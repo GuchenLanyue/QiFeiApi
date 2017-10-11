@@ -1,2 +1,12 @@
-/target/
 /.classpath
+/target/
+/target/*
+/test-output/
+/test-output/*
+*.classpath
+/allure-results/
+/allure-results/*
+/.allure/
+/.allure/*
+/.settings/
+/.settings/*
