@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qifei.utils.Headers;
-import com.qifei.utils.HttpMethods;
+import com.qifei.utils.http.Headers;
+import com.qifei.utils.http.HttpMethods;
 
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
@@ -83,7 +83,7 @@ public class Attendance {
 		map.put("base", baseMap);
 		map.put("params", params);
 		map.put("headers", headerMap);
-		
+		//发起请求
 		HttpMethods http = new HttpMethods(basePath);
 		Response response = http.post(map);
 		return http.getBody(response);

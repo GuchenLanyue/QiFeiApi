@@ -3,9 +3,9 @@ package com.qifei.apis;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.qifei.utils.HttpMethods;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.TxtData;
+import com.qifei.utils.http.HttpMethods;
 
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;

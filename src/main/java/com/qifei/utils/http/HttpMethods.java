@@ -1,4 +1,4 @@
-package com.qifei.utils;
+package com.qifei.utils.http;
 
 import static io.restassured.RestAssured.given;
 
@@ -20,7 +20,7 @@ public class HttpMethods {
 	private Map<String,Object> queryMap = new HashMap<>();
 	private Map<String,Object> paramMap = new HashMap<>();
 	private String requestURL = null;
-	private String url = null;
+	private String basePath = null;
 	
 	public HttpMethods() {
 		// TODO Auto-generated constructor stub
@@ -28,13 +28,13 @@ public class HttpMethods {
 	
 	public HttpMethods(String basePath) {
 		// TODO Auto-generated constructor stub
-		url = basePath;
+		this.basePath = basePath;
 	}
 	
 	@Step("post() 发起请求")
 	public Response post(Map<String, Map<String,Object>> map){
-		if(url!=null){
-			requestURL = url + map.get("base").get("path").toString();
+		if(basePath!=null){
+			requestURL = basePath + map.get("base").get("path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();
@@ -83,8 +83,8 @@ public class HttpMethods {
 	
 	@Step("get() 发起请求")
 	public Response get(Map<String, Map<String,Object>> map){
-		if(url!=null){
-			requestURL = url + map.get("base").get("path").toString();
+		if(basePath!=null){
+			requestURL = basePath + map.get("base").get("path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();
@@ -133,8 +133,8 @@ public class HttpMethods {
 	
 	@Step("put() 发起请求")
 	public Response put(Map<String, Map<String,Object>> map){
-		if(url!=null){
-			requestURL = url + map.get("base").get("path").toString();
+		if(basePath!=null){
+			requestURL = basePath + map.get("base").get("path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();
@@ -183,8 +183,8 @@ public class HttpMethods {
 	
 	@Step("put() 发起请求")
 	public Response delete(Map<String, Map<String,Object>> map){
-		if(url!=null){
-			requestURL = url + map.get("base").get("path").toString();
+		if(basePath!=null){
+			requestURL = basePath + map.get("base").get("path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();

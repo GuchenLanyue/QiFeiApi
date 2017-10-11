@@ -1,8 +1,9 @@
-package com.qifei.utils;
+package com.qifei.utils.http;
 
 import java.io.File;
 
 import com.qifei.apis.Auth;
+import com.qifei.utils.TxtData;
 
 public class Headers {
 	
