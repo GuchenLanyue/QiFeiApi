@@ -19,13 +19,20 @@
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20170516</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/br.eti.kinoshita/testlink-java-api -->
 		<dependency>
-		    <groupId>br.eti.kinoshita</groupId>
-		    <artifactId>testlink-java-api</artifactId>
-		    <version>1.9.16-1</version>
+			<groupId>br.eti.kinoshita</groupId>
+			<artifactId>testlink-java-api</artifactId>
+			<version>1.9.16-1</version>
 		</dependency>
-	
+
 		<!--allure的testng插件 -->
 		<dependency>
 			<groupId>io.qameta.allure</groupId>
@@ -103,7 +110,7 @@
 				<version>2.20</version>
 				<configuration>
 					<suiteXmlFiles>
-						<suiteXmlFile>all.xml</suiteXmlFile>
+						<suiteXmlFile>testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
 					<!-- 解决用maven执行test时 日志乱码的问题，详见：http://www.cnblogs.com/discuss/archive/2010/10/27/1862225.html -->
 					<argLine>-Dfile.encoding=UTF-8</argLine>

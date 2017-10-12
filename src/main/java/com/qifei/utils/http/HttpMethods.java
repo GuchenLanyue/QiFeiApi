@@ -8,6 +8,8 @@ import io.qameta.allure.Description;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.testng.Assert;
+
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
@@ -31,13 +33,29 @@ public class HttpMethods {
 		this.basePath = basePath;
 	}
 	
+	public Response request(Map<String, Map<String,Object>> map){
+		String method = map.get("base").get("Method").toString();
+		if(method.equals("POST")){
+			return post(map);
+		}else if (method.equals("GET")) {
+			return get(map);
+		}else if (method.equals("DELETE")) {
+			return delete(map);
+		}else if (method.equals("PUT")) {
+			return put(map);
+		}else{
+			Assert.fail("目前不支持"+method+"请求！");
+			return null;
+		}
+	}
+	
 	@Step("post() 发起请求")
 	public Response post(Map<String, Map<String,Object>> map){
 		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("path").toString();
+			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("path").toString();
+					+ map.get("base").get("Path").toString();
 		}
 		
 		if(map.containsKey("headers")){
@@ -64,7 +82,7 @@ public class HttpMethods {
 						  .encoderConfig(EncoderConfig.encoderConfig()
 								    .defaultContentCharset("UTF-8")
 								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-				.contentType((ContentType) map.get("base").get("contentType"))
+				.contentType(map.get("base").get("contentType").toString())
 				.queryParams(queryMap)
 				.body(paramMap)
 			.when()
@@ -84,7 +102,7 @@ public class HttpMethods {
 	@Step("get() 发起请求")
 	public Response get(Map<String, Map<String,Object>> map){
 		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("path").toString();
+			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();
@@ -134,7 +152,7 @@ public class HttpMethods {
 	@Step("put() 发起请求")
 	public Response put(Map<String, Map<String,Object>> map){
 		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("path").toString();
+			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();
@@ -181,10 +199,10 @@ public class HttpMethods {
 		return response;
 	}
 	
-	@Step("put() 发起请求")
+	@Step("delete() 发起请求")
 	public Response delete(Map<String, Map<String,Object>> map){
 		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("path").toString();
+			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
 					+ map.get("base").get("path").toString();

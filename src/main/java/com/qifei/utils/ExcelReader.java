@@ -126,7 +126,7 @@ public class ExcelReader {
 			}
 			
 			if (sheet.getRow(rowNum).getCell(i)==null) {
-				map.put(sheet.getRow(0).getCell(i).toString(), null);
+				map.put(sheet.getRow(0).getCell(i).toString(), "");
 			} else {
 				map.put(sheet.getRow(0).getCell(i).toString(), sheet.getRow(rowNum).getCell(i).toString());
 			}
@@ -164,7 +164,7 @@ public class ExcelReader {
 			}
 
 			if (sheet.getRow(rowNum).getCell(i)==null) {
-				map.put(sheet.getRow(0).getCell(i).toString(), null);
+				map.put(sheet.getRow(0).getCell(i).toString(), "");
 			} else {
 				map.put(sheet.getRow(0).getCell(i).toString(), sheet.getRow(rowNum).getCell(i).toString());
 			}

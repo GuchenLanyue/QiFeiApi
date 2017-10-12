@@ -6,9 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.testng.Assert;
 
 import io.qameta.allure.Step;
@@ -36,6 +40,32 @@ public class JsonUtils {
 			
 			return null;
 		}
+	}
+	
+	public List<Map<String, Object>> getList(String jsonStr){
+		JSONArray jsonArr = new JSONArray(jsonStr);
+		List<Map<String, Object>> list = new ArrayList<>();
+
+		for(Object json:jsonArr){
+			list.add(getMap(json.toString()));
+		}
+		
+		return list;
+	}
+	
+	public Map<String, Object> getMap(String jsonStr){
+		JSONObject jsonObj = new JSONObject(jsonStr);
+		Map<String, Object> map = new HashMap<>();
+		for(Object key:jsonObj.keySet()){
+			Object value = jsonObj.get(key.toString());
+			if(value instanceof JSONArray){
+				map.put(key.toString(), getList(value.toString()));
+			}else{
+				map.put(key.toString(), value);
+			}
+		}
+		
+		return map;
 	}
 	
 	@Step
@@ -100,6 +130,13 @@ public class JsonUtils {
 					
 				Assert.assertEquals(actual, expected,"文件\""+filePath+"\"["+key+"]:的预期值为："+expected+"，实际值为："+actual);
 			}
+		}
+	}
+	
+	@Step
+	public void equalsJson(Map<String, Object>expected,JsonPath response){
+		for(String key:expected.keySet()){
+			Assert.assertEquals(response.get(key), expected.get(key),key);
 		}
 	}
 }

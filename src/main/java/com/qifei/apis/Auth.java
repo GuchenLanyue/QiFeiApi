@@ -30,7 +30,7 @@ public class Auth {
 	@Step("tokens() 登录-获取Token")
 	public String tokens(){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("path", "/auth/v1/auth/tokens");
+		baseMap.put("Path", "/auth/v1/auth/tokens");
 		baseMap.put("contentType", ContentType.JSON);
 		
 		//通过user.json文件读取登录信息
