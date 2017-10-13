@@ -50,7 +50,7 @@ public class Attendance {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations");
 		baseMap.put("contentType", ContentType.JSON);
-		
+		baseMap.put("Method", "POST");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();
@@ -62,7 +62,7 @@ public class Attendance {
 		map.put("headers", headerMap);
 		//发起请求
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.post(map);
+		Response response = http.request(map);
 		
 		return http.getBody(response);
 	}
@@ -71,7 +71,8 @@ public class Attendance {
 	public List<Object> getLocations(){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations");
-		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();
@@ -82,7 +83,7 @@ public class Attendance {
 		map.put("headers", headerMap);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.get(map);
+		Response response = http.request(map);
 		String body = http.getBody(response);
 		JsonPath json = JsonPath.with(body);
 		return json.getList("items.uuid");
@@ -93,7 +94,7 @@ public class Attendance {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations/" + uuid);
 		baseMap.put("contentType", ContentType.JSON);
-		
+		baseMap.put("Method", "PUT");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();
@@ -105,7 +106,7 @@ public class Attendance {
 		map.put("headers", headerMap);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.put(map);
+		Response response = http.request(map);
 		return http.getBody(response);
 	}
 	
@@ -114,6 +115,7 @@ public class Attendance {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations/"+uuid);
 		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("Method", "DELETE");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();
@@ -124,7 +126,7 @@ public class Attendance {
 		map.put("headers", headerMap);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		http.delete(map);
+		http.request(map);
 	}
 	
 	public static void main(String[] args) {

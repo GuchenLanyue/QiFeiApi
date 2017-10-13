@@ -13,7 +13,6 @@ import org.testng.Assert;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 public class HttpMethods {
@@ -21,6 +20,7 @@ public class HttpMethods {
 	private Map<String,Object> cookieMap = new HashMap<>();
 	private Map<String,Object> queryMap = new HashMap<>();
 	private Map<String,Object> paramMap = new HashMap<>();
+	private Map<String,Object> pathParamMap = new HashMap<>();
 	private String requestURL = null;
 	private String basePath = null;
 	
@@ -35,6 +35,29 @@ public class HttpMethods {
 	
 	public Response request(Map<String, Map<String,Object>> map){
 		String method = map.get("base").get("Method").toString();
+		if(basePath!=null){
+			requestURL = basePath + map.get("base").get("Path").toString();
+		}else{
+			requestURL = map.get("base").get("basePath").toString()
+					+ map.get("base").get("path").toString();
+		}
+		
+		if(map.containsKey("headers")){
+			headerMap = map.get("headers");
+		}
+		if(map.containsKey("cookies")){
+			cookieMap = map.get("cookies");
+		}
+		if(map.containsKey("querys")){
+			queryMap = map.get("querys");
+		}
+		if(map.containsKey("params")){
+			paramMap = map.get("params");
+		}
+		if(map.containsKey("pathParams")){
+			pathParamMap = map.get("pathParams");
+		}
+		
 		if(method.equals("POST")){
 			return post(map);
 		}else if (method.equals("GET")) {
@@ -47,31 +70,13 @@ public class HttpMethods {
 			Assert.fail("目前不支持"+method+"请求！");
 			return null;
 		}
+		
 	}
 	
 	@Step("post() 发起请求")
 	public Response post(Map<String, Map<String,Object>> map){
-		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("Path").toString();
-		}else{
-			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("Path").toString();
-		}
-		
-		if(map.containsKey("headers")){
-			headerMap = map.get("headers");
-		}		
-		if(map.containsKey("cookies")){
-			cookieMap = map.get("cookies");
-		}
-		if(map.containsKey("querys")){
-			queryMap = map.get("querys");
-		}
-		if(map.containsKey("params")){
-			paramMap = map.get("params");
-		}
-		
 		Response response = given()
+				.log().method()
 				.proxy("127.0.0.1", 8888)
 //				.log().all()
 				.log().uri()
@@ -83,6 +88,7 @@ public class HttpMethods {
 								    .defaultContentCharset("UTF-8")
 								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
 				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
 				.queryParams(queryMap)
 				.body(paramMap)
 			.when()
@@ -101,28 +107,9 @@ public class HttpMethods {
 	
 	@Step("get() 发起请求")
 	public Response get(Map<String, Map<String,Object>> map){
-		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("Path").toString();
-		}else{
-			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("path").toString();
-		}
-		
-		if(map.containsKey("headers")){
-			headerMap = map.get("headers");
-		}
-		if(map.containsKey("cookies")){
-			cookieMap = map.get("cookies");
-		}
-		if(map.containsKey("querys")){
-			queryMap = map.get("querys");
-		}
-		if(map.containsKey("params")){
-			paramMap = map.get("params");
-		}
-		
 		Response response = given()
 				.proxy("127.0.0.1", 8888)
+				.log().method()
 //				.log().all()
 				.log().uri()
 //				.log().params()
@@ -132,7 +119,8 @@ public class HttpMethods {
 						  .encoderConfig(EncoderConfig.encoderConfig()
 								    .defaultContentCharset("UTF-8")
 								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-				.contentType((ContentType) map.get("base").get("contentType"))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
 				.queryParams(queryMap)
 				.body(paramMap)
 			.when()
@@ -151,28 +139,9 @@ public class HttpMethods {
 	
 	@Step("put() 发起请求")
 	public Response put(Map<String, Map<String,Object>> map){
-		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("Path").toString();
-		}else{
-			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("path").toString();
-		}
-		
-		if(map.containsKey("headers")){
-			headerMap = map.get("headers");
-		}
-		if(map.containsKey("cookies")){
-			cookieMap = map.get("cookies");
-		}
-		if(map.containsKey("querys")){
-			queryMap = map.get("querys");
-		}
-		if(map.containsKey("params")){
-			paramMap = map.get("params");
-		}
-		
 		Response response = given()
 				.proxy("127.0.0.1", 8888)
+				.log().method()
 //				.log().all()
 				.log().uri()
 //				.log().params()
@@ -182,7 +151,8 @@ public class HttpMethods {
 						  .encoderConfig(EncoderConfig.encoderConfig()
 								    .defaultContentCharset("UTF-8")
 								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-				.contentType((ContentType) map.get("base").get("contentType"))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
 				.queryParams(queryMap)
 				.body(paramMap)
 			.when()
@@ -201,28 +171,9 @@ public class HttpMethods {
 	
 	@Step("delete() 发起请求")
 	public Response delete(Map<String, Map<String,Object>> map){
-		if(basePath!=null){
-			requestURL = basePath + map.get("base").get("Path").toString();
-		}else{
-			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("path").toString();
-		}
-		
-		if(map.containsKey("headers")){
-			headerMap = map.get("headers");
-		}
-		if(map.containsKey("cookies")){
-			cookieMap = map.get("cookies");
-		}
-		if(map.containsKey("querys")){
-			queryMap = map.get("querys");
-		}
-		if(map.containsKey("params")){
-			paramMap = map.get("params");
-		}
-		
 		Response response = given()
 				.proxy("127.0.0.1", 8888)
+				.log().method()
 //				.log().all()
 				.log().uri()
 //				.log().params()
@@ -232,7 +183,8 @@ public class HttpMethods {
 						  .encoderConfig(EncoderConfig.encoderConfig()
 								    .defaultContentCharset("UTF-8")
 								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-				.contentType((ContentType) map.get("base").get("contentType"))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
 				.queryParams(queryMap)
 				.body(paramMap)
 			.when()

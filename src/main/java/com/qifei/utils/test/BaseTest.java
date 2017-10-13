@@ -14,6 +14,7 @@ import io.qameta.allure.Step;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import junit.framework.Assert;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -117,6 +118,12 @@ public class BaseTest {
 		Parameter parameter = new Parameter();
 		Map<String, Object> baseMap = parameter.setUrlData(api,filePath);
 		baseMap.put("basePath", basePath);
+		Map<String, Object> pathParamMap = new HashMap<>();
+		if(baseMap.get("Path").toString().contains("{")){
+			String path = baseMap.get("Path").toString();
+			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
+			pathParamMap.put(pathParam, paramsMap.get(pathParam));
+		}
 		
 		if (paramsMap.containsKey("CaseID")) {
 			caseName = paramsMap.get("CaseID").toString();
@@ -127,11 +134,7 @@ public class BaseTest {
 		if(expectedMap.containsKey("CaseID")){
 			expectedMap.remove("CaseID");
 		}
-//		for(String key:expectedMap.keySet()){
-//			if(paramsMap.containsKey(key)){
-//				expectedMap.put(key, paramsMap.get(key));
-//			}
-//		}
+
 		Map<String, Object> headerMap = new HashMap<>();
 		Headers header = new Headers(basePath);
 		headerMap.put("Authorization", header.getAuthorization());
@@ -139,7 +142,7 @@ public class BaseTest {
 		map.put("base", baseMap);
 		map.put("params", paramsMap);
 		map.put("headers", headerMap);
-		
+		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		Response response = http.request(map);
 		saveResponseBody(response);
@@ -171,36 +174,15 @@ public class BaseTest {
 	}
 	
 	@Step("checkResponse() 校验response")
-	public void checkResponse() {
+	public void checkResponse(Map<String, Object> expected) {
 		String response = getBodyStr();
 		
-		//部分接口返回的response首字母不是“{”，不符合json格式，在这里处理一下
-		
-		response = response.substring(response.indexOf("{"), response.lastIndexOf("}"));
-		
-		JsonPath jsonPath = new JsonPath(response);
-
-		String jsonFile = getSrcDir() + expectedJson;
 		JsonUtils jsonUtil = new JsonUtils();
-		
-		jsonUtil.equalsJson(jsonFile, jsonPath);
-	}
-	
-	@Step("checkResponse() 校验response")
-	public void checkResponse(Map<String, Object> params) {
-		String response = getBodyStr();
-		
-		//部分接口返回的response首字母不是“{”，不符合json格式，在这里处理一下
-		while (response.charAt(0) != '{') {
-			response = response.substring(1, response.length());
-		};
-
-		JsonPath jsonPath = new JsonPath(response);
-
-		String jsonFile = getSrcDir() + expectedJson;
-		JsonUtils jsonUtil = new JsonUtils();
-		
-		jsonUtil.equalsJson(params, jsonFile, jsonPath);
+		Map<String, Object> responseMap = jsonUtil.getMap(response);
+		for(String key:expected.keySet()){
+			System.out.println(expected.get(key).toString()+":"+responseMap.get(key).toString());
+			Assert.assertEquals(expected.get(key).toString(), responseMap.get(key).toString());
+		}
 	}
 	
 	@Attachment(value = "Response.Body",type = "String")

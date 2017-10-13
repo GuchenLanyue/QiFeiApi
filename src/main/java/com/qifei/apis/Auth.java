@@ -32,7 +32,8 @@ public class Auth {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/auth/v1/auth/tokens");
 		baseMap.put("contentType", ContentType.JSON);
-		
+		baseMap.put("Method", "POST");
+
 		//通过user.json文件读取登录信息
 		JsonUtils jsonUtil = new JsonUtils();
 		JsonPath user = jsonUtil.jsonReader(file);
@@ -44,7 +45,7 @@ public class Auth {
 		map.put("params", paramMap);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.post(map);
+		Response response = http.request(map);
 		JsonPath body = JsonPath.with(http.getBody(response));
 		
 		String authorization = "Bearer " + body.getString("access_token");

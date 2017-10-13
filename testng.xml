@@ -9,13 +9,15 @@
 	<test name="单独用例测试" preserve-order="true">
 		<groups>
 			<define name="Attendance">
-				<include name="add_Attendance_Test" />
+				<include name="add_Locations_Test" />
+				<include name="modify_Locations_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.apis.attendance.LocationsTest">
 				<methods>
-					<include name="add_Attendance_Test" />
+					<include name="add_Locations_Test" />
+					<include name="modify_Locations_Test" />
 				</methods>
 			</class>
 		</classes>
