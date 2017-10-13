@@ -6,11 +6,12 @@
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
-	<test name="单独用例测试" preserve-order="true">
+	<test name="打卡地点测试" preserve-order="true">
 		<groups>
 			<define name="Attendance">
 				<include name="add_Locations_Test" />
 				<include name="modify_Locations_Test" />
+				<include name="del_Locations_Test" />
 			</define>
 		</groups>
 		<classes>
@@ -18,6 +19,7 @@
 				<methods>
 					<include name="add_Locations_Test" />
 					<include name="modify_Locations_Test" />
+					<include name="del_Locations_Test" />
 				</methods>
 			</class>
 		</classes>

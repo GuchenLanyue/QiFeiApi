@@ -12,7 +12,6 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import junit.framework.Assert;
 
@@ -180,7 +179,6 @@ public class BaseTest {
 		JsonUtils jsonUtil = new JsonUtils();
 		Map<String, Object> responseMap = jsonUtil.getMap(response);
 		for(String key:expected.keySet()){
-			System.out.println(expected.get(key).toString()+":"+responseMap.get(key).toString());
 			Assert.assertEquals(expected.get(key).toString(), responseMap.get(key).toString());
 		}
 	}

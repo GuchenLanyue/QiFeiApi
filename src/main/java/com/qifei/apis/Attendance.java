@@ -67,6 +67,42 @@ public class Attendance {
 		return http.getBody(response);
 	}
 	
+	@Step("addLocations() 新增打卡地点")
+	public String addLocations(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/locations");
+		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("Method", "POST");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("name", "兆维小区");
+		paramMap.put("province", "北京市");
+		paramMap.put("city", "");
+		paramMap.put("address", "北京市朝阳区酒仙桥街道兆维小区");
+		paramMap.put("longitude", 116.503805f);
+		paramMap.put("latitude", 39.960939f);
+		paramMap.put("range", 300);
+		Object[] apply_scope = new Object[1];
+		Map<String, String> scope = new HashMap<>();
+		scope.put("type", "all");
+		apply_scope[0] = scope;
+		paramMap.put("apply_scope", apply_scope);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("params", paramMap);
+		map.put("headers", headerMap);
+		//发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		
+		return http.getBody(response);
+	}
+	
 	@Step("getLocations() 获取打卡地点列表")
 	public List<Object> getLocations(){
 		Map<String, Object> baseMap = new HashMap<>();
