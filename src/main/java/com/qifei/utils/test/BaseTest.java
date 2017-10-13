@@ -113,7 +113,7 @@ public class BaseTest {
 	}
 	
 	@Step
-	public void setRequest(String api,Map<String, Object> paramsMap) {
+	public void setRequest(String api,Map<String, Object> paramMap) {
 		Parameter parameter = new Parameter();
 		Map<String, Object> baseMap = parameter.setUrlData(api,filePath);
 		baseMap.put("basePath", basePath);
@@ -121,12 +121,12 @@ public class BaseTest {
 		if(baseMap.get("Path").toString().contains("{")){
 			String path = baseMap.get("Path").toString();
 			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
-			pathParamMap.put(pathParam, paramsMap.get(pathParam));
+			pathParamMap.put(pathParam, paramMap.get(pathParam));
 		}
 		
-		if (paramsMap.containsKey("CaseID")) {
-			caseName = paramsMap.get("CaseID").toString();
-			paramsMap.remove("CaseID");
+		if (paramMap.containsKey("CaseID")) {
+			caseName = paramMap.get("CaseID").toString();
+			paramMap.remove("CaseID");
 		}
 		
 		expectedMap = parameter.setExpectedMap(filePath, caseName);
@@ -139,7 +139,7 @@ public class BaseTest {
 		headerMap.put("Authorization", header.getAuthorization());
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		map.put("base", baseMap);
-		map.put("params", paramsMap);
+		map.put("params", paramMap);
 		map.put("headers", headerMap);
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);

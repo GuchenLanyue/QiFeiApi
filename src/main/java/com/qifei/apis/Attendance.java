@@ -3,13 +3,13 @@ package com.qifei.apis;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -49,7 +49,7 @@ public class Attendance {
 	public String addLocations(Map<String,Object> params){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations");
-		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "POST");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
@@ -71,7 +71,7 @@ public class Attendance {
 	public String addLocations(){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations");
-		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "POST");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
@@ -103,33 +103,11 @@ public class Attendance {
 		return http.getBody(response);
 	}
 	
-	@Step("getLocations() 获取打卡地点列表")
-	public List<Object> getLocations(){
-		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("Path", "/attendance/v1/locations");
-		baseMap.put("contentType", "application/json");
-		baseMap.put("Method", "GET");
-		//设置Authorization
-		String authorization = new Headers(basePath).getAuthorization();
-		Map<String, Object> headerMap = new HashMap<>();
-		headerMap.put("Authorization", authorization);
-		
-		Map<String, Map<String,Object>> map = new HashMap<>();
-		map.put("base", baseMap);
-		map.put("headers", headerMap);
-		
-		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.request(map);
-		String body = http.getBody(response);
-		JsonPath json = JsonPath.with(body);
-		return json.getList("items.uuid");
-	}
-	
 	@Step("modifyLocations() 更新打卡地点")
 	public String modifyLocations(String uuid,Map<String,Object> params){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations/" + uuid);
-		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "PUT");
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
@@ -150,8 +128,127 @@ public class Attendance {
 	public void deleteLocations(String uuid){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/locations/"+uuid);
-		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "DELETE");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		http.request(map);
+	}
+	
+
+	@Step("getLocations() 获取打卡地点列表")
+	public List<Map<String, Object>> getLocations(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/locations");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+		JsonPath json = JsonPath.with(body);
+		
+		return json.getList("items");
+	}
+	
+	@Step("getLocation() 获取打卡地点信息")
+	public Map<String, Object> getLocation(String uuid){
+		List<Map<String, Object>> locations = getLocations();
+		if (locations.size()==0) {
+			return null;
+		}
+		
+		for(Map<String, Object> map:locations){
+			if (map.get("uuid").toString().equals(uuid)) {
+				return map;
+			}else{
+				continue;
+			}
+		}
+		
+		return null;
+	}
+	
+	@Step("getLocation() 随机获取一个打卡地点的id")
+	public String getUUID(){
+		List<Map<String, Object>> locations = getLocations();
+		int size = locations.size();
+		
+		if (locations.size()==0) {
+			return null;
+		}
+		
+		Random random = new Random();
+		int index = random.nextInt(size);
+		String uuid = locations.get(index).get("uuid").toString();
+		return uuid;
+	}
+	
+	@Step
+	public void in(Map<String,Object> params){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/attendances/in");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+		
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		http.request(map);
+	}
+	
+	@Step
+	public void out(Map<String,Object> params){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/attendances/out");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+		
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		http.request(map);
+	}
+	
+	@Step
+	public void daily_statistic(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/attendances/daily-statistic");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+		
 		//设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();
@@ -167,21 +264,25 @@ public class Attendance {
 	
 	public static void main(String[] args) {
 		Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
-//		Map<String, Object> paramMap = new HashMap<>();
-//
-//		paramMap.put("longitude", 116.345369f);
-//		paramMap.put("latitude", 40.056871f);
-//		paramMap.put("range", 300);
-//		paramMap = attendance.formatParams(paramMap);
-//		Object[] apply_scope = new Object[1];
-//		Map<String, String> scope = new HashMap<>();
-//		scope.put("type", "all");
-//		apply_scope[0] = scope;
-//		paramMap.put("apply_scope", apply_scope);
-//		attendance.addLocations(paramMap);
-		for(Object uuid:attendance.getLocations()){
-			attendance.deleteLocations(uuid.toString());
-		}		
-//		System.out.println(attendance.getLocations().size());
+		//新增打卡地点
+//		attendance.addLocations();
+		//获取打卡地点列表
+		List<Map<String, Object>> locations = attendance.getLocations();
+//		int size = locations.size();
+//		Random random = new Random();
+//		int index = random.nextInt(size);
+//		String uuid = locations.get(index).get("uuid").toString();
+//		System.out.println(uuid);
+//		//获取打卡地点详情
+//		Map<String, Object> location = attendance.getLocation(uuid);
+//		for(String key:location.keySet()){
+//			System.out.println(key+":"+location.get(key));
+//		}
+		
+		//删除打卡地点
+		for(Map<String, Object> map:locations){
+			String uuid = map.get("uuid").toString();
+			attendance.deleteLocations(uuid);
+		}
 	}
 }
