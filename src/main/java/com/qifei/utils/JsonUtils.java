@@ -45,7 +45,7 @@ public class JsonUtils {
 	public List<Map<String, Object>> getList(String jsonStr){
 		JSONArray jsonArr = new JSONArray(jsonStr);
 		List<Map<String, Object>> list = new ArrayList<>();
-
+		System.out.println(jsonStr);
 		for(Object json:jsonArr){
 			list.add(getMap(json.toString()));
 		}
@@ -54,13 +54,31 @@ public class JsonUtils {
 	}
 	
 	public Map<String, Object> getMap(String jsonStr){
-		JSONObject jsonObj = new JSONObject(jsonStr);
+		JSONObject jsonObj = null;
+		
+		try {
+			jsonObj = new JSONObject(jsonStr);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(jsonStr);
+			e.printStackTrace();
+		}
 		Map<String, Object> map = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
 			
 			if(value instanceof JSONArray){
-				map.put(key.toString(), getList(value.toString()));
+				String str = value.toString();
+				if(str.startsWith("{")|str.startsWith("[")){
+					if(str.contains(":")){
+						map.put(key.toString(), getList(value.toString()));
+					}else{
+						map.put(key.toString(), str);
+					}
+					
+				}else{
+					map.put(key.toString(), value.toString());
+				}
 			}else{
 				map.put(key.toString(), value);
 			}
@@ -74,10 +92,17 @@ public class JsonUtils {
 		Map<String, Object> formatMap = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
-			if(value.toString().contains("[")){
-				formatMap.put(key.toString(), getList(value.toString()));
+			String valueStr = value.toString();
+			if(valueStr.startsWith("[")){
+				if(valueStr.contains(":")){
+					formatMap.put(key.toString(), getList(value.toString()));
+				}else{
+					formatMap.put(key.toString(), valueStr);
+				}
+			}else if(valueStr.startsWith("{")){
+				formatMap.put(key.toString(), getMap(value.toString()));
 			}else if(value instanceof Double){
-				String valueStr = value.toString();
+
 				String str = valueStr.substring(valueStr.indexOf(".")+1, valueStr.length());
 
 				if(Integer.parseInt(str)==0){
