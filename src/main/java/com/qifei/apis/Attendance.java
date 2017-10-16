@@ -58,7 +58,7 @@ public class Attendance {
 		
 		Map<String, Map<String,Object>> map = new HashMap<>();
 		map.put("base", baseMap);
-		map.put("params", params);
+		map.put("params", formatParams(params));
 		map.put("headers", headerMap);
 		//发起请求
 		HttpMethods http = new HttpMethods(basePath);
@@ -116,7 +116,7 @@ public class Attendance {
 		
 		Map<String, Map<String,Object>> map = new HashMap<>();
 		map.put("base", baseMap);
-		map.put("params", params);
+		map.put("params", formatParams(params));
 		map.put("headers", headerMap);
 		
 		HttpMethods http = new HttpMethods(basePath);

@@ -115,8 +115,10 @@ public class BaseTest {
 	@Step
 	public void setRequest(String api,Map<String, Object> paramMap) {
 		Parameter parameter = new Parameter();
+		//设置请求类型，请求路径等基本数据
 		Map<String, Object> baseMap = parameter.setUrlData(api,filePath);
 		baseMap.put("basePath", basePath);
+		//设置路径参数
 		Map<String, Object> pathParamMap = new HashMap<>();
 		if(baseMap.get("Path").toString().contains("{")){
 			String path = baseMap.get("Path").toString();
@@ -124,19 +126,29 @@ public class BaseTest {
 			pathParamMap.put(pathParam, paramMap.get(pathParam));
 		}
 		
+		//为caseName赋值，并将CaseID从参数值Map中删除。
 		if (paramMap.containsKey("CaseID")) {
 			caseName = paramMap.get("CaseID").toString();
 			paramMap.remove("CaseID");
 		}
 		
+		//获取预期结果
 		expectedMap = parameter.setExpectedMap(filePath, caseName);
 		if(expectedMap.containsKey("CaseID")){
 			expectedMap.remove("CaseID");
 		}
-
+		
+		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
+		JsonUtils jsonUtil = new JsonUtils();
+		paramMap = jsonUtil.formatMap(paramMap);
+		expectedMap = jsonUtil.formatMap(expectedMap);
+		
+		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
 		Headers header = new Headers(basePath);
 		headerMap.put("Authorization", header.getAuthorization());
+		
+		//设置请求数据
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		map.put("base", baseMap);
 		map.put("params", paramMap);
@@ -151,25 +163,51 @@ public class BaseTest {
 	public void setRequest(String api,String filePath, String caseName) {
 		this.filePath = filePath;
 		Parameter parameter = new Parameter();
-		Map<String, Object> baseMap = parameter.setUrlData(filePath, api);
+		//获取请求路径，请求类型等基本信息
+		Map<String, Object> baseMap = parameter.setUrlData(api, filePath);
 		baseMap.put("basePath", basePath);
 		this.caseName = caseName;
-		Map<String, Object> paramsMap = parameter.setParams(filePath, caseName);
 		
-		if (paramsMap.containsKey("Case")) {
-			paramsMap.remove("Case");
+		//获取参数值
+		Map<String, Object> paramMap = parameter.setParams(filePath, caseName);
+		//设置路径参数
+		Map<String, Object> pathParamMap = new HashMap<>();
+		if(baseMap.get("Path").toString().contains("{")){
+			String path = baseMap.get("Path").toString();
+			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
+			pathParamMap.put(pathParam, paramMap.get(pathParam));
+			paramMap.remove(pathParam);
+		}
+		//为caseName赋值，并将CaseID从参数值Map中删除。
+		if (paramMap.containsKey("CaseID")) {
+			caseName = paramMap.get("CaseID").toString();
+			paramMap.remove("CaseID");
+		}		
+		
+		//获取预期结果
+		expectedMap = parameter.setExpectedMap(filePath, caseName);
+		if(expectedMap.containsKey("CaseID")){
+			expectedMap.remove("CaseID");
 		}
 		
-		Map<String, Object>expectedMap  = parameter.setExpectedMap(filePath, caseName);
-		
+		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
+		JsonUtils jsonUtil = new JsonUtils();
+		paramMap = jsonUtil.formatMap(paramMap);
+		expectedMap = jsonUtil.formatMap(expectedMap);
+		//设置header
+		Map<String, Object> headerMap = new HashMap<>();
+		Headers header = new Headers(basePath);
+		headerMap.put("Authorization", header.getAuthorization());
+		//设置请求数据
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		map.put("base", baseMap);
-		map.put("params", paramsMap);
-		
+		map.put("params", paramMap);
+		map.put("headers", headerMap);
+		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		Response response = http.request(map);
+		//保存response
 		saveResponseBody(response);
-		expectedJson = expectedMap.get("Path").toString();
 	}
 	
 	@Step("checkResponse() 校验response")

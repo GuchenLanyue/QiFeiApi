@@ -51,26 +51,42 @@ public class HttpMethods {
 		if(map.containsKey("querys")){
 			queryMap = map.get("querys");
 		}
-		if(map.containsKey("params")){
-			paramMap = map.get("params");
-		}
 		if(map.containsKey("pathParams")){
 			pathParamMap = map.get("pathParams");
 		}
 		
 		if(method.equals("POST")){
-			return post(map);
+			if (map.containsKey("params")) {
+				paramMap = map.get("params");
+				return post(map);
+			}else{
+				return postNobody(map);
+			}
 		}else if (method.equals("GET")) {
-			return get(map);
+			if (map.containsKey("params")) {
+				paramMap = map.get("params");
+				return get(map);
+			}else{
+				return getNobody(map);
+			}
 		}else if (method.equals("DELETE")) {
-			return delete(map);
+			if (map.containsKey("params")) {
+				paramMap = map.get("params");
+				return delete(map);
+			}else{
+				return deleteNobody(map);
+			}
 		}else if (method.equals("PUT")) {
-			return put(map);
+			if (map.containsKey("params")) {
+				paramMap = map.get("params");
+				return put(map);
+			}else{
+				return putNobody(map);
+			}
 		}else{
 			Assert.fail("目前不支持"+method+"请求！");
 			return null;
 		}
-		
 	}
 	
 	@Step("post() 发起请求")
@@ -201,6 +217,133 @@ public class HttpMethods {
 		return response;
 	}
 	
+	@Step("post() 发起请求")
+	public Response postNobody(Map<String, Map<String,Object>> map){
+		Response response = given()
+				.log().method()
+				.proxy("127.0.0.1", 8888)
+//				.log().all()
+				.log().uri()
+//				.log().params()
+				.headers(headerMap)
+				.cookies(cookieMap)
+				.config(RestAssured.config()
+						  .encoderConfig(EncoderConfig.encoderConfig()
+								    .defaultContentCharset("UTF-8")
+								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
+				.queryParams(queryMap)
+//				.body(paramMap)
+			.when()
+				.post(requestURL)
+			.then()
+//				.log().body()
+//				.statusCode(200)
+				.log().status()
+			.extract()
+				.response();
+
+		responseLog(response);
+		
+		return response;
+	}
+	
+	@Step("get() 发起请求")
+	public Response getNobody(Map<String, Map<String,Object>> map){
+		Response response = given()
+				.proxy("127.0.0.1", 8888)
+				.log().method()
+//				.log().all()
+				.log().uri()
+//				.log().params()
+				.headers(headerMap)
+				.cookies(cookieMap)
+				.config(RestAssured.config()
+						  .encoderConfig(EncoderConfig.encoderConfig()
+								    .defaultContentCharset("UTF-8")
+								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
+				.queryParams(queryMap)
+//				.body(paramMap)
+			.when()
+				.get(requestURL)
+			.then()
+//				.log().body()
+				.log().status()
+//				.statusCode(200)
+			.extract()
+				.response();
+		
+		responseLog(response);
+		
+		return response;
+	}
+	
+	@Step("put() 发起请求")
+	public Response putNobody(Map<String, Map<String,Object>> map){
+		Response response = given()
+				.proxy("127.0.0.1", 8888)
+				.log().method()
+//				.log().all()
+				.log().uri()
+//				.log().params()
+				.headers(headerMap)
+				.cookies(cookieMap)
+				.config(RestAssured.config()
+						  .encoderConfig(EncoderConfig.encoderConfig()
+								    .defaultContentCharset("UTF-8")
+								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
+				.queryParams(queryMap)
+//				.body(paramMap)
+			.when()
+				.put(requestURL)
+			.then()
+//				.log().body()
+				.log().status()
+//				.statusCode(200)
+			.extract()
+				.response();
+		
+		responseLog(response);
+		
+		return response;
+	}
+	
+	@Step("delete() 发起请求")
+	public Response deleteNobody(Map<String, Map<String,Object>> map){
+		Response response = given()
+				.proxy("127.0.0.1", 8888)
+				.log().method()
+//				.log().all()
+				.log().uri()
+//				.log().params()
+				.headers(headerMap)
+				.cookies(cookieMap)
+				.config(RestAssured.config()
+						  .encoderConfig(EncoderConfig.encoderConfig()
+								    .defaultContentCharset("UTF-8")
+								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+				.contentType(map.get("base").get("contentType").toString())
+				.pathParams(pathParamMap)
+				.queryParams(queryMap)
+//				.body(paramMap)
+			.when()
+				.delete(requestURL)
+			.then()
+//				.log().body()
+				.log().status()
+//				.statusCode(200)
+			.extract()
+				.response();
+		
+		responseLog(response);
+		
+		return response;
+	}
 	@Description("获取响应数据")
 	public String getBody(Response response){
 		String body = response.asString();

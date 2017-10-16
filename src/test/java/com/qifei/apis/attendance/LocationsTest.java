@@ -16,10 +16,10 @@ public class LocationsTest extends BaseTest {
 	
 	@Test(dataProvider="SingleCase",description="新增打卡地点")
 	public void add_Locations_Test(Map<String, Object> params){
-		Attendance attendance = new Attendance(getbasePath());
-		setRequest("addLocations", attendance.formatParams(params));
+//		Attendance attendance = new Attendance(getbasePath());
+		setRequest("addLocations", params);
 		Map<String, Object> expected = getExpectedMap();
-		checkResponse(attendance.formatParams(expected));
+		checkResponse(expected);
 	}
 	
 	@Test(dataProvider="SingleCase",description="更新打卡地点")
@@ -28,7 +28,7 @@ public class LocationsTest extends BaseTest {
 		List<Map<String, Object>> locations = attendance.getLocations();
 		String uuid = null;
 		if(locations.size()==0){
-			String body = attendance.addLocations(attendance.formatParams(params));
+			String body = attendance.addLocations(params);
 			JsonPath json = JsonPath.with(body);
 			uuid = json.getString("uuid");
 		}else{

@@ -3,12 +3,15 @@ package com.qifei.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -129,12 +132,41 @@ public class ExcelReader {
 			if (sheet.getRow(rowNum).getCell(i)==null) {
 				map.put(sheet.getRow(0).getCell(i).toString(), "");
 			} else {
-				map.put(sheet.getRow(0).getCell(i).toString(), sheet.getRow(rowNum).getCell(i).toString());
+				Cell cell = sheet.getRow(rowNum).getCell(i);
+				map.put(sheet.getRow(0).getCell(i).toString(), getCell(cell));
 			}
 			
 		}
 		
 		return map;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public Object getCell(Cell cell) {
+//		DecimalFormat df = new DecimalFormat("#");
+		if (cell == null)
+			return "";
+		switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_NUMERIC:
+				if(HSSFDateUtil.isCellDateFormatted(cell)){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+				}
+//				return df.format(cell.getNumericCellValue());
+				return cell.getNumericCellValue();
+			case Cell.CELL_TYPE_STRING:
+//				System.out.println(cell.getStringCellValue());
+				return cell.getStringCellValue();
+			case Cell.CELL_TYPE_FORMULA:
+				return cell.getCellFormula();
+			case Cell.CELL_TYPE_BLANK:
+				return "";
+			case Cell.CELL_TYPE_BOOLEAN:
+				return cell.getBooleanCellValue() + "";
+			case Cell.CELL_TYPE_ERROR:
+				return cell.getErrorCellValue() + "";
+		}
+		return "";
 	}
 	
 	/**
@@ -168,7 +200,7 @@ public class ExcelReader {
 				map.put(sheet.getRow(0).getCell(i).toString(), "");
 			} else {
 				Cell cell = sheet.getRow(rowNum).getCell(i);
-				map.put(sheet.getRow(0).getCell(i).toString(), cell.toString());
+				map.put(sheet.getRow(0).getCell(i).toString(), getCell(cell));
 			}
 			
 		}

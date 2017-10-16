@@ -58,6 +58,7 @@ public class JsonUtils {
 		Map<String, Object> map = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
+			
 			if(value instanceof JSONArray){
 				map.put(key.toString(), getList(value.toString()));
 			}else{
@@ -66,6 +67,31 @@ public class JsonUtils {
 		}
 		
 		return map;
+	}
+	
+	public Map<String, Object> formatMap(Map<String, Object> map){
+		JSONObject jsonObj = new JSONObject(map);
+		Map<String, Object> formatMap = new HashMap<>();
+		for(Object key:jsonObj.keySet()){
+			Object value = jsonObj.get(key.toString());
+			if(value.toString().contains("[")){
+				formatMap.put(key.toString(), getList(value.toString()));
+			}else if(value instanceof Double){
+				String valueStr = value.toString();
+				String str = valueStr.substring(valueStr.indexOf(".")+1, valueStr.length());
+
+				if(Integer.parseInt(str)==0){
+					int intValue = ((Double) value).intValue();
+					formatMap.put(key.toString(), intValue);
+				}else{
+					formatMap.put(key.toString(), value);
+				}
+			}else{
+				formatMap.put(key.toString(), value);
+			}
+		}
+		
+		return formatMap;
 	}
 	
 	@Step

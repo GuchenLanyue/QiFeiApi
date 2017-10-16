@@ -22,4 +22,8 @@ public class AttendancesTest extends BaseTest {
 		Map<String, Object> location = attendance.getLocation(uuid);
 		checkResponse(location);
 	}
+	
+	public void attendance_Out_Test(){
+		
+	}
 }
