@@ -3,6 +3,7 @@ package com.qifei.utils.test;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 
+import com.qifei.apis.Path;
 import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
@@ -30,7 +31,8 @@ import org.testng.annotations.AfterTest;
 public class BaseTest {
 	private String srcDir = null;
 	private String method = null;
-	private String responseStr = null;
+	private String bodyStr = null;
+	private Response response = null;
 	private String expectedJson = null;
 	private String basePath = null;
 	private String caseName = null;
@@ -58,7 +60,11 @@ public class BaseTest {
 	}
 	
 	public String getBodyStr(){
-		return responseStr;
+		return bodyStr;
+	}
+	
+	public Response getResponse(){
+		return response;
 	}
 	
 	public String getExpectedJson(){
@@ -123,7 +129,13 @@ public class BaseTest {
 		if(baseMap.get("Path").toString().contains("{")){
 			String path = baseMap.get("Path").toString();
 			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
-			pathParamMap.put(pathParam, paramMap.get(pathParam));
+			if(paramMap.containsKey(pathParam)){
+				pathParamMap.put(pathParam, paramMap.get(pathParam));
+			}else{
+				Path pathStr = new Path(basePath);
+				String pathParamStr = pathStr.analysisPath(pathParam);
+				pathParamMap.put(pathParam, pathParamStr);
+			}
 		}
 		
 		//为caseName赋值，并将CaseID从参数值Map中删除。
@@ -139,8 +151,9 @@ public class BaseTest {
 		}
 		
 		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
+		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
 		JsonUtils jsonUtil = new JsonUtils();
-		paramMap = jsonUtil.formatMap(paramMap);
+		paramMap = jsonUtil.formatMap(jsonFile,paramMap);
 		expectedMap = jsonUtil.formatMap(expectedMap);
 		
 		//设置header
@@ -155,7 +168,8 @@ public class BaseTest {
 		map.put("headers", headerMap);
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.request(map);
+		response = http.request(map);
+		
 		saveResponseBody(response);
 	}
 
@@ -205,7 +219,7 @@ public class BaseTest {
 		map.put("headers", headerMap);
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.request(map);
+		response = http.request(map);
 		//保存response
 		saveResponseBody(response);
 	}
@@ -217,7 +231,9 @@ public class BaseTest {
 		JsonUtils jsonUtil = new JsonUtils();
 		Map<String, Object> responseMap = jsonUtil.getMap(response);
 		for(String key:expected.keySet()){
-			Assert.assertEquals(expected.get(key).toString(), responseMap.get(key).toString());
+			String expectedStr = expected.get(key).toString();
+			String actualStr = responseMap.get(key).toString();
+			Assert.assertEquals(expectedStr, actualStr);
 		}
 	}
 	
@@ -226,12 +242,12 @@ public class BaseTest {
 		String body = response.getBody().asString();
 		Allure.addAttachment("Response.body", body);
 		
-		while(body.charAt(0)!='{'){
-			body = body.substring(1, body.length());
+		if(body.length()>0){
+			body = body.substring(body.indexOf("{"), body.lastIndexOf("}")+1);
 		}
 		
-		responseStr = body;
-		return responseStr;
+		bodyStr = body;
+		return bodyStr;
 	}
 	
 	@AfterTest

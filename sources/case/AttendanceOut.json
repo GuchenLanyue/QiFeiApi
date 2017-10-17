@@ -1,0 +1,6 @@
+{
+  "address": "String",
+  "latitude": "Double",
+  "location": "String",
+  "longitude": "Double"
+}
