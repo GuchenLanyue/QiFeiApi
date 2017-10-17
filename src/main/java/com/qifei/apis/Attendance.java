@@ -235,7 +235,7 @@ public class Attendance {
 		return locationID;
 	}
 	
-	@Step
+	@Step("in() 内勤打卡")
 	public void in(Map<String,Object> params){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/attendances/in");
@@ -256,7 +256,7 @@ public class Attendance {
 		http.request(map);
 	}
 	
-	@Step
+	@Step("out() 外勤打卡")
 	public void out(Map<String,Object> params){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/attendances/out");
@@ -277,7 +277,7 @@ public class Attendance {
 		http.request(map);
 	}
 	
-	@Step
+	@Step("daily_statistic()")
 	public void daily_statistic(){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("Path", "/attendance/v1/attendances/daily-statistic");

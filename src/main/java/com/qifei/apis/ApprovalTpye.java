@@ -9,12 +9,12 @@ import com.qifei.utils.http.HttpMethods;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
-public class Tpye {
-	public Tpye() {
+public class ApprovalTpye {
+	public ApprovalTpye() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Tpye(String basePath) {
+	public ApprovalTpye(String basePath) {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
 	}
