@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
@@ -162,9 +165,36 @@ public class Attendance {
 		HttpMethods http = new HttpMethods(basePath);
 		Response response = http.request(map);
 		String body = http.getBody(response);
+		//处理response
+		JsonUtils jsonUtils = new JsonUtils();
+		JSONObject jsonObj = new JSONObject(body);
+		JSONArray jsonArr = jsonObj.getJSONArray("items");
+		List<Map<String,Object>> list = jsonUtils.getList(jsonArr.toString());
+		
+		return list;
+	}
+	
+	@Step("getLocations() 获取打卡地点列表")
+	public List<String> getLocationIDs(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/locations");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
 		JsonPath json = JsonPath.with(body);
 		
-		return json.getList("items");
+		return json.getList("items.uuid");
 	}
 	
 	@Step("getLocation() 获取打卡地点信息")
@@ -186,18 +216,23 @@ public class Attendance {
 	}
 	
 	@Step("getLocation() 随机获取一个打卡地点的id")
-	public String getUUID(){
+	public String getLocationID(){
 		List<Map<String, Object>> locations = getLocations();
 		int size = locations.size();
-		
-		if (locations.size()==0) {
-			return null;
+		String locationID = null;
+		if(size==0){
+			String body = addLocations();
+			JsonPath json = JsonPath.with(body);
+			locationID = json.getString("uuid");
+		}else{
+			Random random = new Random();
+			int index = random.nextInt(locations.size());
+			Map<String, Object> locationMap = new HashMap<>();
+			locationMap = locations.get(index);
+			locationID = locationMap.get("uuid").toString();
 		}
 		
-		Random random = new Random();
-		int index = random.nextInt(size);
-		String uuid = locations.get(index).get("uuid").toString();
-		return uuid;
+		return locationID;
 	}
 	
 	@Step
@@ -267,7 +302,7 @@ public class Attendance {
 		//新增打卡地点
 //		attendance.addLocations();
 		//获取打卡地点列表
-		List<Map<String, Object>> locations = attendance.getLocations();
+		List<String> locations = attendance.getLocationIDs();
 //		int size = locations.size();
 //		Random random = new Random();
 //		int index = random.nextInt(size);
@@ -280,9 +315,9 @@ public class Attendance {
 //		}
 		
 		//删除打卡地点
-		for(Map<String, Object> map:locations){
-			String uuid = map.get("uuid").toString();
+		for(String uuid:locations){
 			attendance.deleteLocations(uuid);
 		}
+//		attendance.addLocations();
 	}
 }
