@@ -70,12 +70,7 @@ public class HttpMethods {
 				return getNobody(map);
 			}
 		}else if (method.equals("DELETE")) {
-			if (map.containsKey("params")) {
-				paramMap = map.get("params");
-				return delete(map);
-			}else{
-				return deleteNobody(map);
-			}
+			return delete(map);
 		}else if (method.equals("PUT")) {
 			if (map.containsKey("params")) {
 				paramMap = map.get("params");
@@ -202,7 +197,6 @@ public class HttpMethods {
 				.contentType(map.get("base").get("contentType").toString())
 				.pathParams(pathParamMap)
 				.queryParams(queryMap)
-				.body(paramMap)
 			.when()
 				.delete(requestURL)
 			.then()
@@ -313,37 +307,6 @@ public class HttpMethods {
 		return response;
 	}
 	
-	@Step("delete() 发起请求")
-	public Response deleteNobody(Map<String, Map<String,Object>> map){
-		Response response = given()
-				.proxy("127.0.0.1", 8888)
-				.log().method()
-//				.log().all()
-				.log().uri()
-//				.log().params()
-				.headers(headerMap)
-				.cookies(cookieMap)
-				.config(RestAssured.config()
-						  .encoderConfig(EncoderConfig.encoderConfig()
-								    .defaultContentCharset("UTF-8")
-								    .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-				.contentType(map.get("base").get("contentType").toString())
-				.pathParams(pathParamMap)
-				.queryParams(queryMap)
-//				.body(paramMap)
-			.when()
-				.delete(requestURL)
-			.then()
-//				.log().body()
-				.log().status()
-//				.statusCode(200)
-			.extract()
-				.response();
-		
-		responseLog(response);
-		
-		return response;
-	}
 	@Description("获取响应数据")
 	public String getBody(Response response){
 		String body = response.asString();
