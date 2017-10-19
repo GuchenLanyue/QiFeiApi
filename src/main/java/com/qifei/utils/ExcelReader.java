@@ -130,7 +130,7 @@ public class ExcelReader {
 			}
 		}
 
-		Assert.assertTrue(rowNum != 0, "没有在" + fileName + "/" + sheetName + "中找到Case:" + caseName + "!");
+		Assert.assertTrue(rowNum != 0, "Not found API " + caseName +" in "+fileName + " sheet:[" + sheetName + "]!");
 
 		for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
 			if (sheet.getRow(0).getCell(i).toString() == null) {

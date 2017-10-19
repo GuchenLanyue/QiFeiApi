@@ -100,20 +100,31 @@ public class JsonUtils {
 		JsonPath json = jsonReader(jsonFile);
 		Map<String, Object> formatMap = new HashMap<>();
 		formatMap = formatMap(map);
+//		formatMap = map;
 		for(String key:formatMap.keySet()){
 			Type type = Enum.valueOf(Type.class, json.getString(key));
+			String value = formatMap.get(key).toString();
+			if(value.contains("${")){
+				String fileName = value.substring(value.indexOf("{")+1, value.indexOf("."));
+				String paramPath = value.substring(value.indexOf(".")+1, value.indexOf("}"));
+				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+				TxtData txt = new TxtData();
+				String jsonStr = txt.readTxtFile(fileName);
+				JsonPath jsonPath = JsonPath.with(jsonStr);
+				value = jsonPath.getString(paramPath);
+			}
 			switch (type) {
 			case String:
-				formatMap.put(key, formatMap.get(key).toString());
+				formatMap.put(key, value);
 				break;
 			case Int:
-				formatMap.put(key, Integer.parseInt(formatMap.get(key).toString()));
+				formatMap.put(key, Integer.parseInt(value));
 				break;
 			case Double:
-				formatMap.put(key, Double.parseDouble(formatMap.get(key).toString()));
+				formatMap.put(key, Double.parseDouble(value));
 				break;
 			case Float:
-				formatMap.put(key, Float.parseFloat(formatMap.get(key).toString()));
+				formatMap.put(key, Float.parseFloat(value));
 				break;
 			default:
 				break;
@@ -129,16 +140,32 @@ public class JsonUtils {
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
 			String valueStr = value.toString();
+			if(valueStr.contains("${")){
+				String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+				String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+				TxtData txt = new TxtData();
+				String jsonStr = txt.readTxtFile(fileName);
+				JsonPath jsonPath = JsonPath.with(jsonStr);
+				valueStr = jsonPath.getString(paramPath);
+			}
+			
 			if(valueStr.startsWith("[")){
 				if(valueStr.contains(":")){
-					formatMap.put(key.toString(), getList(value.toString()));
+					formatMap.put(key.toString(), getList(valueStr));
 				}else if(valueStr.equals("[]")){
 					formatMap.put(key.toString(), new JSONArray());
 				}else{
-					formatMap.put(key.toString(), valueStr);
+					valueStr = valueStr.substring(valueStr.indexOf("[")+1, valueStr.lastIndexOf("]"));
+					String[] valueArr = valueStr.split(",");
+					List<String> valueList = new ArrayList<>();
+					for(String str:valueArr){
+						valueList.add(str.substring(str.indexOf("\"")+1,str.lastIndexOf("\"")));
+					}
+					formatMap.put(key.toString(), valueList);
 				}
 			}else if(valueStr.startsWith("{")){
-				formatMap.put(key.toString(), getMap(value.toString()));
+				formatMap.put(key.toString(), getMap(valueStr));
 			}else if(value instanceof Double){
 
 				String str = valueStr.substring(valueStr.indexOf(".")+1, valueStr.length());
@@ -150,7 +177,7 @@ public class JsonUtils {
 					formatMap.put(key.toString(), value);
 				}
 			}else{
-				formatMap.put(key.toString(), value);
+				formatMap.put(key.toString(), valueStr);
 			}
 		}
 		
