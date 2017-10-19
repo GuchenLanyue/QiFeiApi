@@ -35,11 +35,16 @@ public class HttpMethods {
 	
 	public Response request(Map<String, Map<String,Object>> map){
 		String method = map.get("base").get("Method").toString();
-		if(basePath!=null){
+		String base = null;
+		if(map.get("base").containsKey("basePath")){
+			base = map.get("base").get("basePath").toString();
+		}
+		
+		if(basePath!=null&&base==null){
 			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
 			requestURL = map.get("base").get("basePath").toString()
-					+ map.get("base").get("path").toString();
+					+ map.get("base").get("Path").toString();
 		}
 		
 		if(map.containsKey("headers")){
