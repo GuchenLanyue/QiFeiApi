@@ -1,6 +1,7 @@
 package com.qifei.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.codehaus.groovy.util.ListHashMap;
+import org.json.JSONObject;
 
 import com.qifei.utils.http.HttpMethods;
 
@@ -24,6 +26,92 @@ import io.restassured.response.Response;
 
 public class ExcelWriter {
 	public static void main(String[] args) {
+		TxtData txt = new TxtData();
+		String baseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\base.txt");
+		baseJson = baseJson.substring(baseJson.indexOf("{"),baseJson.lastIndexOf("}")+1);
+		String paramJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\paramters.txt");
+		paramJson = paramJson.substring(paramJson.indexOf("{"),paramJson.lastIndexOf("}")+1);
+		String responseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\response.txt");
+		responseJson = responseJson.substring(responseJson.indexOf("{"),responseJson.lastIndexOf("}")+1);
+		
+		JSONObject baseObject = new JSONObject(baseJson);
+		JSONObject paramObject = new JSONObject(paramJson);
+		JSONObject responseObject = new JSONObject(responseJson);
+		
+		ExcelWriter excel = new ExcelWriter();
+		excel.createExcel(baseObject,paramObject,responseObject);
+	}
+	
+	public void createExcel(JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
+		Workbook wb = null;
+		File file = new File("C:\\Users\\sam\\Desktop\\apis\\qifei.xlsx");
+		try {
+			if(file.exists()){
+				FileInputStream inputStream = new FileInputStream(file);
+				wb = new XSSFWorkbook(inputStream);
+			}else{
+				wb = new XSSFWorkbook();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		wb = createSheet(wb, "Base", baseJson);
+		wb = createSheet(wb, "Params", paramJson);
+		wb = createSheet(wb, "Expectations", expectJson);
+		
+		try {
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
+			FileOutputStream outputStream = new FileOutputStream(file);
+			
+			wb.write(outputStream);
+			outputStream.flush();
+			outputStream.close();
+			wb.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Workbook createSheet(Workbook workbook,String sheetName,JSONObject json){
+		Workbook wb = workbook;
+		int sheets = wb.getNumberOfSheets();
+		int rowIndex = 1;
+		Sheet sheet = null;
+		for(int i=0;i<sheets;i++){
+			if(wb.getSheetName(i).equals(sheetName)){
+				sheet = wb.getSheet(sheetName);
+				rowIndex = sheet.getLastRowNum()+1;
+				break;
+			}else{
+				continue;
+			}
+		}
+		if(sheet==null){
+			sheet = wb.createSheet(sheetName);
+		}
+//		Sheet paramterSheet = wb.createSheet("Params");
+		Row title = sheet.createRow(0);
+		Row value = sheet.createRow(rowIndex);
+		int i = 0;
+		for(String key:json.keySet()){
+			Cell titleCell = title.createCell(i);
+			Cell valueCell = value.createCell(i);
+			titleCell.setCellValue(key);
+			valueCell.setCellValue(json.get(key).toString());
+			i++;
+		}
+		
+		return wb;
+	}
+	
+	public void weixunAPIDocs(){
 		Map<String, Map<String,Object>> map = new HashMap<>();
 		Map<String,Object> baseMap = new HashMap<>();
 		baseMap.put("Method", "GET");
@@ -38,7 +126,7 @@ public class ExcelWriter {
 		
 		map.put("cookies", cookieMap);
 		HttpMethods http = new HttpMethods("http://nchr.release.microfastup.com");
-		Response response = http.post(map);
+		Response response = http.request(map);
 		JsonPath json = JsonPath.with(http.getBody(response));
 		List<Map<String, Object>> dirs = json.getList("apis");
 		for(int i = 0 ; i < dirs.size(); i++){
@@ -56,7 +144,7 @@ public class ExcelWriter {
 			
 			map.put("cookies", cookieMap);
 			http = new HttpMethods("http://nchr.release.microfastup.com");
-			response = http.post(map);
+			response = http.request(map);
 			json = JsonPath.with(http.getBody(response));
 			
 			String basePath = json.getString("basePath");
@@ -92,7 +180,7 @@ public class ExcelWriter {
 		}
 	}
 	
-	public static void createExcel(Map<String,String> base,String[] params){
+	public void createExcel(Map<String,String> base,String[] params){
 		Workbook wb = null;
 		try {
 			wb = new XSSFWorkbook();
