@@ -110,7 +110,7 @@
 				<version>2.20</version>
 				<configuration>
 					<suiteXmlFiles>
-						<suiteXmlFile>single.xml</suiteXmlFile>
+						<suiteXmlFile>Smoke.xml</suiteXmlFile>
 					</suiteXmlFiles>
 					<!-- 解决用maven执行test时 日志乱码的问题，详见：http://www.cnblogs.com/discuss/archive/2010/10/27/1862225.html -->
 					<argLine>-Dfile.encoding=UTF-8</argLine>

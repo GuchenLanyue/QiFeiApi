@@ -2,8 +2,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests" thread-count="1">
 	<parameter name="platform" value="pc" />
-	<parameter name="sourcesDir" value="/sources" />
-	<parameter name="CaseList" value="/case/CaseList.xlsx" />
+	<parameter name="sourcesDir" value="\sources" />
+	<parameter name="CaseList" value="\case\CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
 	<test name="流程测试" preserve-order="true">
@@ -13,7 +13,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.apis.ProcessTest">
+			<class name="com.qifei.test.ProcessTest">
 				<methods>
 					<include name="process_Test" />
 				</methods>

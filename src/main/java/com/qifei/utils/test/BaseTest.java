@@ -6,13 +6,14 @@ import org.testng.annotations.DataProvider;
 import com.qifei.apis.Path;
 import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
+import com.qifei.utils.TxtData;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import junit.framework.Assert;
 
@@ -153,7 +154,12 @@ public class BaseTest {
 		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
 		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
 		JsonUtils jsonUtil = new JsonUtils();
-		paramMap = jsonUtil.formatMap(jsonFile,paramMap);
+		if(new File(jsonFile).exists()){
+			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
+		}else{
+			paramMap = jsonUtil.formatMap(paramMap);
+		}
+		
 		expectedMap = jsonUtil.formatMap(expectedMap);
 		
 		//设置header
@@ -179,7 +185,7 @@ public class BaseTest {
 		Parameter parameter = new Parameter();
 		//获取请求路径，请求类型等基本信息
 		Map<String, Object> baseMap = parameter.setUrlData(api, filePath);
-		baseMap.put("basePath", basePath);
+		baseMap.put("basePath", baseMap.get("BasePath").toString());
 		this.caseName = caseName;
 		
 		//获取参数值
@@ -189,7 +195,18 @@ public class BaseTest {
 		if(baseMap.get("Path").toString().contains("{")){
 			String path = baseMap.get("Path").toString();
 			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
-			pathParamMap.put(pathParam, paramMap.get(pathParam));
+			String pathParamStr = paramMap.get(pathParam).toString();
+			if(pathParamStr.contains("${")){
+				String jsonFile = pathParamStr.substring(pathParamStr.indexOf("{")+1, pathParamStr.indexOf("."));
+				String paramPath = pathParamStr.substring(pathParamStr.indexOf(".")+1, pathParamStr.indexOf("}"));
+				jsonFile = getSrcDir()+"\\temp\\"+jsonFile+".txt";
+				TxtData txt = new TxtData();
+				String jsonStr = txt.readTxtFile(jsonFile);
+				JsonPath jsonPath = JsonPath.with(jsonStr);
+				pathParamStr = jsonPath.getString(paramPath);
+			}
+			
+			pathParamMap.put(pathParam, pathParamStr);
 			paramMap.remove(pathParam);
 		}
 		//为caseName赋值，并将CaseID从参数值Map中删除。
@@ -206,7 +223,14 @@ public class BaseTest {
 		
 		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
 		JsonUtils jsonUtil = new JsonUtils();
-		paramMap = jsonUtil.formatMap(paramMap);
+		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
+		File jFile = new File(jsonFile);
+		if(jFile.exists()){
+			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
+		}else{
+			paramMap = jsonUtil.formatMap(paramMap);
+		}
+		
 		expectedMap = jsonUtil.formatMap(expectedMap);
 		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
@@ -242,7 +266,7 @@ public class BaseTest {
 		String body = response.getBody().asString();
 		Allure.addAttachment("Response.body", body);
 		
-		if(body.length()>0){
+		if(body.length()>0&&body.contains("{")){
 			body = body.substring(body.indexOf("{"), body.lastIndexOf("}")+1);
 		}
 		

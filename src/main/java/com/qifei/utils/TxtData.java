@@ -23,6 +23,9 @@ public class TxtData {
 	 */
 	public void writerText(String fileName, String content) {
 		File f = new File(fileName);
+		if(!f.getParentFile().exists()){
+			f.getParentFile().mkdirs();
+		}
 		if (!f.exists()) {
 			try {
 				f.createNewFile();

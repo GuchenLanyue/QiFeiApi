@@ -1,0 +1,8 @@
+{
+  "name": "String",
+  "mobile": "String",
+  "employee_no": "String",
+  "organization_ID": "String",
+  "join_date": "String",
+  "position_ID": "String"
+}
