@@ -59,26 +59,36 @@ public class JsonUtils {
 	public Map<String, Object> getMap(String jsonStr){
 		JSONObject jsonObj = null;
 		
-		try {
-			jsonObj = new JSONObject(jsonStr);
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(jsonStr);
-			e.printStackTrace();
+		if(jsonStr==null|jsonStr==""){
+			return null;
+		}else{
+			try {
+				jsonObj = new JSONObject(jsonStr);
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println(jsonStr);
+				e.printStackTrace();
+			}
 		}
+		
 		Map<String, Object> map = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
-			
 			if(value instanceof JSONArray){
-				String str = value.toString();
-				if(str.startsWith("{")|str.startsWith("[")){
-					if(str.contains(":")){
+				String valueStr = value.toString();
+				if(valueStr.startsWith("{")|valueStr.startsWith("[")){
+					if(valueStr.contains(":")){
 						map.put(key.toString(), getList(value.toString()));
-					}else if(str.equals("[]")){
+					}else if(valueStr.equals("[]")){
 						map.put(key.toString(), new JSONArray());
 					}else{
-						map.put(key.toString(), str);
+						valueStr = valueStr.substring(valueStr.indexOf("[")+1, valueStr.lastIndexOf("]"));
+						String[] valueArr = valueStr.split(",");
+						List<String> valueList = new ArrayList<>();
+						for(String str:valueArr){
+							valueList.add(str.substring(str.indexOf("\"")+1,str.lastIndexOf("\"")));
+						}
+						map.put(key.toString(), valueList);
 					}
 					
 				}else{
