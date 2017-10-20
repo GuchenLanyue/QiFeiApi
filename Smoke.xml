@@ -6,7 +6,22 @@
 	<parameter name="CaseList" value="\case\CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
-	<test name="流程测试" preserve-order="true">
+	<test name="删除子部门" preserve-order="true">
+		<groups>
+			<define name="DeleteOrganizationByName">
+				<include name="DeleteOrganizationByName_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="DeleteOrganizationByName_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="审批流程冒烟测试" preserve-order="true">
 		<groups>
 			<define name="Smoke">
 				<include name="process_Test" />
