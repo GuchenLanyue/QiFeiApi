@@ -254,10 +254,14 @@ public class BaseTest {
 		
 		JsonUtils jsonUtil = new JsonUtils();
 		Map<String, Object> responseMap = jsonUtil.getMap(response);
-		for(String key:expected.keySet()){
-			String expectedStr = expected.get(key).toString();
-			String actualStr = responseMap.get(key).toString();
-			Assert.assertEquals(expectedStr, actualStr);
+		if(responseMap!=null){
+			for(String key:expected.keySet()){
+				String expectedStr = expected.get(key).toString();
+				String actualStr = responseMap.get(key).toString();
+				Assert.assertEquals("Case:"+caseName+" key:"+key,expectedStr, actualStr);
+			}
+		}else{
+			return;
 		}
 	}
 	
