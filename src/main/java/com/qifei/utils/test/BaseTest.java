@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterTest;
 
@@ -249,20 +250,41 @@ public class BaseTest {
 	}
 	
 	@Step("checkResponse() 校验response")
-	public void checkResponse(Map<String, Object> expected) {
+	public boolean checkResponse(Map<String, Object> expected) {
+//		JsonUtils jsonUtil = new JsonUtils();	
+		boolean isContinue = false;
 		String response = getBodyStr();
-		
-		JsonUtils jsonUtil = new JsonUtils();
-		Map<String, Object> responseMap = jsonUtil.getMap(response);
-		if(responseMap!=null){
-			for(String key:expected.keySet()){
-				String expectedStr = expected.get(key).toString();
-				String actualStr = responseMap.get(key).toString();
-				Assert.assertEquals("Case:"+caseName+" key:"+key,expectedStr, actualStr);
-			}
-		}else{
-			return;
+		JSONObject responseObj = new JSONObject();
+		JSONObject expections = new JSONObject(expected);
+		if(response.startsWith("{")){
+			responseObj = new JSONObject(response);
 		}
+		
+		for(String key:expections.keySet()){
+			if(expections.get(key).toString().contains("?${")){
+				String str = expections.get(key).toString();
+				String expectedStr = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+				isContinue = !responseObj.get(key).toString().contains(expectedStr);
+			}else{
+				Assert.assertEquals("Case:"+caseName+" key:"+key, expections.get(key).toString(), responseObj.get(key).toString());
+			}
+		}
+		
+//		Map<String, Object> responseMap = jsonUtil.getMap(response);
+//		if(responseMap!=null){
+//			for(String key:expected.keySet()){
+//				String expectedStr = expected.get(key).toString();
+//				String actualStr = null;
+//				if(responseMap.containsKey(key)){
+//					actualStr = responseMap.get(key).toString();
+//				}
+//				Assert.assertEquals("Case:"+caseName+" key:"+key,expectedStr, actualStr);
+//			}
+//		}else{
+//			return;
+//		}
+		
+		return isContinue;
 	}
 	
 	@Attachment(value = "Response.Body",type = "String")
@@ -280,10 +302,10 @@ public class BaseTest {
 	
 	@AfterTest
 	public void AfterTest(ITestContext context) {
-		File file = new File(getSrcDir()+"\\config\\access_token.txt");
-		if(file.exists()&&file.isFile()){
-			file.delete();
-		}
+//		File file = new File(getSrcDir()+"\\config\\access_token.txt");
+//		if(file.exists()&&file.isFile()){
+//			file.delete();
+//		}
 		System.out.println(context.getName()+" End!");
 	}
 }

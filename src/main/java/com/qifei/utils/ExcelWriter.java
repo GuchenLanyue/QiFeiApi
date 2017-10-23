@@ -30,10 +30,15 @@ public class ExcelWriter {
 		String baseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\base.txt");
 		baseJson = baseJson.substring(baseJson.indexOf("{"),baseJson.lastIndexOf("}")+1);
 		String paramJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\paramters.txt");
-		paramJson = paramJson.substring(paramJson.indexOf("{"),paramJson.lastIndexOf("}")+1);
 		String responseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\response.txt");
-		responseJson = responseJson.substring(responseJson.indexOf("{"),responseJson.lastIndexOf("}")+1);
-		
+
+		if(paramJson!=""){
+			paramJson = paramJson.substring(paramJson.indexOf("{"),paramJson.lastIndexOf("}")+1);
+		}
+		if(responseJson!=""){
+			responseJson = responseJson.substring(responseJson.indexOf("{"),responseJson.lastIndexOf("}")+1);
+
+		}
 		JSONObject baseObject = new JSONObject(baseJson);
 		JSONObject paramObject = new JSONObject(paramJson);
 		JSONObject responseObject = new JSONObject(responseJson);
