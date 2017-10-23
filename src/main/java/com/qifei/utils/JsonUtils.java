@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
 
-import groovy.json.JsonOutput;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 
@@ -268,83 +267,68 @@ public class JsonUtils {
 		}
 	}
 	
-	public List<JSONArray> getJSONArray(JSONArray arr1,JSONArray arr2){
-		List<JSONArray> array = new ArrayList<>();
+	public boolean compareJSONArray(JSONArray arr1,JSONArray arr2){
+		boolean isContinue = false;
 		for(int i=0;i<arr2.length();i++){
 			if(arr2.get(i) instanceof JSONObject){
-				List<JSONObject> objs = getJSONObject(arr1.getJSONObject(i), arr2.getJSONObject(i));
-				while(objs!=null){
-					objs = getJSONObject(objs.get(0), objs.get(1));
+				isContinue =  compareJSONObject(arr1.getJSONObject(i), arr2.getJSONObject(i));
+				if (isContinue) {
+					return isContinue;
 				}
-				
-				return null;
 			}else if (arr2.get(i) instanceof JSONArray) {
-				array = getJSONArray(arr1.getJSONArray(i), arr2.getJSONArray(i));
-				while(array!=null){
-					array = getJSONArray(array.get(0), array.get(1));
+				isContinue =  compareJSONArray(arr1.getJSONArray(i), arr2.getJSONArray(i));
+				if (isContinue) {
+					return isContinue;
 				}
 			}else{
-				JSONObject obj3 = arr2.toJSONObject(arr1);
-				JSONObject obj4 = arr2.toJSONObject(arr2);
-				
-				for(String key:obj4.keySet()){
-					if(obj4.get(key) instanceof JSONArray){
-						getJSONArray(obj3.getJSONArray(key), obj4.getJSONArray(key));
-					}else if (obj4.get(key) instanceof JSONObject) {
-						getJSONObject(obj3.getJSONObject(key), obj4.getJSONObject(key));
-					}else{
-						System.out.println(key+":"+obj3.get(key).toString());
-						System.out.println(key+":"+obj4.get(key).toString());
-						Assert.assertEquals(obj3.get(key).toString(), obj4.get(key).toString(),key);
+				String str = arr2.get(i).toString();
+				if(str.contains("?${")){
+					str = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+					isContinue = !arr1.get(i).toString().equals(str);
+					if (isContinue) {
+						return isContinue;
 					}
 				}
-				
-				return null;
+				Assert.assertEquals(arr1.get(i).toString(), str);
 			}
 		}
 		
-		return array;
+		return isContinue;
 	}
 	
-	public List<JSONObject> getJSONObject(JSONObject obj1,JSONObject obj2){
-		List<JSONObject> obj = new ArrayList<>();
+	public boolean compareJSONObject(JSONObject obj1,JSONObject obj2){
+		boolean isContinue = false;
 		for(String key:obj2.keySet()){
 			if(obj2.get(key) instanceof JSONObject){
-				obj = getJSONObject(obj1.getJSONObject(key), obj2.getJSONObject(key));
-				while(obj!=null){
-					obj = getJSONObject(obj.get(0),obj.get(1));
+				JSONObject obj3 = obj1.getJSONObject(key);
+				JSONObject obj4 = obj1.getJSONObject(key);
+				isContinue = compareJSONObject(obj3, obj4);
+				if (isContinue) {
+					return isContinue;
 				}
-				return null;
 			}else if (obj2.get(key) instanceof JSONArray) {
-				List<JSONArray> array = getJSONArray(obj1.getJSONArray(key), obj2.getJSONArray(key));
-				while(array!=null){
-					array = getJSONArray(array.get(0), array.get(1));
+				JSONArray arr1 = obj1.getJSONArray(key);
+				JSONArray arr2 = obj2.getJSONArray(key);
+				isContinue = compareJSONArray(arr1, arr2);
+				if (isContinue) {
+					return isContinue;
 				}
-				return null;
 			}else {
-				for(String key1:obj2.keySet()){
-					if(obj2.get(key1) instanceof JSONArray){
-						getJSONArray(obj1.getJSONArray(key1), obj2.getJSONArray(key1));
-					}else if(obj2.get(key1) instanceof JSONObject){
-						getJSONObject(obj1.getJSONObject(key1), obj2.getJSONObject(key1));
-					}else{
-						System.out.println(key1+":"+obj1.get(key1).toString());
-						System.out.println(key1+":"+obj2.get(key1).toString());
-						Assert.assertEquals(obj1.get(key1).toString(), obj2.get(key1).toString(),key1);
+				String str = obj2.get(key).toString();
+				if(str.contains("?${")){
+					str = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+					isContinue = !obj1.get(key).toString().equals(str);
+					if (isContinue) {
+						return isContinue;
 					}
 				}
-				
-				return null;
+				Assert.assertEquals(obj1.get(key).toString(), str,key);
 			}
 		}
 		
-		return obj;
+		return isContinue;
 	}
-	
-	public void equalsJson(JSONObject obj1,JSONObject obj2){
-		getJSONObject(obj1, obj2);
-	}
-	
+		
 	@Step
 	public void equalsJson(Map<String, Object>expected,JsonPath response){
 		for(String key:expected.keySet()){
@@ -361,6 +345,6 @@ public class JsonUtils {
 		JSONObject obj1 = new JSONObject(str1);
 		JSONObject obj2 = new JSONObject(str2);
 		
-		jsonUtils.getJSONObject(obj1, obj2);
+		System.out.println(jsonUtils.compareJSONObject(obj1, obj2));
 	}
 }

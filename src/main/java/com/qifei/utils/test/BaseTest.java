@@ -251,7 +251,6 @@ public class BaseTest {
 	
 	@Step("checkResponse() 校验response")
 	public boolean checkResponse(Map<String, Object> expected) {
-//		JsonUtils jsonUtil = new JsonUtils();	
 		boolean isContinue = false;
 		String response = getBodyStr();
 		JSONObject responseObj = new JSONObject();
@@ -260,15 +259,17 @@ public class BaseTest {
 			responseObj = new JSONObject(response);
 		}
 		
-		for(String key:expections.keySet()){
-			if(expections.get(key).toString().contains("?${")){
-				String str = expections.get(key).toString();
-				String expectedStr = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
-				isContinue = !responseObj.get(key).toString().contains(expectedStr);
-			}else{
-				Assert.assertEquals("Case:"+caseName+" key:"+key, expections.get(key).toString(), responseObj.get(key).toString());
-			}
-		}
+		JsonUtils jsonUtil = new JsonUtils();
+		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
+//		for(String key:expections.keySet()){
+//			if(expections.get(key).toString().contains("?${")){
+//				String str = expections.get(key).toString();
+//				String expectedStr = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+//				isContinue = !responseObj.get(key).toString().contains(expectedStr);
+//			}else{
+//				Assert.assertEquals("Case:"+caseName+" key:"+key, expections.get(key).toString(), responseObj.get(key).toString());
+//			}
+//		}
 		
 //		Map<String, Object> responseMap = jsonUtil.getMap(response);
 //		if(responseMap!=null){
