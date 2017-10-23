@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
 
+import groovy.json.JsonOutput;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 
@@ -150,7 +151,15 @@ public class JsonUtils {
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
 			String valueStr = value.toString();
-			if(valueStr.contains("${")){
+			if(valueStr.contains("?${")){
+				String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+				String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+				TxtData txt = new TxtData();
+				String jsonStr = txt.readTxtFile(fileName);
+				JsonPath jsonPath = JsonPath.with(jsonStr);
+				valueStr = "?${"+jsonPath.getString(paramPath)+"}";
+			}else if(valueStr.contains("${")){
 				String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 				String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
 				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
@@ -259,10 +268,99 @@ public class JsonUtils {
 		}
 	}
 	
+	public List<JSONArray> getJSONArray(JSONArray arr1,JSONArray arr2){
+		List<JSONArray> array = new ArrayList<>();
+		for(int i=0;i<arr2.length();i++){
+			if(arr2.get(i) instanceof JSONObject){
+				List<JSONObject> objs = getJSONObject(arr1.getJSONObject(i), arr2.getJSONObject(i));
+				while(objs!=null){
+					objs = getJSONObject(objs.get(0), objs.get(1));
+				}
+				
+				return null;
+			}else if (arr2.get(i) instanceof JSONArray) {
+				array = getJSONArray(arr1.getJSONArray(i), arr2.getJSONArray(i));
+				while(array!=null){
+					array = getJSONArray(array.get(0), array.get(1));
+				}
+			}else{
+				JSONObject obj3 = arr2.toJSONObject(arr1);
+				JSONObject obj4 = arr2.toJSONObject(arr2);
+				
+				for(String key:obj4.keySet()){
+					if(obj4.get(key) instanceof JSONArray){
+						getJSONArray(obj3.getJSONArray(key), obj4.getJSONArray(key));
+					}else if (obj4.get(key) instanceof JSONObject) {
+						getJSONObject(obj3.getJSONObject(key), obj4.getJSONObject(key));
+					}else{
+						System.out.println(key+":"+obj3.get(key).toString());
+						System.out.println(key+":"+obj4.get(key).toString());
+						Assert.assertEquals(obj3.get(key).toString(), obj4.get(key).toString(),key);
+					}
+				}
+				
+				return null;
+			}
+		}
+		
+		return array;
+	}
+	
+	public List<JSONObject> getJSONObject(JSONObject obj1,JSONObject obj2){
+		List<JSONObject> obj = new ArrayList<>();
+		for(String key:obj2.keySet()){
+			if(obj2.get(key) instanceof JSONObject){
+				obj = getJSONObject(obj1.getJSONObject(key), obj2.getJSONObject(key));
+				while(obj!=null){
+					obj = getJSONObject(obj.get(0),obj.get(1));
+				}
+				return null;
+			}else if (obj2.get(key) instanceof JSONArray) {
+				List<JSONArray> array = getJSONArray(obj1.getJSONArray(key), obj2.getJSONArray(key));
+				while(array!=null){
+					array = getJSONArray(array.get(0), array.get(1));
+				}
+				return null;
+			}else {
+				for(String key1:obj2.keySet()){
+					if(obj2.get(key1) instanceof JSONArray){
+						getJSONArray(obj1.getJSONArray(key1), obj2.getJSONArray(key1));
+					}else if(obj2.get(key1) instanceof JSONObject){
+						getJSONObject(obj1.getJSONObject(key1), obj2.getJSONObject(key1));
+					}else{
+						System.out.println(key1+":"+obj1.get(key1).toString());
+						System.out.println(key1+":"+obj2.get(key1).toString());
+						Assert.assertEquals(obj1.get(key1).toString(), obj2.get(key1).toString(),key1);
+					}
+				}
+				
+				return null;
+			}
+		}
+		
+		return obj;
+	}
+	
+	public void equalsJson(JSONObject obj1,JSONObject obj2){
+		getJSONObject(obj1, obj2);
+	}
+	
 	@Step
 	public void equalsJson(Map<String, Object>expected,JsonPath response){
 		for(String key:expected.keySet()){
 			Assert.assertEquals(response.get(key), expected.get(key),key);
 		}
+	}
+	
+	public static void main(String[] args) {
+		JsonUtils jsonUtils = new JsonUtils();
+		TxtData txt = new TxtData();
+		String str1 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\1.txt");
+		String str2 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\2.txt");
+		
+		JSONObject obj1 = new JSONObject(str1);
+		JSONObject obj2 = new JSONObject(str2);
+		
+		jsonUtils.getJSONObject(obj1, obj2);
 	}
 }
