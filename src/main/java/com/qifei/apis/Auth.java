@@ -56,6 +56,29 @@ public class Auth {
 		return authorization;
 	}
 	
+	@Step("tokens() 登录-获取Token")
+	public String tokens(Map<String, Object> params){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/auth/v1/auth/tokens");
+		baseMap.put("contentType", ContentType.JSON);
+		baseMap.put("Method", "POST");
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("params", params);
+		
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		JsonPath body = JsonPath.with(http.getBody(response));
+		
+		String authorization = "Bearer " + body.getString("access_token");
+		
+		TxtData txt = new TxtData();
+		txt.writerText(tokenFile, authorization);
+		
+		return authorization;
+	}
+	
 	public static void main(String[] args) {
 		Auth auth = new Auth("http://console.t.upvi.com/bapi");
 		System.out.println(auth.tokens());
