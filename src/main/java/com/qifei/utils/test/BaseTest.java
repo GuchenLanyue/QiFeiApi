@@ -15,7 +15,6 @@ import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import junit.framework.Assert;
 
 import java.io.File;
 import java.lang.reflect.Method;

@@ -45,19 +45,55 @@ public class JsonUtils {
 		}
 	}
 	
-	public List<Map<String, Object>> getList(String jsonStr){
-		JSONArray jsonArr = new JSONArray(jsonStr);
-		List<Map<String, Object>> list = new ArrayList<>();
-//		System.out.println(jsonStr);
-		for(Object json:jsonArr){
-			list.add(getMap(json.toString()));
+	public List<Object> getList(String jsonStr){
+		JSONArray jsonArray = new JSONArray(jsonStr);
+		List<Object> list = new ArrayList<>();
+		
+		for(int i=0;i<jsonArray.length();i++){
+			if(jsonArray.get(i) instanceof JSONObject|jsonArray.get(i).toString().startsWith("{")){
+				list.add(getMap(jsonArray.get(i).toString()));
+			}else if(jsonArray.get(i) instanceof JSONArray|jsonArray.get(i).toString().startsWith("[")){
+				list.add(getList(jsonArray.get(i).toString()));
+			}else if(jsonArray.get(i) instanceof Double){
+				String str = jsonArray.getString(i);
+				str = str.substring(str.indexOf(".")+1,str.length());
+				if(Integer.parseInt(str)==0){
+					list.add(Integer.parseInt(jsonArray.get(i).toString()));
+				}else{
+					list.add(Double.parseDouble(jsonArray.get(i).toString()));
+				}
+			}else if(jsonArray.get(i) instanceof Boolean){
+				list.add(Boolean.parseBoolean(jsonArray.get(i).toString()));
+			}else{
+				String valueStr = jsonArray.get(i).toString();
+				if(valueStr.contains("?${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String str = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(str);
+					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
+				}else if(valueStr.contains("${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String str = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(str);
+					valueStr = jsonPath.getString(paramPath);
+				}else if(valueStr.contains("?{")){
+					valueStr = valueStr.replaceAll("?{", "{");
+				}
+				list.add(valueStr);
+			}
 		}
 		
 		return list;
 	}
 	
 	public Map<String, Object> getMap(String jsonStr){
-		JSONObject jsonObj = null;
+		JSONObject jsonObj = new JSONObject();
 		
 		if(jsonStr==null|jsonStr==""){
 			return null;
@@ -74,28 +110,40 @@ public class JsonUtils {
 		Map<String, Object> map = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
 			Object value = jsonObj.get(key.toString());
-			if(value instanceof JSONArray){
-				String valueStr = value.toString();
-				if(valueStr.startsWith("{")|valueStr.startsWith("[")){
-					if(valueStr.contains(":")){
-						map.put(key.toString(), getList(value.toString()));
-					}else if(valueStr.equals("[]")){
-						map.put(key.toString(), new JSONArray());
-					}else{
-						valueStr = valueStr.substring(valueStr.indexOf("[")+1, valueStr.lastIndexOf("]"));
-						String[] valueArr = valueStr.split(",");
-						List<String> valueList = new ArrayList<>();
-						for(String str:valueArr){
-							valueList.add(str.substring(str.indexOf("\"")+1,str.lastIndexOf("\"")));
-						}
-						map.put(key.toString(), valueList);
-					}
-					
+			String valueStr = value.toString();
+			if(value instanceof JSONArray|valueStr.startsWith("[")){
+				map.put(key.toString(), getList(valueStr));
+			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
+				map.put(key.toString(), getMap(valueStr));
+			}else if(value instanceof Double){
+				String str = valueStr;
+				str = str.substring(str.indexOf(".")+1, str.length());
+				if(Integer.parseInt(str)==0){
+					map.put(key.toString(), Integer.parseInt(valueStr));
 				}else{
-					map.put(key.toString(), value.toString());
+					map.put(key.toString(), Double.parseDouble(valueStr));
 				}
 			}else{
-				map.put(key.toString(), value);
+				if(valueStr.contains("?${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String str = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(str);
+					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
+				}else if(valueStr.contains("${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String str = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(str);
+					valueStr = jsonPath.getString(paramPath);
+				}else if(valueStr.startsWith("s{")){
+					valueStr = valueStr.substring(1, valueStr.length());
+				}
+				map.put(key.toString(), valueStr);
 			}
 		}
 		
@@ -103,7 +151,136 @@ public class JsonUtils {
 	}
 	
 	enum Type{
-		String,Int,Double,Float
+		String,Int,Double,Float,Boolean
+	}
+	
+	public List<Object> formatList(JSONArray baseArr,JSONArray array){
+		List<Object> list = new ArrayList<>();
+		for(int i=0;i<baseArr.length();i++){
+			System.out.println(baseArr.get(i).toString());
+			System.out.println(array.get(i).toString());
+			if(baseArr.get(i) instanceof JSONObject){
+				
+				for(int j=0;j<array.length();i++){
+					System.out.println(baseArr.get(j).toString());
+					System.out.println(array.get(j).toString());
+					if(array.get(j) instanceof JSONObject){
+						if(array.get(j).toString().equals("{}")){
+							list.add(array.get(j).toString());
+						}else if(baseArr.getJSONObject(i).length()==array.getJSONObject(j).length()){
+							list.add(formatMap(baseArr.getJSONObject(i), array.getJSONObject(j).toMap()));
+						}else{
+							Type type = Enum.valueOf(Type.class, baseArr.get(j).toString());
+							switch (type) {
+							case Int:
+								list.add(Integer.parseInt(array.get(i).toString()));
+								break;
+							case Double:
+								list.add(Double.parseDouble(array.get(i).toString()));
+								break;
+							case String:
+								list.add(array.get(i).toString());
+								break;
+							case Boolean:
+								list.add(Boolean.parseBoolean(array.getBigInteger(i).toString()));
+								break;
+							default:
+								break;
+							}
+						}
+					}else{
+						list.add(array.get(j));
+					}
+				}
+			}else if(baseArr.get(i) instanceof JSONArray){
+				
+				for(int k=0;k<array.length();k++){
+					System.out.println(baseArr.get(k).toString());
+					System.out.println(array.get(k).toString());
+					if(array.get(k) instanceof JSONArray){
+						list.add(formatList(baseArr.getJSONArray(i), array.getJSONArray(k)));
+					}else{
+						list.add(array.get(k));
+					}
+				}
+			}else{
+				Type type = Enum.valueOf(Type.class, baseArr.get(i).toString());
+				switch (type) {
+				case Int:
+					list.add(Integer.parseInt(array.get(i).toString()));
+					break;
+				case Double:
+					list.add(Double.parseDouble(array.get(i).toString()));
+					break;
+				case String:
+					list.add(array.get(i).toString());
+					break;
+				case Boolean:
+					list.add(Boolean.parseBoolean(array.getBigInteger(i).toString()));
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	public Map<String, Object> formatMap(JSONObject baseObj,Map<String, Object> map){
+		Map<String, Object> formatMap = new HashMap<>();
+		formatMap = formatMap(map);
+		
+		JSONObject obj = new JSONObject(formatMap);
+		for(String key:baseObj.keySet()){
+			System.out.println(baseObj.get(key).toString());
+			System.out.println(obj.get(key).toString());
+			if(obj.get(key) instanceof JSONObject){
+				if(key.toString().equals("target_value")|key.toString().equals("form_key_field")){
+					System.out.println(key.toString());
+					System.out.println(obj.get(key).toString());
+				}
+				if(obj.get(key).toString().equals("{}")){
+					formatMap.put(key.toString(), obj.get(key).toString());
+				}else if(baseObj.getJSONObject(key).length()==obj.getJSONObject(key).length()){
+					formatMap.put(key.toString(), formatMap(baseObj.getJSONObject(key),obj.getJSONObject(key).toMap()));
+				}else{
+					Type type = Enum.valueOf(Type.class, baseObj.get(key).toString());
+					switch (type) {
+					case Int:
+						formatMap.put(key.toString(),Integer.parseInt(obj.get(key).toString()));
+						break;
+					case Double:
+						formatMap.put(key.toString(),Double.parseDouble(obj.get(key).toString()));
+						break;
+					case String:
+						formatMap.put(key.toString(), obj.get(key).toString());
+						break;
+					default:
+						break;
+					}
+				}
+			}else if(obj.get(key) instanceof JSONArray){
+				formatMap.put(key.toString(), formatList(baseObj.getJSONArray(key), obj.getJSONArray(key)));
+			}else{
+				Type type = Enum.valueOf(Type.class, baseObj.get(key).toString());
+				switch (type) {
+				case Int:
+					formatMap.put(key.toString(),Integer.parseInt(obj.get(key).toString()));
+					break;
+				case Double:
+					formatMap.put(key.toString(),Double.parseDouble(obj.get(key).toString()));
+					break;
+				case String:
+					formatMap.put(key.toString(), obj.get(key).toString());
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
+		return formatMap;
 	}
 	
 	public Map<String, Object> formatMap(String jsonFile,Map<String, Object> map){
@@ -111,18 +288,12 @@ public class JsonUtils {
 		Map<String, Object> formatMap = new HashMap<>();
 		formatMap = formatMap(map);
 //		formatMap = map;
+		
 		for(String key:formatMap.keySet()){
+			
 			Type type = Enum.valueOf(Type.class, json.getString(key));
 			String value = formatMap.get(key).toString();
-			if(value.contains("${")){
-				String fileName = value.substring(value.indexOf("{")+1, value.indexOf("."));
-				String paramPath = value.substring(value.indexOf(".")+1, value.indexOf("}"));
-				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
-				TxtData txt = new TxtData();
-				String jsonStr = txt.readTxtFile(fileName);
-				JsonPath jsonPath = JsonPath.with(jsonStr);
-				value = jsonPath.getString(paramPath);
-			}
+
 			switch (type) {
 			case String:
 				formatMap.put(key, value);
@@ -148,53 +319,44 @@ public class JsonUtils {
 		JSONObject jsonObj = new JSONObject(map);
 		Map<String, Object> formatMap = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
+			if(key.toString().equals("extra")){
+				System.out.println(jsonObj.get(key.toString()).toString());
+			}
 			Object value = jsonObj.get(key.toString());
 			String valueStr = value.toString();
-			if(valueStr.contains("?${")){
-				String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
-				String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
-				TxtData txt = new TxtData();
-				String jsonStr = txt.readTxtFile(fileName);
-				JsonPath jsonPath = JsonPath.with(jsonStr);
-				valueStr = "?${"+jsonPath.getString(paramPath)+"}";
-			}else if(valueStr.contains("${")){
-				String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
-				String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-				fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
-				TxtData txt = new TxtData();
-				String jsonStr = txt.readTxtFile(fileName);
-				JsonPath jsonPath = JsonPath.with(jsonStr);
-				valueStr = jsonPath.getString(paramPath);
-			}
-			
-			if(valueStr.startsWith("[")){
-				if(valueStr.contains(":")){
-					formatMap.put(key.toString(), getList(valueStr));
-				}else if(valueStr.equals("[]")){
-					formatMap.put(key.toString(), new JSONArray());
-				}else{
-					valueStr = valueStr.substring(valueStr.indexOf("[")+1, valueStr.lastIndexOf("]"));
-					String[] valueArr = valueStr.split(",");
-					List<String> valueList = new ArrayList<>();
-					for(String str:valueArr){
-						valueList.add(str.substring(str.indexOf("\"")+1,str.lastIndexOf("\"")));
-					}
-					formatMap.put(key.toString(), valueList);
-				}
-			}else if(valueStr.startsWith("{")){
+			if(value instanceof JSONArray|valueStr.startsWith("[")){
+				formatMap.put(key.toString(), getList(valueStr));
+			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
 				formatMap.put(key.toString(), getMap(valueStr));
 			}else if(value instanceof Double){
-
-				String str = valueStr.substring(valueStr.indexOf(".")+1, valueStr.length());
-
-				if(Integer.parseInt(str)==0){
-					int intValue = ((Double) value).intValue();
-					formatMap.put(key.toString(), intValue);
-				}else{
-					formatMap.put(key.toString(), value);
+				valueStr = valueStr.substring(valueStr.indexOf(".")+1,valueStr.length());
+				if(Integer.parseInt(valueStr)==0){
+					formatMap.put(key.toString(), Integer.parseInt(value.toString()));
+				}else {
+					formatMap.put(key.toString(), Double.parseDouble(value.toString()));
 				}
+			}else if(value instanceof Boolean){
+				formatMap.put(key.toString(), Boolean.parseBoolean(valueStr));
 			}else{
+				if(valueStr.contains("?${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String jsonStr = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(jsonStr);
+					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
+				}else if(valueStr.contains("${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String jsonStr = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(jsonStr);
+					valueStr = jsonPath.getString(paramPath);
+				}else if(valueStr.startsWith("s{")){
+					valueStr = valueStr.substring(1,valueStr.length());
+				}
 				formatMap.put(key.toString(), valueStr);
 			}
 		}
@@ -300,9 +462,14 @@ public class JsonUtils {
 		boolean isContinue = false;
 		for(String key:obj2.keySet()){
 			if(obj2.get(key) instanceof JSONObject){
-				JSONObject obj3 = obj1.getJSONObject(key);
-				JSONObject obj4 = obj1.getJSONObject(key);
-				isContinue = compareJSONObject(obj3, obj4);
+				if(obj1.get(key).toString().equals("{}")){
+					Assert.assertEquals(obj1.get(key).toString(), obj2.get(key).toString());
+				}else{
+					JSONObject obj3 = obj1.getJSONObject(key);
+					JSONObject obj4 = obj2.getJSONObject(key);
+					isContinue = compareJSONObject(obj3, obj4);
+				}
+				
 				if (isContinue) {
 					return isContinue;
 				}

@@ -1,5 +1,6 @@
 package com.qifei.apis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,8 @@ public class Attendance {
 		paramMap = params;
 		JsonUtils jsonUtil = new JsonUtils();
 		String apply_scope = paramMap.get("apply_scope").toString();
-		List<Map<String, Object>> list = jsonUtil.getList(apply_scope);
+		List<Object> list = jsonUtil.getList(apply_scope);
+		
 		paramMap.put("apply_scope", list);
 		
 		double longitude = Double.parseDouble(paramMap.get("longitude").toString());
@@ -169,7 +171,12 @@ public class Attendance {
 		JsonUtils jsonUtils = new JsonUtils();
 		JSONObject jsonObj = new JSONObject(body);
 		JSONArray jsonArr = jsonObj.getJSONArray("items");
-		List<Map<String,Object>> list = jsonUtils.getList(jsonArr.toString());
+		List<Map<String,Object>> list = new ArrayList<>();
+		List<Object> items = jsonArr.toList();
+		for(int i=0;i<items.size();i++){
+			Map<String,Object> item = jsonUtils.getMap(items.get(i).toString());
+			items.add(item);
+		}
 		
 		return list;
 	}
