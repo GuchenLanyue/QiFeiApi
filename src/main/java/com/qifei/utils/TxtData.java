@@ -26,13 +26,16 @@ public class TxtData {
 		if(!f.getParentFile().exists()){
 			f.getParentFile().mkdirs();
 		}
-		if (!f.exists()) {
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
+		if (f.exists()) {
+			f.delete();
+		}
+		
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		try {

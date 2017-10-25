@@ -319,9 +319,7 @@ public class JsonUtils {
 		JSONObject jsonObj = new JSONObject(map);
 		Map<String, Object> formatMap = new HashMap<>();
 		for(Object key:jsonObj.keySet()){
-			if(key.toString().equals("extra")){
-				System.out.println(jsonObj.get(key.toString()).toString());
-			}
+
 			Object value = jsonObj.get(key.toString());
 			String valueStr = value.toString();
 			if(value instanceof JSONArray|valueStr.startsWith("[")){

@@ -24,10 +24,75 @@ public class Organization {
 	
 	private String basePath = null;
 	
+	//新增部门
+	public String addOrganization(String organization_Name){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/hr/v1/formrecords?form=organization");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		//设置参数
+		Map<String, Object> params = new HashMap<>();
+		params.put("opt", "addSon");
+		params.put("headcount", "10");
+		params.put("name", organization_Name);
+		params.put("parent_organization_ID", "b89d7d04-0f75-11e7-9aa4-00163e007053");
+		params.put("leader_ID", "");
+		params.put("hrbp_ID", "");
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+		
+		//发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+		
+		return body;
+	}
+	
+	//新增岗位
+	public String addPosition(String organization_ID,String position_Name){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/hr/v1/formrecords?form=position");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		//设置参数
+		Map<String, Object> params = new HashMap<>();
+		params.put("opt", "addPost");
+		params.put("headcount", "10");
+		params.put("organization_ID", organization_ID);
+		params.put("name", position_Name);
+		params.put("reporting_position_ID", "");
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+		
+		//发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+		
+		return body;
+	}
+		
 	//获取组织结构
 	public String getOrganizations(String parent_organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/formrecords?form=organization&status=created&parent_organization_ID="+parent_organization_ID+"");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
@@ -49,7 +114,7 @@ public class Organization {
 	//获取子部门详情
 	public String getChildOrganization(String organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/simple-employees?status=active&organization_ID="+organization_ID+"&limit=100&offset=0");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
@@ -69,9 +134,9 @@ public class Organization {
 	}
 	
 	//获取岗位列表
-	public List<String> getPositions(String organization_ID){
+	public List<String> getPositionsID(String organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/formrecords?form=position");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
@@ -103,10 +168,34 @@ public class Organization {
 		return positions;
 	}
 	
+	//获取岗位列表
+	public String getPositions(String organization_ID){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/hr/v1/formrecords?form=position");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		//发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		
+		String body = http.getBody(response);
+			
+		return body;
+	}
+		
 	//删除岗位
 	public void deletePosition(String position_ID){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/formrecords/"+position_ID+"?form=position");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "DELETE");
@@ -126,7 +215,7 @@ public class Organization {
 	//调入调出
 	public void transfer_out(Map<String, Object> params){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/employees/op/transfer");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "POST");
@@ -147,7 +236,7 @@ public class Organization {
 	//删除部门
 	public void deleteOrganization(String organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
-		baseMap.put("BasePath", baseMap);
+		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/formrecords/"+organization_ID+"?form=organization");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "DELETE");
@@ -209,13 +298,39 @@ public class Organization {
 		}
 		
 		//获取所有岗位
-		List<String> positions = getPositions(uuid);
+		List<String> positions = getPositionsID(uuid);
 		//删除所有岗位
 		for(String position_ID:positions){
 			deletePosition(position_ID);
 		}
 		
 		deleteOrganization(uuid);
+	}
+	
+	public String getOrganizationID(String parent_organization_ID,String organization_Name){
+		//获取所有子部门
+		String body = getOrganizations(parent_organization_ID);
+		JsonPath json = JsonPath.with(body);
+		//获取所有子部门名字
+		List<Object> organizations = json.getList("items.name");
+		boolean isCreated = false;
+		int index = 0;
+		for(int i=0;i<organizations.size();i++){
+			String name = organizations.get(i).toString();
+			if(name.equals(organization_Name)){
+				isCreated = true;
+				index = i;
+				break;
+			}
+		}
+		//判断部门是否已经被创建
+		if(!isCreated){
+			return null;
+		}
+		//获取部门id
+		String uuid = json.getString("items["+index+"].uuid");
+		
+		return uuid;		
 	}
 	
 	public static void main(String[] args) {
