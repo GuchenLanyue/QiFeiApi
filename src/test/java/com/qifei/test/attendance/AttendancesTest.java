@@ -1,9 +1,7 @@
 package com.qifei.test.attendance;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.testng.annotations.Test;
 
@@ -11,7 +9,6 @@ import com.qifei.apis.Attendance;
 import com.qifei.utils.test.BaseTest;
 
 import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
 
 public class AttendancesTest extends BaseTest {
 	
