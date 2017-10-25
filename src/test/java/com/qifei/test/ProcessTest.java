@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import com.qifei.apis.Organization;
@@ -25,24 +26,26 @@ public class ProcessTest extends BaseTest {
 		Organization organization = new Organization(getbasePath());
 		//设置部门
 		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
+		String organizationStr = null;
 		if(organizationID.equals(null)){
-			organizationID = organization.addOrganization(params.get("organization_Name").toString());
+			organizationStr = organization.addOrganization(params.get("organization_Name").toString());
+			organizationID = JsonPath.with(organizationStr).getString("uuid");
 		}
 		//写入txt
 		TxtData txt = new TxtData();
 		String organizationFile = getSrcDir()+"\\temp\\"+params.get("organization_Name").toString()+".txt";
-		txt.writerText(organizationFile, organizationID);
+		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
+		
+		txt.writerText(organizationFile, organizationStr);
 		//设置岗位
 		String positionID=null;
 		List<String> positions = organization.getPositionsID(organizationID);
 		if(positions.size()==0){
 			positionID = organization.addPosition(organizationID, params.get("position_Name").toString());
 		}else{
-			Random random = new Random();
-			int index = random.nextInt(positions.size());
 			String body = organization.getPositions(organizationID);
-			JsonPath position = JsonPath.with(body);
-			position.getMap("");
+			JSONObject obj = new JSONObject(body);
+			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
 		String positionFile = getSrcDir()+"\\temp\\"+params.get("position_Name").toString()+".txt";

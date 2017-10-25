@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
@@ -331,6 +333,33 @@ public class Organization {
 		String uuid = json.getString("items["+index+"].uuid");
 		
 		return uuid;		
+	}
+	
+	public String getOrganization(String parent_organization_ID,String organization_Name){
+		//获取所有子部门
+		String body = getOrganizations(parent_organization_ID);
+		JsonPath json = JsonPath.with(body);
+		//获取所有子部门名字
+		List<Object> organizations = json.getList("items.name");
+		boolean isCreated = false;
+		int index = 0;
+		for(int i=0;i<organizations.size();i++){
+			String name = organizations.get(i).toString();
+			if(name.equals(organization_Name)){
+				isCreated = true;
+				index = i;
+				break;
+			}
+		}
+		//判断部门是否已经被创建
+		if(!isCreated){
+			return null;
+		}
+		
+		JSONObject obj = new JSONObject(body);
+		String organization = obj.getJSONArray("items").get(index).toString();
+		
+		return organization;		
 	}
 	
 	public static void main(String[] args) {
