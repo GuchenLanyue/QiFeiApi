@@ -260,29 +260,6 @@ public class BaseTest {
 		
 		JsonUtils jsonUtil = new JsonUtils();
 		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
-//		for(String key:expections.keySet()){
-//			if(expections.get(key).toString().contains("?${")){
-//				String str = expections.get(key).toString();
-//				String expectedStr = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
-//				isContinue = !responseObj.get(key).toString().contains(expectedStr);
-//			}else{
-//				Assert.assertEquals("Case:"+caseName+" key:"+key, expections.get(key).toString(), responseObj.get(key).toString());
-//			}
-//		}
-		
-//		Map<String, Object> responseMap = jsonUtil.getMap(response);
-//		if(responseMap!=null){
-//			for(String key:expected.keySet()){
-//				String expectedStr = expected.get(key).toString();
-//				String actualStr = null;
-//				if(responseMap.containsKey(key)){
-//					actualStr = responseMap.get(key).toString();
-//				}
-//				Assert.assertEquals("Case:"+caseName+" key:"+key,expectedStr, actualStr);
-//			}
-//		}else{
-//			return;
-//		}
 		
 		return isContinue;
 	}
