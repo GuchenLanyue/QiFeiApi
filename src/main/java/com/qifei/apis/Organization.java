@@ -135,11 +135,15 @@ public class Organization {
 		return http.getBody(response);
 	}
 	
+	public void getPosition(String organization_ID){
+		
+	}
+	
 	//获取岗位列表
 	public List<String> getPositionsID(String organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
-		baseMap.put("Path", "/hr/v1/formrecords?form=position");
+		baseMap.put("Path", "/hr/v1/formrecords?form=position&organization_ID="+organization_ID);
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
 		//设置Authorization
@@ -174,7 +178,7 @@ public class Organization {
 	public String getPositions(String organization_ID){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
-		baseMap.put("Path", "/hr/v1/formrecords?form=position");
+		baseMap.put("Path", "/hr/v1/formrecords?form=position&organization_ID="+organization_ID);
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
 		//设置Authorization

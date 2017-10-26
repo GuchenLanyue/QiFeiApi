@@ -90,7 +90,7 @@ public class BaseTest {
 		method = caseStr[caseStr.length-2];
 		filePath = getSrcDir()+"/case/"+method+".xlsx";
 		
-		String sheetName = "CaseList";
+		String sheetName = caseStr[0];
 		ExcelReader excel = new ExcelReader();
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
 		List<Object[]> test_IDs = new ArrayList<Object[]>();

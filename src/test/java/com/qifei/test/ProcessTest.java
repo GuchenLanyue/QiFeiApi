@@ -51,8 +51,8 @@ public class ProcessTest extends BaseTest {
 		txt.writerText(positionFile, positionID);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "整体流程冒烟测试")
-	public void adjust_Test(Map<String, Object> baseData) {
+	@Test(dataProvider = "CaseList", description= "调整审批流程冒烟测试")
+	public void adjust_Smoke_Test(Map<String, Object> baseData) {
 		String api = baseData.get("API").toString();
 		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();

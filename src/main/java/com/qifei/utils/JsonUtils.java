@@ -352,9 +352,6 @@ public class JsonUtils {
 					String jsonStr = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(jsonStr);
 					valueStr = valueStr.substring(0,valueStr.indexOf("$"))+jsonPath.getString(paramPath) + valueStr.substring(valueStr.indexOf("}")+1, valueStr.length());
-//					valueStr = jsonPath.getString(paramPath);
-					
-//					valueStr = valueStr.replaceAll("${"+fileName+"."+paramPath+"}", jsonPath.getString(paramPath));
 				}else if(valueStr.startsWith("s{")){
 					valueStr = valueStr.substring(1,valueStr.length());
 				}
