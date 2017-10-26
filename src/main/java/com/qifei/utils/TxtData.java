@@ -84,4 +84,10 @@ public class TxtData {
 		
 		return str.substring(0, str.length()-2);
 	}
+	
+	public static void main(String[] args) {
+		String file = "C:\\Users\\sam\\Desktop\\new 1.txt";
+		TxtData txt = new TxtData();
+		System.out.println(txt.readTxtFile(file));
+	}
 }

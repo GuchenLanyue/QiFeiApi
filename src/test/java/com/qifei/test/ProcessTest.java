@@ -52,7 +52,7 @@ public class ProcessTest extends BaseTest {
 	}
 	
 	@Test(dataProvider = "CaseList", description= "整体流程冒烟测试")
-	public void process_Test(Map<String, Object> baseData) {
+	public void adjust_Test(Map<String, Object> baseData) {
 		String api = baseData.get("API").toString();
 		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
@@ -70,16 +70,15 @@ public class ProcessTest extends BaseTest {
 			time += 5000;
 		}
 		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(getBodyStr());
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"\\sources\\config\\access_token.txt";
-			TxtData txt = new TxtData();
 			txt.writerText(tokenFile, authorization);
 		}
-		
-		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
 	}
 }

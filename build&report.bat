@@ -1,5 +1,8 @@
 @echo off
 echo 清除测试报告残留文件
+rd /s /Q allure-report
+rd /s /Q allure-results
+rd /s /Q test-output
 call allure generate -c
 echo 清除成功
 call mvn clean test -e
