@@ -14,7 +14,7 @@ public class AttendancesTest extends BaseTest {
 	
 	@Test(dataProvider="SingleCase",description="内勤打卡")
 	public void attendance_In_Test(Map<String, Object> params){
-		Attendance attendance = new Attendance(getbasePath());
+		Attendance attendance = new Attendance(getBasePath());
 		String uuid = attendance.getLocationID();
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = params;
@@ -44,7 +44,7 @@ public class AttendancesTest extends BaseTest {
 	public void attendance_Out_Test(Map<String, Object> params){
 		setRequest("AttendanceOut", params);
 		checkResponse(getExpectedMap());
-		Attendance attendance = new Attendance(getbasePath());
+		Attendance attendance = new Attendance(getBasePath());
 		attendance.daily_statistic();
 	}
 }

@@ -43,7 +43,7 @@ public class HttpMethods {
 		if(basePath!=null&&base==null){
 			requestURL = basePath + map.get("base").get("Path").toString();
 		}else{
-			requestURL = map.get("base").get("basePath").toString()
+			requestURL = map.get("base").get("BasePath").toString()
 					+ map.get("base").get("Path").toString();
 		}
 		

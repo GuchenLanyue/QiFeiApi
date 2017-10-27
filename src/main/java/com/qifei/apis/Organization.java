@@ -254,7 +254,6 @@ public class Organization {
 		Map<String, Map<String,Object>> map = new HashMap<>();
 		map.put("base", baseMap);
 		map.put("headers", headerMap);
-		
 		//发起请求
 		HttpMethods http = new HttpMethods(basePath);
 		http.request(map);

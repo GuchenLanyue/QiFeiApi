@@ -21,6 +21,7 @@
 		</classes>
 	</test>
 	
+	
 	<test name="调整审批流程冒烟测试" preserve-order="true">
 		<groups>
 			<define name="Smoke">
@@ -35,4 +36,36 @@
 			</class>
 		</classes>
 	</test>
+	
+	 <!-- 
+	<test name="新增员工" preserve-order="true">
+		<groups>
+			<define name="AddMember">
+				<include name="addMember_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="addMember_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="转正审批测试" preserve-order="true">
+		<groups>
+			<define name="Join_Formal">
+				<include name="join_Formal_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="join_Formal_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	 -->
 </suite>

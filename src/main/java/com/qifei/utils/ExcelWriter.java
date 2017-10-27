@@ -37,7 +37,6 @@ public class ExcelWriter {
 		}
 		if(responseJson!=""){
 			responseJson = responseJson.substring(responseJson.indexOf("{"),responseJson.lastIndexOf("}")+1);
-
 		}
 		JSONObject baseObject = new JSONObject(baseJson);
 		JSONObject paramObject = new JSONObject(paramJson);
