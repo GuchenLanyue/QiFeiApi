@@ -10,6 +10,30 @@
 		<groups>
 			<define name="GetOrganizationByName">
 				<include name="getOrganizationByName_Test" />
+				<include name="adjust_Smoke_Test" />
+				<include name="addMember_Test" />
+				<include name="join_Formal_Smoke_Test" />
+				<include name="Types_Temp_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="getOrganizationByName_Test" />
+					<exclude name="adjust_Smoke_Test" />
+					<include name="addMember_Test" />
+					<exclude name="join_Formal_Smoke_Test" />
+					<include name="Types_Temp_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<!-- 
+	<test name="获取子部门ID" preserve-order="true">
+		<groups>
+			<define name="GetOrganizationByName">
+				<include name="getOrganizationByName_Test" />
 			</define>
 		</groups>
 		<classes>
@@ -21,23 +45,21 @@
 		</classes>
 	</test>
 	
-	
 	<test name="调整审批流程冒烟测试" preserve-order="true">
 		<groups>
 			<define name="Smoke">
-				<include name="process_Test" />
+				<include name="adjust_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="process_Test" />
+					<include name="adjust_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 	
-	 <!-- 
 	<test name="新增员工" preserve-order="true">
 		<groups>
 			<define name="AddMember">

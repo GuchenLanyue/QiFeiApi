@@ -189,7 +189,9 @@ public class ExcelReader {
 	 * @return HashMap<key,value> key:首行cell的值，value:指定行cell的值
 	 */
 	public HashMap<String, Object> rowMap(String fileName, String sheetName, int rowNum) {
-
+		if(rowNum==11){
+			System.out.println(rowNum);
+		}
 		Workbook workbook = null;
 		Sheet sheet = null;
 

@@ -1,6 +1,5 @@
 package com.qifei.test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,6 +108,33 @@ public class ProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="转正审批测试")
 	public void join_Formal_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+	}
+	
+	@Test(dataProvider="CaseList",description="审批类型设置")
+	public void Types_Temp_Smoke_Test(Map<String, Object> baseData){
 		if(baseData.get("API").toString().equals("")){
 			return;
 		}
