@@ -69,7 +69,7 @@ public class JsonUtils {
 				if(valueStr.contains("?${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String str = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(str);
@@ -77,7 +77,7 @@ public class JsonUtils {
 				}else if(valueStr.contains("${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String str = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(str);
@@ -127,7 +127,7 @@ public class JsonUtils {
 				if(valueStr.contains("?${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String str = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(str);
@@ -135,7 +135,7 @@ public class JsonUtils {
 				}else if(valueStr.contains("${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String str = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(str);
@@ -339,7 +339,7 @@ public class JsonUtils {
 				if(valueStr.contains("?${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/ources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String jsonStr = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(jsonStr);
@@ -347,7 +347,7 @@ public class JsonUtils {
 				}else if(valueStr.contains("${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"\\sources\\temp\\"+fileName+".txt";
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
 					String jsonStr = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(jsonStr);

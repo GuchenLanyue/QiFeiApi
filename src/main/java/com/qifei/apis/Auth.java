@@ -24,8 +24,8 @@ public class Auth {
 	}
 	
 	private String basePath = null;
-	private String file = System.getProperty("user.dir")+"\\sources\\config\\user.json";
-	private String tokenFile = System.getProperty("user.dir")+"\\sources\\config\\access_token.txt";
+	private String file = System.getProperty("user.dir")+"/sources/config/user.json";
+	private String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 	
 	@Step("tokens() 登录-获取Token")
 	public String tokens(){

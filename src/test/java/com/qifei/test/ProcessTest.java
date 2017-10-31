@@ -26,14 +26,14 @@ public class ProcessTest extends BaseTest {
 		Organization organization = new Organization(getBasePath());
 		//设置部门
 		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
-		String organizationStr = null;
-		if(organizationID.equals(null)){
+		String organizationStr = "";
+		if(organizationID.equals("")){
 			organizationStr = organization.addOrganization(params.get("organization_Name").toString());
 			organizationID = JsonPath.with(organizationStr).getString("uuid");
 		}
 		//写入txt
 		TxtData txt = new TxtData();
-		String organizationFile = getSrcDir()+"\\temp\\"+params.get("organization_Name").toString()+".txt";
+		String organizationFile = getSrcDir()+"/temp/"+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 		
 		txt.writerText(organizationFile, organizationStr);
@@ -48,7 +48,7 @@ public class ProcessTest extends BaseTest {
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-		String positionFile = getSrcDir()+"\\temp\\"+params.get("position_Name").toString()+".txt";
+		String positionFile = getSrcDir()+"/temp/"+params.get("position_Name").toString()+".txt";
 		txt.writerText(positionFile, positionID);
 	}
 	
@@ -75,13 +75,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		String filename = getSrcDir()+"/temp/"+api+".txt";
 		txt.writerText(filename, getBodyStr());
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(getBodyStr());
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"\\sources\\config\\access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -96,7 +96,7 @@ public class ProcessTest extends BaseTest {
 		String body = member.addMember(paramMap);
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+caseID+".txt";
+		String filename = getSrcDir()+"/temp/"+caseID+".txt";
 		txt.writerText(filename, body);
 		//验证结果
 		member.checkResponse(body);
@@ -129,8 +129,49 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		String filename = getSrcDir()+"/temp/"+api+".txt";
 		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="辞职审批测试")
+	public void Offboard_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
 	}
 	
 	@Test(dataProvider="CaseList",description="审批类型设置")
@@ -158,5 +199,12 @@ public class ProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String filename = getSrcDir()+"\\temp\\"+api+".txt";
 		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
 	}
 }

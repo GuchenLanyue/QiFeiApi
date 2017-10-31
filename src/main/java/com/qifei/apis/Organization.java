@@ -40,7 +40,7 @@ public class Organization {
 		//设置参数
 		Map<String, Object> params = new HashMap<>();
 		params.put("opt", "addSon");
-		params.put("headcount", "10");
+		params.put("headcount", 10);
 		params.put("name", organization_Name);
 		params.put("parent_organization_ID", "b89d7d04-0f75-11e7-9aa4-00163e007053");
 		params.put("leader_ID", "");
@@ -73,7 +73,7 @@ public class Organization {
 		//设置参数
 		Map<String, Object> params = new HashMap<>();
 		params.put("opt", "addPost");
-		params.put("headcount", "10");
+		params.put("headcount", 10);
 		params.put("organization_ID", organization_ID);
 		params.put("name", position_Name);
 		params.put("reporting_position_ID", "");
@@ -330,7 +330,7 @@ public class Organization {
 		}
 		//判断部门是否已经被创建
 		if(!isCreated){
-			return null;
+			return "";
 		}
 		//获取部门id
 		String uuid = json.getString("items["+index+"].uuid");

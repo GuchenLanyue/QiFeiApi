@@ -279,10 +279,10 @@ public class BaseTest {
 	
 	@AfterTest
 	public void AfterTest(ITestContext context) {
-//		File file = new File(getSrcDir()+"\\config\\access_token.txt");
-//		if(file.exists()&&file.isFile()){
-//			file.delete();
-//		}
+		File file = new File(getSrcDir()+"/temp/access_token.txt");
+		if(file.exists()&&file.isFile()){
+			file.delete();
+		}
 		System.out.println(context.getName()+" End!");
 	}
 }
