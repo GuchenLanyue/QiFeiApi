@@ -58,11 +58,13 @@ public class ProcessTest extends BaseTest {
 		if(baseData.get("API").toString().equals("")){
 			return;
 		}
+
 		String api = baseData.get("API").toString();
 		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
+
 		setRequest(api,filePath,caseName);
-		
+
 		long time = 5000;
 		while (checkResponse(getExpectedMap())&&time<15000) {
 			try {
@@ -174,6 +176,11 @@ public class ProcessTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
+	}
+	
+	@Test(dataProvider="SingleCase")
+	public void OvertimeRequest_Test(Map<String, Object> params){
+		setRequest("OvertimeRequest", params);
 	}
 	
 	@Test(dataProvider="CaseList",description="审批类型设置")

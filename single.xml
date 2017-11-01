@@ -9,13 +9,13 @@
 	<test name="打卡测试" preserve-order="true">
 		<groups>
 			<define name="Attendance">
-				<include name="attendance_In_Test" />
+				<include name="OvertimeRequest_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.attendance.AttendancesTest">
+			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="attendance_In_Test" />
+					<include name="OvertimeRequest_Test" />
 				</methods>
 			</class>
 		</classes>

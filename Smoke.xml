@@ -21,10 +21,10 @@
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
 					<include name="getOrganizationByName_Test" />
-					<exclude name="adjust_Smoke_Test" />
-					<include name="addMember_Test" />
-					<include name="join_Formal_Smoke_Test" />
-					<include name="Offboard_Smoke_Test" />
+					<exclude name="addMember_Test" />
+					<exclude name="join_Formal_Smoke_Test" />
+					<include name="adjust_Smoke_Test" />
+					<exclude name="Offboard_Smoke_Test" />
 					<exclude name="Types_Temp_Smoke_Test" />
 				</methods>
 			</class>
