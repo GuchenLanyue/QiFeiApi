@@ -367,7 +367,37 @@ public class Organization {
 	
 	public static void main(String[] args) {
 		Organization organization = new Organization("http://console.t.upvi.com/bapi");
+//		Map<String, Object> baseMap = new HashMap<>();
+//		baseMap.put("BasePath", organization.basePath);
+//		baseMap.put("Path", "/hr/v1/formrecords?form=organization");
+//		baseMap.put("contentType", "application/json");
+//		baseMap.put("Method", "GET");
+//		//设置Authorization
+//		String authorization = new Headers(organization.basePath).getAuthorization();
+//		Map<String, Object> headerMap = new HashMap<>();
+//		headerMap.put("Authorization", authorization);
+//		
+//		Map<String, Map<String,Object>> map = new HashMap<>();
+//		map.put("base", baseMap);
+//		map.put("headers", headerMap);
+//		//发起请求
+//		HttpMethods http = new HttpMethods(organization.basePath);
+//		Response response = http.request(map);
+//		
+//		String body = http.getBody(response);
+//		JsonPath json = JsonPath.with(body);
+//		List<Boolean> list = json.getList("items.is_deleted");
+//		List<String> organizations = json.getList("items.uuid");
+//		
+//		for(int index = 0 ; index < list.size(); index++){
+//			Boolean isDeleted = list.get(index);
+//			if(!isDeleted){
+//				System.out.println();
+//				organization.deleteOrganization(organizations.get(index));
+//			}
+//		}
+		
 		organization.deleteOrganization("b89d7d04-0f75-11e7-9aa4-00163e007053", "流程1");
-		organization.deleteOrganization("b89d7d04-0f75-11e7-9aa4-00163e007053", "流程2");
+		organization.deleteOrganization("b89d7d04-0f75-11e7-9aa4-00163e007053", "流程1");
 	}
 }

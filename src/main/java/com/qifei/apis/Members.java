@@ -101,8 +101,8 @@ public class Members {
 		String dateString = formatter.format(date)+"T10:00:00+08:00";
 		this.params.put("join_date", dateString);
 		this.params.put("employee_no", "ZZ_"+date.getTime());
-		this.params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
-		this.params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
+//		this.params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
+//		this.params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
 		RandomValue random = new RandomValue();
 		this.params.put("mobile", random.getTel());
 		this.params.put("name", random.getChineseName());
