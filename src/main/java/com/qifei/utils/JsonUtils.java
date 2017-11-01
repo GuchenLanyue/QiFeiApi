@@ -329,7 +329,7 @@ public class JsonUtils {
 			}else if(value instanceof Double){
 				valueStr = valueStr.substring(valueStr.indexOf(".")+1,valueStr.length());
 				if(Integer.parseInt(valueStr)==0){
-					formatMap.put(key.toString(), Integer.parseInt(value.toString()));
+					formatMap.put(key.toString(), value.toString().substring(0, value.toString().indexOf(".")));
 				}else {
 					formatMap.put(key.toString(), Double.parseDouble(value.toString()));
 				}
