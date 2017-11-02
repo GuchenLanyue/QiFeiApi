@@ -5,33 +5,7 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	
-	<test name="获取子部门ID" preserve-order="true">
-		<groups>
-			<define name="GetOrganizationByName">
-				<include name="getOrganizationByName_Test" />
-				<include name="adjust_Smoke_Test" />
-				<include name="addMember_Test" />
-				<include name="join_Formal_Smoke_Test" />
-				<include name="Offboard_Smoke_Test" />
-				<include name="Types_Temp_Smoke_Test" />
-			</define>
-		</groups>
-		<classes>
-			<class name="com.qifei.test.ProcessTest">
-				<methods>
-					<include name="getOrganizationByName_Test" />
-					<exclude name="addMember_Test" />
-					<exclude name="join_Formal_Smoke_Test" />
-					<include name="adjust_Smoke_Test" />
-					<exclude name="Offboard_Smoke_Test" />
-					<exclude name="Types_Temp_Smoke_Test" />
-				</methods>
-			</class>
-		</classes>
-	</test>
-	
-	<!-- 
+	<!--  
 	<test name="获取子部门ID" preserve-order="true">
 		<groups>
 			<define name="GetOrganizationByName">
@@ -42,21 +16,6 @@
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
 					<include name="getOrganizationByName_Test" />
-				</methods>
-			</class>
-		</classes>
-	</test>
-	
-	<test name="调整审批流程冒烟测试" preserve-order="true">
-		<groups>
-			<define name="Smoke">
-				<include name="adjust_Smoke_Test" />
-			</define>
-		</groups>
-		<classes>
-			<class name="com.qifei.test.ProcessTest">
-				<methods>
-					<include name="adjust_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
@@ -77,7 +36,7 @@
 		</classes>
 	</test>
 	
-	<test name="转正审批测试" preserve-order="true">
+	<test name="转正" preserve-order="true">
 		<groups>
 			<define name="Join_Formal">
 				<include name="join_Formal_Smoke_Test" />
@@ -91,5 +50,94 @@
 			</class>
 		</classes>
 	</test>
-	 -->
+	
+	<test name="调岗" preserve-order="true">
+		<groups>
+			<define name="GetOrganizationByName">
+				<include name="adjust_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="adjust_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="辞职_辞退" preserve-order="true">
+		<groups>
+			<define name="Offboard">
+				<include name="Offboard_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Offboard_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="请假审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Leave">
+				<include name="Leave_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Leave_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="外出审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Out">
+				<include name="Out_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Out_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="补卡审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Resign_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Resign_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	-->
+	<test name="审批流程设置" preserve-order="true">
+		<groups>
+			<define name="GetOrganizationByName">
+				<include name="Types_Temp_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Types_Temp_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>

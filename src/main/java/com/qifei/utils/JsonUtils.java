@@ -329,7 +329,8 @@ public class JsonUtils {
 			}else if(value instanceof Double){
 				valueStr = valueStr.substring(valueStr.indexOf(".")+1,valueStr.length());
 				if(Integer.parseInt(valueStr)==0){
-					formatMap.put(key.toString(), value.toString().substring(0, value.toString().indexOf(".")));
+					String str = value.toString().substring(0, value.toString().indexOf("."));
+					formatMap.put(key.toString(), Integer.parseInt(str));
 				}else {
 					formatMap.put(key.toString(), Double.parseDouble(value.toString()));
 				}
@@ -472,9 +473,12 @@ public class JsonUtils {
 					return isContinue;
 				}
 			}else if (obj2.get(key) instanceof JSONArray) {
-				JSONArray arr1 = obj1.getJSONArray(key);
-				JSONArray arr2 = obj2.getJSONArray(key);
-				isContinue = compareJSONArray(arr1, arr2);
+				JSONArray tempArray = obj2.getJSONArray(key);
+				if(tempArray.length()>0){
+					JSONArray arr1 = obj1.getJSONArray(key);
+					JSONArray arr2 = obj2.getJSONArray(key);
+					isContinue = compareJSONArray(arr1, arr2);
+				}
 				if (isContinue) {
 					return isContinue;
 				}

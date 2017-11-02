@@ -207,14 +207,9 @@ public class ExcelReader {
 			if (sheet.getRow(0).getCell(i).toString() == null) {
 				throw new IllegalArgumentException("参数错误：" + fileName + "表：" + sheetName + "第1行第" + i + "列的值为空!!!");
 			}
-
-			if (sheet.getRow(rowNum).getCell(i) == null) {
-				map.put(sheet.getRow(0).getCell(i).toString(), "");
-			} else {
-				Cell cell = sheet.getRow(rowNum).getCell(i);
-				map.put(sheet.getRow(0).getCell(i).toString(), getCell(cell));
-			}
-
+			
+			Cell cell = sheet.getRow(rowNum).getCell(i);
+			map.put(sheet.getRow(0).getCell(i).toString(), getCell(cell));
 		}
 
 		return map;

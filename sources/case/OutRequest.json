@@ -1,0 +1,7 @@
+{
+	"duration": "Double",
+	"reason": "String",
+	"start_time": "String",
+	"Description": "String",
+	"end_time": "String"
+}

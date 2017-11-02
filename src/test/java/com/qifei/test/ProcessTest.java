@@ -53,6 +53,27 @@ public class ProcessTest extends BaseTest {
 		txt.writerText(positionFile, positionID);
 	}
 	
+	@Test(dataProvider="SingleCase",description="新增员工")
+	public void addMember_Test(Map<String, Object> params){
+		Map<String, Object> paramMap = params;
+		String caseID = paramMap.get("CaseID").toString();
+		paramMap.remove("CaseID");
+		//新增员工
+		Members member = new Members(getBasePath());
+		JsonUtils jsonUtils = new JsonUtils();
+		String body = member.addMember(jsonUtils.formatMap(paramMap));
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"/temp/"+caseID+".txt";
+		txt.writerText(filename, body);
+		//验证结果
+		member.checkResponse(body);
+		JsonPath response = new JsonPath(body);
+		//到岗
+		member.join(response.get("uuid").toString());
+		member.checkResponse(body);
+	}
+	
 	@Test(dataProvider = "CaseList", description= "调整审批流程冒烟测试")
 	public void adjust_Smoke_Test(Map<String, Object> baseData) {
 		if(baseData.get("API").toString().equals("")){
@@ -87,27 +108,6 @@ public class ProcessTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
-	}
-	
-	@Test(dataProvider="SingleCase",description="新增员工")
-	public void addMember_Test(Map<String, Object> params){
-		Map<String, Object> paramMap = params;
-		String caseID = paramMap.get("CaseID").toString();
-		paramMap.remove("CaseID");
-		//新增员工
-		Members member = new Members(getBasePath());
-		JsonUtils jsonUtils = new JsonUtils();
-		String body = member.addMember(jsonUtils.formatMap(paramMap));
-		
-		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+caseID+".txt";
-		txt.writerText(filename, body);
-		//验证结果
-		member.checkResponse(body);
-		JsonPath response = new JsonPath(body);
-		//到岗
-		member.join(response.get("uuid").toString());
-		member.checkResponse(body);
 	}
 	
 	@Test(dataProvider="CaseList",description="转正审批测试")
@@ -191,6 +191,145 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="请假审批流程测试")
+	public void Leave_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="外出审批流程测试")
+	public void Out_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="补卡审批流程测试")
+	public void Resign_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="加班审批流程测试")
+	public void OverTime_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		if(caseName.equals("OvertimeRequest_01")){
+			System.out.println(caseName);
+		}
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
