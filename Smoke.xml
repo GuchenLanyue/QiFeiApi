@@ -125,6 +125,21 @@
 			</class>
 		</classes>
 	</test>
+	
+	<test name="加班审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="OverTime_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="OverTime_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 	-->
 	<test name="审批流程设置" preserve-order="true">
 		<groups>

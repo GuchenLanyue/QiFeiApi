@@ -327,9 +327,7 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("OvertimeRequest_01")){
-			System.out.println(caseName);
-		}
+
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
@@ -345,7 +343,42 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		String filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="出差审批流程测试")
+	public void Trip_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"/temp/"+api+".txt";
 		txt.writerText(filename, getBodyStr());
 		
 		if(api.equals("Auth")){

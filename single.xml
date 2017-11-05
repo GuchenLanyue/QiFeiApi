@@ -9,13 +9,15 @@
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Resign">
-				<include name="OverTime_Smoke_Test" />
+			    <include name="getOrganizationByName_Test" />
+				<include name="Trip_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="OverTime_Smoke_Test" />
+				    <include name="getOrganizationByName_Test" />
+					<include name="Trip_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
