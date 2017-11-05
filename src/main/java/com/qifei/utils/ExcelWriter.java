@@ -27,10 +27,10 @@ import io.restassured.response.Response;
 public class ExcelWriter {
 	public static void main(String[] args) {
 		TxtData txt = new TxtData();
-		String baseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\base.txt");
+		String baseJson = txt.readTxtFile("C:/Users/sam/Desktop/apis/base.txt");
 		baseJson = baseJson.substring(baseJson.indexOf("{"),baseJson.lastIndexOf("}")+1);
-		String paramJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\paramters.txt");
-		String responseJson = txt.readTxtFile("C:\\Users\\sam\\Desktop\\apis\\response.txt");
+		String paramJson = txt.readTxtFile("C:/Users/sam/Desktop/apis/paramters.txt");
+		String responseJson = txt.readTxtFile("C:/Users/sam/Desktop/apis/response.txt");
 
 		if(paramJson!=""){
 			paramJson = paramJson.substring(paramJson.indexOf("{"),paramJson.lastIndexOf("}")+1);
@@ -48,7 +48,7 @@ public class ExcelWriter {
 	
 	public void createExcel(JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
 		Workbook wb = null;
-		File file = new File("C:\\Users\\sam\\Desktop\\apis\\qifei.xlsx");
+		File file = new File("C:/Users/sam/Desktop/apis/qifei.xlsx");
 		try {
 			if(file.exists()){
 				FileInputStream inputStream = new FileInputStream(file);
@@ -230,7 +230,7 @@ public class ExcelWriter {
 			}
 			
 			try {
-				File file = new File("C:\\Users\\sam\\Desktop\\apis\\"+base.get("dir")+"\\"+base.get("fileName")+".xlsx");
+				File file = new File("C:/Users/sam/Desktop/apis/"+base.get("dir")+"/"+base.get("fileName")+".xlsx");
 				if(!file.getParentFile().exists()){
 					file.getParentFile().mkdirs();
 				}

@@ -14,7 +14,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.NewProcessTest">
 				<methods>
 				    <include name="getOrganizationByName_Test" />
 					<include name="Trip_Smoke_Test" />
