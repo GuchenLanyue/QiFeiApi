@@ -348,7 +348,7 @@ public class JsonUtils {
 					JsonPath jsonPath = JsonPath.with(jsonStr);
 					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
 				}else if(valueStr.contains("${")){
-					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String fileName = valueStr.substring(valueStr.indexOf("$")+2, valueStr.indexOf(".",valueStr.indexOf("$")+2));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
 					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
 					TxtData txt = new TxtData();
@@ -448,7 +448,7 @@ public class JsonUtils {
 			}else{
 				String str = arr2.get(i).toString();
 				if(str.contains("?${")){
-					str = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+					str = str.substring(str.indexOf("?")+3, str.indexOf("}",str.indexOf("?")+3));
 					isContinue = !arr1.get(i).toString().equals(str);
 					if (isContinue) {
 						return isContinue;
@@ -489,7 +489,7 @@ public class JsonUtils {
 			}else {
 				String str = obj2.get(key).toString();
 				if(str.contains("?${")){
-					str = str.substring(str.indexOf("{")+1, str.lastIndexOf("}"));
+					str = str.substring(str.indexOf("?")+3, str.indexOf("}",str.indexOf("?")+3));
 					isContinue = !obj1.get(key).toString().equals(str);
 					if (isContinue) {
 						return isContinue;
@@ -510,14 +510,39 @@ public class JsonUtils {
 	}
 	
 	public static void main(String[] args) {
-		JsonUtils jsonUtils = new JsonUtils();
-		TxtData txt = new TxtData();
-		String str1 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\1.txt");
-		String str2 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\2.txt");
+//		JsonUtils jsonUtils = new JsonUtils();
+//		TxtData txt = new TxtData();
+//		String str1 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\1.txt");
+//		String str2 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\2.txt");
+//		
+//		JSONObject obj1 = new JSONObject(str1);
+//		JSONObject obj2 = new JSONObject(str2);
+//		
+//		System.out.println(jsonUtils.compareJSONObject(obj1, obj2));
+		String str1 = "{\"symbol\":\"${Auth.employee_id}\",\"unit\":\"${EditSon.name}\",\"number\":\"4\"}";
+//		String pattern = "{\\w*_?\\w]*.\\w*_?\\w*}$";	
+//	    // 创建 Pattern 对象
+//	    Pattern r = Pattern.compile(pattern);
+//	 
+//	    // 现在创建 matcher 对象
+//	    Matcher m = r.matcher(str1);
+	    
+		while(str1.contains("${")){
+			int startIndex = str1.indexOf("$");
+			int endIndex = str1.indexOf("}",startIndex);
+			int splitCharIndex = str1.indexOf(".",startIndex);
+			
+			String fileName = str1.substring(startIndex+2,splitCharIndex);
+			String paramter = str1.substring(splitCharIndex+1,endIndex);
+			
+			TxtData txt = new TxtData();
+			String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
+			JsonPath json = JsonPath.with(body);
+			
+			String value = json.getString(paramter);
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+			System.out.println(str1);
+		}
 		
-		JSONObject obj1 = new JSONObject(str1);
-		JSONObject obj2 = new JSONObject(str2);
-		
-		System.out.println(jsonUtils.compareJSONObject(obj1, obj2));
 	}
 }
