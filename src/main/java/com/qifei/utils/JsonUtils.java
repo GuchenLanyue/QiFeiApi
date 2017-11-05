@@ -124,7 +124,11 @@ public class JsonUtils {
 					map.put(key.toString(), Double.parseDouble(valueStr));
 				}
 			}else{
-				if(valueStr.contains("?${")){
+				if(valueStr.startsWith("s{")){
+					valueStr = valueStr.substring(1, valueStr.length());
+					JSONObject obj = new JSONObject(getMap(valueStr));
+					valueStr = obj.toString();
+				}else if(valueStr.contains("?${")){
 					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
 					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
 					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
@@ -140,8 +144,6 @@ public class JsonUtils {
 					String str = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(str);
 					valueStr = jsonPath.getString(paramPath);
-				}else if(valueStr.startsWith("s{")){
-					valueStr = valueStr.substring(1, valueStr.length());
 				}
 				map.put(key.toString(), valueStr);
 			}
@@ -355,6 +357,8 @@ public class JsonUtils {
 					valueStr = valueStr.substring(0,valueStr.indexOf("$"))+jsonPath.getString(paramPath) + valueStr.substring(valueStr.indexOf("}")+1, valueStr.length());
 				}else if(valueStr.startsWith("s{")){
 					valueStr = valueStr.substring(1,valueStr.length());
+					JSONObject obj = new JSONObject(getMap(valueStr));
+					valueStr = obj.toString();
 				}
 				formatMap.put(key.toString(), valueStr);
 			}

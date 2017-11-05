@@ -76,12 +76,16 @@ public class TxtData {
 
 				read.close();
 				bufferedReader.close();
+			}else{
+				Assert.fail("File not found:"+filePath);
 			}
 		} catch (Exception e) {
 			Assert.fail("读取文件内容出错");
 			e.printStackTrace();
 		}
-		
+		if(str.length()==0){
+			System.out.println("pause");
+		}
 		return str.substring(0, str.length()-2);
 	}
 	
