@@ -88,4 +88,10 @@ public class NewProcessTest extends BaseTest{
 			txt.writerText(tokenFile, authorization);
 		}
 	}
+	
+	@Test(dataProvider = "SingleCase", description = "设置班次")
+	public void SetSchedule_Test(Map<String, Object> params){
+		setRequest("SetSchedule", params);
+		checkResponse(getExpectedMap());
+	}
 }

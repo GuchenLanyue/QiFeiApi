@@ -6,24 +6,39 @@
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
+	<!--  
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Resign">
 			    <include name="getOrganizationByName_Test" />
 			    <include name="addMember_Test" />
-				<include name="join_Formal_Smoke_Test" />
-				<include name="adjust_Smoke_Test" />
-				<include name="Resign_Smoke_Test" />
+			    <include name="join_Formal_Smoke_Test" />
+			    <include name="adjust_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-				    <include name="getOrganizationByName_Test" />
+					<include name="getOrganizationByName_Test" />
 				    <include name="addMember_Test" />
-					<include name="join_Formal_Smoke_Test" />
-					<include name="adjust_Smoke_Test" />
-					<include name="Resign_Smoke_Test" />		
+				    <include name="join_Formal_Smoke_Test" />
+				    <include name="adjust_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	-->
+	
+	<test name="加班审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+			    <include name="SetSchedule_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.NewProcessTest">
+				<methods>
+					<include name="SetSchedule_Test" />
 				</methods>
 			</class>
 		</classes>
