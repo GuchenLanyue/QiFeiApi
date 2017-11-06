@@ -10,14 +10,20 @@
 		<groups>
 			<define name="Resign">
 			    <include name="getOrganizationByName_Test" />
-				<include name="Trip_Smoke_Test" />
+			    <include name="addMember_Test" />
+				<include name="join_Formal_Smoke_Test" />
+				<include name="adjust_Smoke_Test" />
+				<include name="Resign_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.NewProcessTest">
+			<class name="com.qifei.test.ProcessTest">
 				<methods>
 				    <include name="getOrganizationByName_Test" />
-					<include name="Trip_Smoke_Test" />
+				    <include name="addMember_Test" />
+					<include name="join_Formal_Smoke_Test" />
+					<include name="adjust_Smoke_Test" />
+					<include name="Resign_Smoke_Test" />		
 				</methods>
 			</class>
 		</classes>

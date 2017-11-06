@@ -5,23 +5,20 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	
-	<test name="打卡地点测试" preserve-order="true">
+
+	<test name="审批流程设置" preserve-order="true">
 		<groups>
-			<define name="Attendance">
-				<include name="add_Locations_Test" />
-				<include name="modify_Locations_Test" />
-				<include name="del_Locations_Test" />
+			<define name="GetOrganizationByName">
+				<include name="Types_Temp_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.apis.attendance.LocationsTest">
+			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="add_Locations_Test" />
-					<include name="modify_Locations_Test" />
-					<include name="del_Locations_Test" />
+					<include name="Types_Temp_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
+
 </suite>

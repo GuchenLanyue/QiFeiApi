@@ -5,7 +5,7 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	<!--  
+	
 	<test name="获取子部门ID" preserve-order="true">
 		<groups>
 			<define name="GetOrganizationByName">
@@ -53,7 +53,7 @@
 	
 	<test name="调岗" preserve-order="true">
 		<groups>
-			<define name="GetOrganizationByName">
+			<define name="Adjust">
 				<include name="adjust_Smoke_Test" />
 			</define>
 		</groups>
@@ -155,7 +155,68 @@
 			</class>
 		</classes>
 	</test>
-	-->
+	
+	<test name="项目审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Project_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Project_Smoke_Test" />			
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="通用审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="General_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="General_Smoke_Test" />			
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="物品领用审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Materialget_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Materialget_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="合同审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Contract_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Contract_Smoke_Test" />				
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<!--  
 	<test name="审批流程设置" preserve-order="true">
 		<groups>
 			<define name="GetOrganizationByName">
@@ -170,4 +231,5 @@
 			</class>
 		</classes>
 	</test>
+	-->
 </suite>
