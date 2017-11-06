@@ -135,8 +135,8 @@ public class JsonUtils {
 					map.put(key.toString(), Double.parseDouble(valueStr));
 				}
 			}else{
-				if(valueStr.startsWith("s{")){
-					valueStr = valueStr.substring(1, valueStr.length());
+				if(valueStr.startsWith("!!String{")){
+					valueStr = valueStr.substring(valueStr.indexOf("{",valueStr.indexOf("!!String{")),valueStr.length());
 					JSONObject obj = new JSONObject(getMap(valueStr));
 					valueStr = obj.toString();
 				}else if(valueStr.contains("?${")){
@@ -170,13 +170,11 @@ public class JsonUtils {
 	public List<Object> formatList(JSONArray baseArr,JSONArray array){
 		List<Object> list = new ArrayList<>();
 		for(int i=0;i<baseArr.length();i++){
-			System.out.println(baseArr.get(i).toString());
-			System.out.println(array.get(i).toString());
+
 			if(baseArr.get(i) instanceof JSONObject){
 				
 				for(int j=0;j<array.length();i++){
-					System.out.println(baseArr.get(j).toString());
-					System.out.println(array.get(j).toString());
+
 					if(array.get(j) instanceof JSONObject){
 						if(array.get(j).toString().equals("{}")){
 							list.add(array.get(j).toString());
@@ -246,8 +244,6 @@ public class JsonUtils {
 		
 		JSONObject obj = new JSONObject(formatMap);
 		for(String key:baseObj.keySet()){
-			System.out.println(baseObj.get(key).toString());
-			System.out.println(obj.get(key).toString());
 			if(obj.get(key) instanceof JSONObject){
 				if(key.toString().equals("target_value")|key.toString().equals("form_key_field")){
 					System.out.println(key.toString());
@@ -377,8 +373,8 @@ public class JsonUtils {
 					String jsonStr = txt.readTxtFile(fileName);
 					JsonPath jsonPath = JsonPath.with(jsonStr);
 					valueStr = valueStr.substring(0,valueStr.indexOf("$"))+jsonPath.getString(paramPath) + valueStr.substring(valueStr.indexOf("}")+1, valueStr.length());
-				}else if(valueStr.startsWith("s{")){
-					valueStr = valueStr.substring(1,valueStr.length());
+				}else if(valueStr.startsWith("!!String{")){
+					valueStr = valueStr.substring(valueStr.indexOf("{",valueStr.indexOf("!!String{")),valueStr.indexOf("}",valueStr.length()));
 					JSONObject obj = new JSONObject(getMap(valueStr));
 					valueStr = obj.toString();
 				}
