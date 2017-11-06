@@ -9,13 +9,15 @@
 	<test name="审批流程设置" preserve-order="true">
 		<groups>
 			<define name="GetOrganizationByName">
-				<include name="Types_Temp_Smoke_Test" />
+				<include name="getOrganizationByName_Test" />
+				<include name="Purchase_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="Types_Temp_Smoke_Test" />
+					<include name="getOrganizationByName_Test" />
+					<include name="Purchase_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>

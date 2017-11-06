@@ -15,6 +15,39 @@ import com.qifei.utils.test.BaseTest;
 import io.restassured.path.json.JsonPath;
 
 public class ProcessTest extends BaseTest {
+	@Test(dataProvider="CaseList",description="审批类型设置")
+	public void Types_Temp_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"\\temp\\"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
 	
 	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
 	public void DeleteOrganizationByName_Test(Map<String, Object> params){
@@ -183,39 +216,6 @@ public class ProcessTest extends BaseTest {
 		setRequest("OvertimeRequest", params);
 	}
 	
-	@Test(dataProvider="CaseList",description="审批类型设置")
-	public void Types_Temp_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
 	
 	@Test(dataProvider="CaseList",description="请假审批流程测试")
 	public void Leave_Smoke_Test(Map<String, Object> baseData){
@@ -515,6 +515,46 @@ public class ProcessTest extends BaseTest {
 
 		TxtData txt = new TxtData();
 		String filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider = "CaseList", description= "采购审批流程冒烟测试")
+	public void Purchase_Smoke_Test(Map<String, Object> baseData) {
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		if(caseName.equals("purchase_2")){
+			System.out.println("pause");
+		}
+		setRequest(api,filePath,caseName);
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+
+		txt = new TxtData();
+		filename = getSrcDir()+"/temp/"+api+".txt";
 		txt.writerText(filename, getBodyStr());
 
 		if(api.equals("Auth")){
