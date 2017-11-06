@@ -113,7 +113,7 @@ public class JsonUtils {
 			String valueStr = value.toString();
 			if(value instanceof JSONArray|valueStr.startsWith("[")){
 				map.put(key.toString(), getList(valueStr));
-			}else if(valueStr.startsWith("!![")){
+			}else if(valueStr.startsWith("!!Int[")){
 				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
 				JSONArray array = new JSONArray(valueStr);
 				List<Integer> list = new ArrayList<>();
@@ -121,6 +121,9 @@ public class JsonUtils {
 					list.add(Integer.parseInt(array.get(i).toString()));
 				}
 				map.put(key.toString(), list);
+			}else if(valueStr.startsWith("!!String[")){
+				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
+				map.put(key.toString(), valueStr);
 			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
 				map.put(key.toString(), getMap(valueStr));
 			}else if(value instanceof Double){
@@ -334,7 +337,7 @@ public class JsonUtils {
 			String valueStr = value.toString();
 			if(value instanceof JSONArray|valueStr.startsWith("[")){
 				formatMap.put(key.toString(), getList(valueStr));
-			}else if(valueStr.startsWith("!![")){
+			}else if(valueStr.startsWith("!!Int[")){
 				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
 				JSONArray array = new JSONArray(valueStr);
 				List<Integer> list = new ArrayList<>();
@@ -342,6 +345,9 @@ public class JsonUtils {
 					list.add(Integer.parseInt(array.get(i).toString()));
 				}
 				formatMap.put(key.toString(), list);
+			}else if(valueStr.startsWith("!!String[")){
+				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
+				formatMap.put(key.toString(), valueStr);
 			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
 				formatMap.put(key.toString(), getMap(valueStr));
 			}else if(value instanceof Double){
