@@ -216,6 +216,50 @@
 		</classes>
 	</test>
 	
+	<test name="采购流程设置" preserve-order="true">
+		<groups>
+			<define name="Purchase">
+				<include name="Purchase_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Purchase_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="报销流程设置" preserve-order="true">
+		<groups>
+			<define name="Reimbursement">
+				<include name="reimbursement_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="reimbursement_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="付款流程设置" preserve-order="true">
+		<groups>
+			<define name="Payment">
+				<include name="payment_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="payment_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 	<!--  
 	<test name="审批流程设置" preserve-order="true">
 		<groups>

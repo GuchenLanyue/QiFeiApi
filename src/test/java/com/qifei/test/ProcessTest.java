@@ -607,4 +607,44 @@ public class ProcessTest extends BaseTest {
 			txt.writerText(tokenFile, authorization);
 		}
 	}
+	
+	@Test(dataProvider = "CaseList", description= "付款审批流程冒烟测试")
+	public void payment_Smoke_Test(Map<String, Object> baseData) {
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		if(caseName.equals("TransferIn_1")){
+			System.out.println("TransferIn_1");
+		}
+		setRequest(api,filePath,caseName);
+		TxtData txt = new TxtData();
+		String filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+		
+		long time = 5000;
+		while (checkResponse(getExpectedMap())&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+
+		txt = new TxtData();
+		filename = getSrcDir()+"/temp/"+api+".txt";
+		txt.writerText(filename, getBodyStr());
+
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(getBodyStr());
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
 }

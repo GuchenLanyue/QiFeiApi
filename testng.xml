@@ -10,14 +10,14 @@
 		<groups>
 			<define name="GetOrganizationByName">
 				<include name="getOrganizationByName_Test" />
-				<include name="reimbursement_Smoke_Test" />
+				<include name="Trip_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
 					<include name="getOrganizationByName_Test" />
-					<include name="reimbursement_Smoke_Test" />
+					<include name="Trip_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
