@@ -31,14 +31,14 @@
 	
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
-			    <include name="SetSchedule_Test" />
+			<define name="Types">
+			    <include name="Types_Temp_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.NewProcessTest">
+			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="SetSchedule_Test" />
+					<include name="Types_Temp_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>

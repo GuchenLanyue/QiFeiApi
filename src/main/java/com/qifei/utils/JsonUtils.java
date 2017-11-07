@@ -50,6 +50,7 @@ public class JsonUtils {
 		List<Object> list = new ArrayList<>();
 		
 		for(int i=0;i<jsonArray.length();i++){
+//			Object tempStr = jsonArray.get(i);
 			if(jsonArray.get(i) instanceof JSONObject|jsonArray.get(i).toString().startsWith("{")){
 				list.add(getMap(jsonArray.get(i).toString()));
 			}else if(jsonArray.get(i) instanceof JSONArray|jsonArray.get(i).toString().startsWith("[")){
@@ -66,27 +67,12 @@ public class JsonUtils {
 				list.add(Boolean.parseBoolean(jsonArray.get(i).toString()));
 			}else{
 				String valueStr = jsonArray.get(i).toString();
-				if(valueStr.contains("?${")){
-					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
-					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
-					TxtData txt = new TxtData();
-					String str = txt.readTxtFile(fileName);
-					JsonPath jsonPath = JsonPath.with(str);
-					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
-				}else if(valueStr.contains("${")){
-					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
-					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
-					TxtData txt = new TxtData();
-					String str = txt.readTxtFile(fileName);
-					JsonPath jsonPath = JsonPath.with(str);
-					valueStr = jsonPath.getString(paramPath);
-				}else if(valueStr.contains("?{")){
-					valueStr = valueStr.replaceAll("?{", "{");
-				}else if(valueStr.startsWith("!!String{")){
-					valueStr = valueStr.substring(valueStr.indexOf("{",valueStr.indexOf("!!String{")),valueStr.indexOf("}",valueStr.length()));
-					JSONObject obj = new JSONObject(getMap(valueStr));
+				if(valueStr.startsWith("!!String{")){
+					int startIndex = valueStr.indexOf("!!String");
+					int beginIndex = valueStr.indexOf("{",startIndex);
+					String variableStr = valueStr.substring(beginIndex,valueStr.length());
+					
+					JSONObject obj = new JSONObject(getMap(variableStr));
 					valueStr = obj.toString();
 					list.add(valueStr);
 				}else if(valueStr.startsWith("!!Boolean")){
@@ -98,8 +84,35 @@ public class JsonUtils {
 				}else if(valueStr.startsWith("!!Double")){
 					valueStr = valueStr.substring(valueStr.indexOf("!!Double")+8,valueStr.length());
 					list.add(Double.parseDouble(valueStr));
-				}else{
+				}else if(valueStr.contains("?${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String str = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(str);
+					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
 					list.add(valueStr);
+				}else if(valueStr.contains("${")){
+					int startIndex = valueStr.indexOf("${");
+					int endIndex = valueStr.indexOf("}",startIndex);
+					int splitCharIndex = valueStr.indexOf(".",startIndex);
+					
+					String fileName = valueStr.substring(startIndex+2,splitCharIndex);
+					String paramter = valueStr.substring(splitCharIndex+1,endIndex);
+					
+					TxtData txt = new TxtData();
+					String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
+					JsonPath json = JsonPath.with(body);
+					
+					String trueValue = json.getString(paramter);
+					valueStr = valueStr.substring(0,startIndex) + trueValue + valueStr.substring(endIndex+1,valueStr.length());
+					list.add(valueStr);
+				}else if(valueStr.contains("?{")){
+					valueStr = valueStr.replaceAll("?{", "{");
+					list.add(valueStr);
+				}else{
+					list.add(jsonArray.get(i));
 				}
 			}
 		}
@@ -137,7 +150,15 @@ public class JsonUtils {
 				}
 				map.put(key.toString(), list);
 			}else if(valueStr.startsWith("!!String[")){
-				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
+				valueStr = valueStr.substring(valueStr.indexOf("!!String[")+9,valueStr.length());
+				map.put(key.toString(), valueStr);
+			}else if(valueStr.startsWith("!!String{")){
+				int startIndex = valueStr.indexOf("!!String");
+				int beginIndex = valueStr.indexOf("{",startIndex);
+				String variableStr = valueStr.substring(beginIndex,valueStr.length());
+				
+				JSONObject obj = new JSONObject(getMap(variableStr));
+				valueStr = obj.toString();
 				map.put(key.toString(), valueStr);
 			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
 				map.put(key.toString(), getMap(valueStr));
@@ -160,17 +181,26 @@ public class JsonUtils {
 					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
 					map.put(key.toString(), valueStr);
 				}else if(valueStr.contains("${")){
-					String fileName = valueStr.substring(valueStr.indexOf("${")+2, valueStr.indexOf(".",valueStr.indexOf("${")));
-					String paramPath = valueStr.substring(valueStr.indexOf(".",valueStr.indexOf("${"))+1, valueStr.indexOf("}",valueStr.indexOf("${")));
-					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
+					int startIndex = valueStr.indexOf("${");
+					int endIndex = valueStr.indexOf("}",startIndex);
+					int splitCharIndex = valueStr.indexOf(".",startIndex);
+					
+					String fileName = valueStr.substring(startIndex+2,splitCharIndex);
+					String paramter = valueStr.substring(splitCharIndex+1,endIndex);
+					
 					TxtData txt = new TxtData();
-					String str = txt.readTxtFile(fileName);
-					JsonPath jsonPath = JsonPath.with(str);
-					valueStr = jsonPath.getString(paramPath);
+					String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
+					JsonPath json = JsonPath.with(body);
+					
+					String trueValue = json.getString(paramter);
+					valueStr = valueStr.substring(0,startIndex) + trueValue + valueStr.substring(endIndex+1,valueStr.length());
 					map.put(key.toString(), valueStr);
 				}else if(valueStr.startsWith("!!String{")){
-					valueStr = valueStr.substring(valueStr.indexOf("{",valueStr.indexOf("!!String{")),valueStr.length());
-					JSONObject obj = new JSONObject(getMap(valueStr));
+					int startIndex = valueStr.indexOf("!!String");
+					int beginIndex = valueStr.indexOf("{",startIndex);
+					String variableStr = valueStr.substring(beginIndex,valueStr.length());
+					
+					JSONObject obj = new JSONObject(getMap(variableStr));
 					valueStr = obj.toString();
 					map.put(key.toString(), valueStr);
 				}else if(valueStr.startsWith("!!Boolean")){
@@ -371,6 +401,14 @@ public class JsonUtils {
 				formatMap.put(key.toString(), list);
 			}else if(valueStr.startsWith("!!String[")){
 				valueStr = valueStr.substring(valueStr.indexOf("["),valueStr.length());
+				formatMap.put(key.toString(), valueStr.toString());
+			}else if(valueStr.startsWith("!!String{")){
+				int startIndex = valueStr.indexOf("!!String");
+				int beginIndex = valueStr.indexOf("{",startIndex);
+				String variableStr = valueStr.substring(beginIndex,valueStr.length());
+				
+				JSONObject obj = new JSONObject(getMap(variableStr));
+				valueStr = obj.toString();
 				formatMap.put(key.toString(), valueStr);
 			}else if(value instanceof JSONObject|valueStr.startsWith("{")){
 				formatMap.put(key.toString(), getMap(valueStr));
@@ -385,27 +423,12 @@ public class JsonUtils {
 			}else if(value instanceof Boolean){
 				formatMap.put(key.toString(), Boolean.parseBoolean(valueStr));
 			}else{
-				if(valueStr.contains("?${")){
-					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
-					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"/ources/temp/"+fileName+".txt";
-					TxtData txt = new TxtData();
-					String jsonStr = txt.readTxtFile(fileName);
-					JsonPath jsonPath = JsonPath.with(jsonStr);
-					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
-					formatMap.put(key.toString(), valueStr);
-				}else if(valueStr.contains("${")){
-					String fileName = valueStr.substring(valueStr.indexOf("$")+2, valueStr.indexOf(".",valueStr.indexOf("$")+2));
-					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
-					fileName = System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt";
-					TxtData txt = new TxtData();
-					String jsonStr = txt.readTxtFile(fileName);
-					JsonPath jsonPath = JsonPath.with(jsonStr);
-					valueStr = valueStr.substring(0,valueStr.indexOf("$"))+jsonPath.getString(paramPath) + valueStr.substring(valueStr.indexOf("}")+1, valueStr.length());
-					formatMap.put(key.toString(), valueStr);
-				}else if(valueStr.startsWith("!!String{")){
-					valueStr = valueStr.substring(valueStr.indexOf("{",valueStr.indexOf("!!String{")),valueStr.indexOf("}",valueStr.length()));
-					JSONObject obj = new JSONObject(getMap(valueStr));
+				if(valueStr.startsWith("!!String{")){
+					int startIndex = valueStr.indexOf("!!String");
+					int beginIndex = valueStr.indexOf("{",startIndex);
+					String variableStr = valueStr.substring(beginIndex,valueStr.length());
+					
+					JSONObject obj = new JSONObject(getMap(variableStr));
 					valueStr = obj.toString();
 					formatMap.put(key.toString(), valueStr);
 				}else if(valueStr.startsWith("!!Boolean")){
@@ -417,6 +440,30 @@ public class JsonUtils {
 				}else if(valueStr.startsWith("!!Double")){
 					valueStr = valueStr.substring(valueStr.indexOf("!!Double")+8,valueStr.length());
 					formatMap.put(key.toString(), Double.parseDouble(valueStr));
+				}else if(valueStr.contains("?${")){
+					String fileName = valueStr.substring(valueStr.indexOf("{")+1, valueStr.indexOf("."));
+					String paramPath = valueStr.substring(valueStr.indexOf(".")+1, valueStr.indexOf("}"));
+					fileName = System.getProperty("user.dir")+"/ources/temp/"+fileName+".txt";
+					TxtData txt = new TxtData();
+					String jsonStr = txt.readTxtFile(fileName);
+					JsonPath jsonPath = JsonPath.with(jsonStr);
+					valueStr = "?${"+jsonPath.getString(paramPath)+"}";
+					formatMap.put(key.toString(), valueStr);
+				}else if(valueStr.contains("${")){
+					int startIndex = valueStr.indexOf("${");
+					int endIndex = valueStr.indexOf("}",startIndex);
+					int splitCharIndex = valueStr.indexOf(".",startIndex);
+					
+					String fileName = valueStr.substring(startIndex+2,splitCharIndex);
+					String paramter = valueStr.substring(splitCharIndex+1,endIndex);
+					
+					TxtData txt = new TxtData();
+					String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
+					JsonPath json = JsonPath.with(body);
+					
+					String trueValue = json.getString(paramter);
+					valueStr = valueStr.substring(0,startIndex) + trueValue + valueStr.substring(endIndex+1,valueStr.length());
+					formatMap.put(key.toString(), valueStr);
 				}else{
 					formatMap.put(key.toString(), valueStr);
 				}
@@ -570,8 +617,8 @@ public class JsonUtils {
 	}
 	
 	public static void main(String[] args) {
-//		JsonUtils jsonUtils = new JsonUtils();
-//		TxtData txt = new TxtData();
+		JsonUtils jsonUtils = new JsonUtils();
+		TxtData txt = new TxtData();
 //		String str1 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\1.txt");
 //		String str2 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\2.txt");
 //		
@@ -587,22 +634,30 @@ public class JsonUtils {
 //	    // 现在创建 matcher 对象
 //	    Matcher m = r.matcher(str1);
 	    
-		while(str1.contains("${")){
-			int startIndex = str1.indexOf("$");
-			int endIndex = str1.indexOf("}",startIndex);
-			int splitCharIndex = str1.indexOf(".",startIndex);
-			
-			String fileName = str1.substring(startIndex+2,splitCharIndex);
-			String paramter = str1.substring(splitCharIndex+1,endIndex);
-			
-			TxtData txt = new TxtData();
-			String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
-			JsonPath json = JsonPath.with(body);
-			
-			String value = json.getString(paramter);
-			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
-			System.out.println(str1);
+//		while(str1.contains("${")){
+//			int startIndex = str1.indexOf("$");
+//			int endIndex = str1.indexOf("}",startIndex);
+//			int splitCharIndex = str1.indexOf(".",startIndex);
+//			
+//			String fileName = str1.substring(startIndex+2,splitCharIndex);
+//			String paramter = str1.substring(splitCharIndex+1,endIndex);
+//			
+//			TxtData txt = new TxtData();
+//			String body = txt.readTxtFile(System.getProperty("user.dir")+"/sources/temp/"+fileName+".txt");
+//			JsonPath json = JsonPath.with(body);
+//			
+//			String value = json.getString(paramter);
+//			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+//			System.out.println(str1);
+//		}
+		String str = txt.readTxtFile("C:\\Users\\sam\\Desktop\\new1.txt");	
+		Map<String, Object> map = new HashMap<>();
+		System.out.println(str);
+		map.put("attachment", str);
+		map = jsonUtils.formatMap(map);
+		JSONObject obj = new JSONObject(map);
+		for(String key:obj.keySet()){
+			System.out.println(obj.get(key));
 		}
-		
 	}
 }
