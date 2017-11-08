@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import com.qifei.apis.Members;
 import com.qifei.apis.Organization;
+import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
@@ -96,8 +97,7 @@ public class ProcessTest extends BaseTest {
 		paramMap.remove("CaseID");
 		//新增员工
 		Members member = new Members(getBasePath());
-		JsonUtils jsonUtils = new JsonUtils();
-		String body = member.addMember(jsonUtils.formatMap(paramMap));
+		String body = member.addMember(paramMap);
 		
 		TxtData txt = new TxtData();
 		String filename = getSrcDir()+"/temp/"+caseID+".txt";

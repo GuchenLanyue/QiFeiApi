@@ -3,7 +3,6 @@ package com.qifei.utils.test;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 
-import com.qifei.apis.Path;
 import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.TxtData;
@@ -91,7 +90,7 @@ public class BaseTest {
 		filePath = getSrcDir()+"/case/"+method+".xlsx";
 		
 		String sheetName = caseStr[caseStr.length-3];
-		ExcelReader excel = new ExcelReader();
+		ExcelReader excel = new ExcelReader(getSrcDir());
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
 		List<Object[]> test_IDs = new ArrayList<Object[]>();
 
@@ -109,7 +108,7 @@ public class BaseTest {
 		method = caseStr[caseStr.length-2];
 		filePath = getSrcDir()+"/case/"+method+".xlsx";
 		String sheetName = "Params";
-		ExcelReader excel = new ExcelReader();
+		ExcelReader excel = new ExcelReader(getSrcDir());
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
 		List<Object[]> test_IDs = new ArrayList<Object[]>();
 		for (Map<String, Object> params:caseList) {
@@ -121,7 +120,7 @@ public class BaseTest {
 	
 	@Step
 	public void setRequest(String api,Map<String, Object> paramMap) {
-		Parameter parameter = new Parameter();
+		Parameter parameter = new Parameter(getSrcDir());
 		//设置请求类型，请求路径等基本数据
 		Map<String, Object> baseMap = parameter.setUrlData(api,filePath);
 		baseMap.put("basePath", basePath);
@@ -132,10 +131,6 @@ public class BaseTest {
 			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
 			if(paramMap.containsKey(pathParam)){
 				pathParamMap.put(pathParam, paramMap.get(pathParam));
-			}else{
-				Path pathStr = new Path(basePath);
-				String pathParamStr = pathStr.analysisPath(pathParam);
-				pathParamMap.put(pathParam, pathParamStr);
 			}
 		}
 		
@@ -152,15 +147,15 @@ public class BaseTest {
 		}
 		
 		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
-		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
-		JsonUtils jsonUtil = new JsonUtils();
-		if(new File(jsonFile).exists()){
-			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
-		}else{
-			paramMap = jsonUtil.formatMap(paramMap);
-		}
+//		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
+//		JsonUtils jsonUtil = new JsonUtils();
+//		if(new File(jsonFile).exists()){
+//			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
+//		}else{
+//			paramMap = jsonUtil.formatMap(paramMap);
+//		}
 		
-		expectedMap = jsonUtil.formatMap(expectedMap);
+//		expectedMap = jsonUtil.formatMap(expectedMap);
 		
 		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
@@ -182,7 +177,7 @@ public class BaseTest {
 	@Step
 	public void setRequest(String api,String filePath, String caseName) {
 		this.filePath = filePath;
-		Parameter parameter = new Parameter();
+		Parameter parameter = new Parameter(getSrcDir());
 		//获取请求路径，请求类型等基本信息
 		Map<String, Object> baseMap = parameter.setUrlData(api, filePath);
 		baseMap.put("basePath", baseMap.get("BasePath").toString());
@@ -222,16 +217,16 @@ public class BaseTest {
 		}
 		
 		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
-		JsonUtils jsonUtil = new JsonUtils();
-		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
-		File jFile = new File(jsonFile);
-		if(jFile.exists()){
-			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
-		}else{
-			paramMap = jsonUtil.formatMap(paramMap);
-		}
-		
-		expectedMap = jsonUtil.formatMap(expectedMap);
+//		JsonUtils jsonUtil = new JsonUtils();
+//		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
+//		File jFile = new File(jsonFile);
+//		if(jFile.exists()){
+//			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
+//		}else{
+//			paramMap = jsonUtil.formatMap(paramMap);
+//		}
+//		
+//		expectedMap = jsonUtil.formatMap(expectedMap);
 		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
 		Headers header = new Headers(basePath);

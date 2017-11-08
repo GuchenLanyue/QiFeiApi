@@ -9,6 +9,7 @@ import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
@@ -18,24 +19,27 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class Attendance {
+	
+	private String basePath = "";
+	private String src = "";
+	
 	public Attendance() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Attendance(String basePath) {
+	public Attendance(String basePath,String src) {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
+		this.src = src;
 	}
-	
-	private String basePath = null;
 	
 	@Step("setParams() 设置打卡地点参数")
 	public Map<String,Object> formatParams(Map<String,Object> params){
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = params;
-		JsonUtils jsonUtil = new JsonUtils();
+		ExcelReader excel = new ExcelReader(src);
 		String apply_scope = paramMap.get("apply_scope").toString();
-		List<Object> list = jsonUtil.getList(apply_scope);
+		List<Object> list = excel.getList(apply_scope);
 		
 		paramMap.put("apply_scope", list);
 		
@@ -168,13 +172,13 @@ public class Attendance {
 		Response response = http.request(map);
 		String body = http.getBody(response);
 		//处理response
-		JsonUtils jsonUtils = new JsonUtils();
+		ExcelReader excel = new ExcelReader(src);
 		JSONObject jsonObj = new JSONObject(body);
 		JSONArray jsonArr = jsonObj.getJSONArray("items");
 		List<Map<String,Object>> list = new ArrayList<>();
 		List<Object> items = jsonArr.toList();
 		for(int i=0;i<items.size();i++){
-			Map<String,Object> item = jsonUtils.getMap(items.get(i).toString());
+			Map<String,Object> item = excel.getMap(items.get(i).toString());
 			items.add(item);
 		}
 		
@@ -305,11 +309,11 @@ public class Attendance {
 	}
 	
 	public static void main(String[] args) {
-		Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
+//		Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
 		//新增打卡地点
 //		attendance.addLocations();
 		//获取打卡地点列表
-		List<String> locations = attendance.getLocationIDs();
+//		List<String> locations = attendance.getLocationIDs();
 //		int size = locations.size();
 //		Random random = new Random();
 //		int index = random.nextInt(size);
@@ -321,10 +325,10 @@ public class Attendance {
 //			System.out.println(key+":"+location.get(key));
 //		}
 		
-		//删除打卡地点
-		for(String uuid:locations){
-			attendance.deleteLocations(uuid);
-		}
+//		//删除打卡地点
+//		for(String uuid:locations){
+//			attendance.deleteLocations(uuid);
+//		}
 //		attendance.addLocations();
 	}
 }

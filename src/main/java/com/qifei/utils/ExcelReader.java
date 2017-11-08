@@ -17,17 +17,25 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.testng.Assert;
 
 import io.qameta.allure.Allure;
+import io.restassured.path.json.JsonPath;
 
 public class ExcelReader {
 	private HashMap<String, Object> map = null;
+	private String src = "";
+//	public ExcelReader() {
+//		// TODO Auto-generated constructor stub
+//	}
 
-	public ExcelReader() {
+	public ExcelReader(String src) {
 		// TODO Auto-generated constructor stub
+		this.src = src;
 	}
-
+	
 	/**
 	 * @param path
 	 *            文件路径
@@ -36,10 +44,10 @@ public class ExcelReader {
 	 * @param caseName
 	 *            用例名
 	 */
-	public ExcelReader(String path, String sheetName, String caseName) {
-		// TODO Auto-generated constructor stub
-		map = mapFromSheet(path, sheetName, caseName);
-	}
+//	public ExcelReader(String path, String sheetName, String caseName) {
+//		// TODO Auto-generated constructor stub
+//		map = mapFromSheet(path, sheetName, caseName);
+//	}
 
 	public HashMap<String, Object> getCaseMap() {
 		return map;
@@ -152,29 +160,32 @@ public class ExcelReader {
 	@SuppressWarnings("deprecation")
 	public Object getCell(Cell cell) {
 		// DecimalFormat df = new DecimalFormat("#");
-		if (cell == null)
-			return "";
-		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_NUMERIC:
-			if (HSSFDateUtil.isCellDateFormatted(cell)) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+		if (cell != null){	
+			switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_NUMERIC:
+				if (HSSFDateUtil.isCellDateFormatted(cell)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+				}
+				// return df.format(cell.getNumericCellValue());
+				return cell.getNumericCellValue();
+			case Cell.CELL_TYPE_STRING:
+				// System.out.println(cell.getStringCellValue());
+				return replace(cell.getStringCellValue());
+			case Cell.CELL_TYPE_FORMULA:
+				return cell.getCellFormula();
+			case Cell.CELL_TYPE_BLANK:
+				return "";
+			case Cell.CELL_TYPE_BOOLEAN:
+				return cell.getBooleanCellValue() + "";
+			case Cell.CELL_TYPE_ERROR:
+				return cell.getErrorCellValue() + "";
+			default:
+				return "";
 			}
-			// return df.format(cell.getNumericCellValue());
-			return cell.getNumericCellValue();
-		case Cell.CELL_TYPE_STRING:
-			// System.out.println(cell.getStringCellValue());
-			return cell.getStringCellValue();
-		case Cell.CELL_TYPE_FORMULA:
-			return cell.getCellFormula();
-		case Cell.CELL_TYPE_BLANK:
+		}else{
 			return "";
-		case Cell.CELL_TYPE_BOOLEAN:
-			return cell.getBooleanCellValue() + "";
-		case Cell.CELL_TYPE_ERROR:
-			return cell.getErrorCellValue() + "";
 		}
-		return "";
 	}
 
 	/**
@@ -246,5 +257,183 @@ public class ExcelReader {
 		}
 
 		return caseList;
+	}
+	
+	public Object replace(String str){
+		String str1 = str;
+		while(str1.contains("${")){
+			int startIndex = str1.indexOf("${");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int splitCharIndex = str1.indexOf(".",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			String fileName = str1.substring(beginIndex+1,splitCharIndex);
+			String paramter = str1.substring(splitCharIndex+1,endIndex);
+			
+			TxtData txt = new TxtData();
+			String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+			JsonPath json = JsonPath.with(body);
+			
+			String value = json.getString(paramter);
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("$csv{")){
+			int startIndex = str1.indexOf("$csv{");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int splitCharIndex1 = str1.indexOf(".",startIndex);
+			int splitCharIndex2 = str1.indexOf(".",splitCharIndex1+1);
+			int splitCharIndex3 = str1.indexOf(".",splitCharIndex2+1);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			String fileName = str1.substring(beginIndex+1,splitCharIndex1);
+			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
+			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
+			String key = str1.substring(splitCharIndex3+1,endIndex);
+			fileName = src + "/temp/"+fileName+".xlsx";
+			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
+			String value = map.get(key).toString();
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("?temp{")){
+			int startIndex = str1.indexOf("?temp{");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int splitCharIndex = str1.indexOf(".",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			String fileName = str1.substring(beginIndex+1,splitCharIndex);
+			String paramter = str1.substring(splitCharIndex+1,endIndex);
+			
+			TxtData txt = new TxtData();
+			String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+			JsonPath json = JsonPath.with(body);
+			
+			String value = json.getString(paramter);
+			str1 = str1.substring(0,startIndex) +"?normal{" + value + "}" + str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("?csv{")){
+			int startIndex = str1.indexOf("$csv{");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int splitCharIndex1 = str1.indexOf(".",startIndex);
+			int splitCharIndex2 = str1.indexOf(".",splitCharIndex1+1);
+			int splitCharIndex3 = str1.indexOf(".",splitCharIndex2+1);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			String fileName = str1.substring(beginIndex+1,splitCharIndex1);
+			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
+			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
+			String key = str1.substring(splitCharIndex3+1,endIndex);
+			fileName = src + "/temp/"+fileName+".xlsx";
+			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
+			String value = map.get(key).toString();
+			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
+		}
+		
+		if(str1.startsWith("{")){
+			return getMap(str1);
+		}else if(str1.startsWith("!!String{")){
+			int beginIndex = str1.indexOf("{");
+			return str1.substring(beginIndex,str1.length());
+		}else if(str1.startsWith("[")){
+			return getList(str1);
+		}else if(str1.startsWith("!!String[")){
+			int beginIndex = str1.indexOf("[");
+			return str1.substring(beginIndex,str1.length());
+		}else if(str1.startsWith("!!Int[")){
+			int beginIndex = str1.indexOf("[");
+			str1 = str1.substring(beginIndex,str1.length());
+			List<Object> list = new ArrayList<>();
+			for(Object obj:getList(str1)){
+				list.add(Integer.parseInt(obj.toString()));
+			}
+			return list;
+		}else if(str1.startsWith("!!Int")){
+			str1 = str1.substring(5,str1.length());
+			return Integer.parseInt(str1);
+		}else if(str1.startsWith("!!Double")){
+			str1 = str1.substring(8,str1.length());
+			return Double.parseDouble(str1);
+		}else if(str1.startsWith("!!Boolean")){
+			str1 = str1.substring(9,str1.length());
+			return Boolean.parseBoolean(str1);
+		}else{
+			return str1;
+		}
+	}
+	
+	public List<Object> getList(String jsonStr){
+		JSONArray jsonArray = new JSONArray(jsonStr);
+		List<Object> list = new ArrayList<>();
+		
+		for(int i=0;i<jsonArray.length();i++){
+			String valueStr = jsonArray.get(i).toString();
+			if(jsonArray.get(i) instanceof JSONObject){
+				list.add(getMap(valueStr));
+			}else if(jsonArray.get(i) instanceof JSONArray){
+				list.add(getList(valueStr));
+			}else if(jsonArray.get(i) instanceof Integer){
+				list.add(Integer.parseInt(valueStr));
+			}else if(jsonArray.get(i) instanceof Double){
+				list.add(Double.parseDouble(valueStr));
+			}else if(jsonArray.get(i) instanceof Boolean){
+				list.add(Boolean.parseBoolean(valueStr));
+			}else{
+				list.add(replace(valueStr));
+			}
+		}
+		
+		return list;
+	}
+	
+	public Map<String, Object> getMap(String jsonStr){
+		JSONObject jsonObj = new JSONObject();
+		
+		if(jsonStr==null|jsonStr==""){
+			return null;
+		}else{
+			try {
+				jsonObj = new JSONObject(jsonStr);
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println(jsonStr);
+				e.printStackTrace();
+			}
+		}
+		
+		Map<String, Object> map = new HashMap<>();
+		for(Object key:jsonObj.keySet()){
+			Object value = jsonObj.get(key.toString());
+			String valueStr = value.toString();
+			if(value instanceof JSONArray){
+				map.put(key.toString(), getList(valueStr));
+			}else if(value instanceof JSONObject){
+				map.put(key.toString(), getMap(valueStr));
+			}else if(value instanceof Double){
+				map.put(key.toString(), Double.parseDouble(valueStr));
+			}else if(value instanceof Integer){
+				map.put(key.toString(), Integer.parseInt(valueStr));
+			}else if(value instanceof Boolean){
+				map.put(key.toString(), Boolean.parseBoolean(valueStr));
+			}else{
+				map.put(key.toString(), replace(valueStr));
+			}
+		}
+		
+		return map;
+	}
+	
+	public static void main(String[] args) {
+		String src = System.getProperty("user.dir")+"/sources";
+		ExcelReader excel = new ExcelReader(src);
+		String fileName = src + "/case/ApprovalTypes.xlsx"; 
+		String sheetName = "Params";
+		String caseName = "trip_2";
+		Map<String, Object> map = excel.mapFromSheet(fileName, sheetName, caseName);
+		for(String key:map.keySet()){
+			System.out.println(key);
+			System.out.println(map.get(key).toString());
+		}
 	}
 }

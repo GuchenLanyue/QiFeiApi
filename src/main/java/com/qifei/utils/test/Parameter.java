@@ -8,15 +8,17 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 
 public class Parameter {
-	public Parameter() {
+	private String src = "";
+	public Parameter(String src) {
 		// TODO Auto-generated constructor stub
+		this.src = src;
 	}
 	
 	@Step
 	@Description("从excel中读取url数据")
 	public Map<String, Object> setUrlData(String api,String filePath){
-		ExcelReader baseExcel = new ExcelReader(filePath, "Base", api);
-		Map<String, Object> baseMap = baseExcel.getCaseMap();
+		ExcelReader baseExcel = new ExcelReader(src);
+		Map<String, Object> baseMap = baseExcel.mapFromSheet(filePath, "Base", api);
 		
 		return baseMap;
 	}
@@ -24,8 +26,8 @@ public class Parameter {
 	@Step
 	@Description("从excel中读取params数据")
 	public Map<String, Object> setParams(String filePath,String caseName){
-		ExcelReader paramsExcel = new ExcelReader(filePath, "Params", caseName);
-		Map<String, Object> paramsMap = paramsExcel.getCaseMap();
+		ExcelReader paramsExcel = new ExcelReader(src);
+		Map<String, Object> paramsMap = paramsExcel.mapFromSheet(filePath, "Params", caseName);
 		paramsMap.remove("Case");
 		
 		return paramsMap;
@@ -34,8 +36,8 @@ public class Parameter {
 	@Step
 	@Description("从excel中读取expected数据")
 	public Map<String, Object> setExpectedMap(String filePath,String caseName){
-		ExcelReader expectedExcel = new ExcelReader(filePath, "Expectations", caseName);
-		Map<String, Object> expectedMap = expectedExcel.getCaseMap();
+		ExcelReader expectedExcel = new ExcelReader(src);
+		Map<String, Object> expectedMap = expectedExcel.mapFromSheet(filePath, "Expectations", caseName);
 		
 		return expectedMap;
 	}
