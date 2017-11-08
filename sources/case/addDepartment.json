@@ -1,8 +1,0 @@
-{
-  "name": "String",
-  "parent_organization_ID": "String",
-  "headcount": "Int",
-  "leader_ID": "String",
-  "hrbp_ID": "String",
-  "opt": "String"
-}

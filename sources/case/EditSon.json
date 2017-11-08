@@ -1,9 +1,0 @@
-{
-  "record_id": "String",
-  "opt": "String",
-  "headcount": "Int",
-  "name": "String",
-  "parent_organization_ID": "String",
-  "leader_ID": "String",
-  "hrbp_ID": "String"
-}
