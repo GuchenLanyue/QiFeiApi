@@ -231,14 +231,13 @@ public class BaseTest {
 	public Map<String, Object> setPathParamters(Map<String, Object> baseMap,Map<String, Object> paramMap){
 		String path = baseMap.get("Path").toString();
 		Map<String, Object> pathParamMap = new HashMap<>();
-		while (path.contains("{")) {
-			int beginIndex = path.indexOf("{");
-			int endIndex = path.indexOf("}",beginIndex);
-			
-			String pathParam = path.substring(beginIndex+1, endIndex);
-			String pathParamStr = paramMap.get(pathParam).toString();
-			pathParamMap.put(pathParam, pathParamStr);
-		}
+
+		int beginIndex = path.indexOf("{");
+		int endIndex = path.indexOf("}",beginIndex);
+		
+		String pathParam = path.substring(beginIndex+1, endIndex);
+		String pathParamStr = paramMap.get(pathParam).toString();
+		pathParamMap.put(pathParam, pathParamStr);
 		
 		return pathParamMap;
 	}
