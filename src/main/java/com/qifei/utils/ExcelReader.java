@@ -115,7 +115,7 @@ public class ExcelReader {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		File f = new File(fileName);
 		if (!f.exists()) {
-			Assert.fail("文件不存在：" + fileName);
+			Assert.fail("File not found ：" + fileName);
 		}
 
 		try {
@@ -292,7 +292,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/config" + platform + "/" +fileName+".xlsx";
+			fileName = src + "/config/" + platform + "/" +fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
@@ -327,7 +327,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/config" + platform + "/" +fileName+".xlsx";
+			fileName = src + "/config/" + platform + "/" +fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
