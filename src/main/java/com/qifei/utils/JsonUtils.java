@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,34 +137,34 @@ public class JsonUtils {
 		return isContinue;
 	}
 	
-	public boolean compareJSONObject(JSONObject obj1,JSONObject obj2){
+	public boolean compareJSONObject(JSONObject response,JSONObject expections){
 		boolean isContinue = false;
-		for(String key:obj2.keySet()){
-			if(obj2.get(key) instanceof JSONObject){
-				if(obj1.get(key).toString().equals("{}")){
-					Assert.assertEquals(obj1.get(key).toString(), obj2.get(key).toString());
+		for(String key:expections.keySet()){
+			if(expections.get(key) instanceof JSONObject){
+				if(response.get(key).toString().equals("{}")){
+					Assert.assertEquals(response.get(key).toString(), expections.get(key).toString());
 				}else{
-					JSONObject obj3 = obj1.getJSONObject(key);
-					JSONObject obj4 = obj2.getJSONObject(key);
+					JSONObject obj3 = response.getJSONObject(key);
+					JSONObject obj4 = expections.getJSONObject(key);
 					isContinue = compareJSONObject(obj3, obj4);
 				}
 				
 				if (isContinue) {
 					return isContinue;
 				}
-			}else if (obj2.get(key) instanceof JSONArray) {
-				JSONArray tempArray = obj2.getJSONArray(key);
+			}else if (expections.get(key) instanceof JSONArray) {
+				JSONArray tempArray = expections.getJSONArray(key);
 				if(tempArray.length()>0){
-					JSONArray arr1 = obj1.getJSONArray(key);
-					JSONArray arr2 = obj2.getJSONArray(key);
+					JSONArray arr1 = response.getJSONArray(key);
+					JSONArray arr2 = expections.getJSONArray(key);
 					isContinue = compareJSONArray(arr1, arr2);
 				}
 				if (isContinue) {
 					return isContinue;
 				}
 			}else {
-				String str1 = obj1.get(key).toString();
-				String str2 = obj2.get(key).toString();
+				String str1 = response.get(key).toString();
+				String str2 = expections.get(key).toString();
 				if(str2.contains("?normal{")){
 					int startIndex = str2.indexOf("?normal{");
 					int beginIndex = str2.indexOf("{",startIndex);
@@ -188,36 +186,6 @@ public class JsonUtils {
 	public void equalsJson(Map<String, Object>expected,JsonPath response){
 		for(String key:expected.keySet()){
 			Assert.assertEquals(response.get(key), expected.get(key),key);
-		}
-	}
-	
-	public static void main(String[] args) {
-		JsonUtils jsonUtils = new JsonUtils();
-		TxtData txt = new TxtData();
-//		String str1 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\1.txt");
-//		String str2 = txt.readTxtFile("C:\\Users\\sam\\Desktop\\2.txt");
-//		
-//		JSONObject obj1 = new JSONObject(str1);
-//		JSONObject obj2 = new JSONObject(str2);
-//		
-//		System.out.println(jsonUtils.compareJSONObject(obj1, obj2));
-		String str1 = "{\"symbol\":\"${Auth.employee_id}\",\"unit\":\"${EditSon.name}\",\"number\":\"4\"}";
-//		String pattern = "{\\w*_?\\w]*.\\w*_?\\w*}$";	
-//	    // 创建 Pattern 对象
-//	    Pattern r = Pattern.compile(pattern);
-//	 
-//	    // 现在创建 matcher 对象
-//	    Matcher m = r.matcher(str1);
-	    
-
-		String str = txt.readTxtFile("C:\\Users\\sam\\Desktop\\new1.txt");	
-		Map<String, Object> map = new HashMap<>();
-		System.out.println(str);
-		map.put("attachment", str);
-//		map = jsonUtils.formatMap(map);
-		JSONObject obj = new JSONObject(map);
-		for(String key:obj.keySet()){
-			System.out.println(obj.get(key));
 		}
 	}
 }

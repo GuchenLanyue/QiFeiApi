@@ -16,13 +16,13 @@ public class NewProcessTest extends BaseTest{
 
 	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
 	public void DeleteOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(getBasePath());
+		Organization organization = new Organization(basePath);
 		organization.deleteOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 	}
 	
 	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
 	public void getOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(getBasePath());
+		Organization organization = new Organization(basePath);
 		//设置部门
 		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 		String organizationStr = "";
@@ -32,7 +32,7 @@ public class NewProcessTest extends BaseTest{
 		}
 		//写入txt
 		TxtData txt = new TxtData();
-		String organizationFile = getSrcDir()+"/temp/"+params.get("organization_Name").toString()+".txt";
+		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 		
 		txt.writerText(organizationFile, organizationStr);
@@ -47,7 +47,7 @@ public class NewProcessTest extends BaseTest{
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-		String positionFile = getSrcDir()+"/temp/"+params.get("position_Name").toString()+".txt";
+		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
 		txt.writerText(positionFile, positionID);
 	}
 	
@@ -57,7 +57,7 @@ public class NewProcessTest extends BaseTest{
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		if(caseName.equals("trip_2")){
@@ -66,7 +66,7 @@ public class NewProcessTest extends BaseTest{
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -78,11 +78,11 @@ public class NewProcessTest extends BaseTest{
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -92,6 +92,6 @@ public class NewProcessTest extends BaseTest{
 	@Test(dataProvider = "SingleCase", description = "设置班次")
 	public void SetSchedule_Test(Map<String, Object> params){
 		setRequest("SetSchedule", params);
-		checkResponse(getExpectedMap());
+		checkResponse(expectedMap);
 	}
 }

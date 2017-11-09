@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.qifei.utils.ExcelReader;
-import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
@@ -21,23 +20,21 @@ import io.restassured.response.Response;
 public class Attendance {
 	
 	private String basePath = "";
-	private String src = "";
 	
 	public Attendance() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Attendance(String basePath,String src) {
+	public Attendance(String basePath) {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
-		this.src = src;
 	}
 	
 	@Step("setParams() 设置打卡地点参数")
 	public Map<String,Object> formatParams(Map<String,Object> params){
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = params;
-		ExcelReader excel = new ExcelReader(src);
+		ExcelReader excel = new ExcelReader();
 		String apply_scope = paramMap.get("apply_scope").toString();
 		List<Object> list = excel.getList(apply_scope);
 		
@@ -172,7 +169,7 @@ public class Attendance {
 		Response response = http.request(map);
 		String body = http.getBody(response);
 		//处理response
-		ExcelReader excel = new ExcelReader(src);
+		ExcelReader excel = new ExcelReader();
 		JSONObject jsonObj = new JSONObject(body);
 		JSONArray jsonArr = jsonObj.getJSONArray("items");
 		List<Map<String,Object>> list = new ArrayList<>();

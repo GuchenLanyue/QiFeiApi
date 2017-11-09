@@ -21,10 +21,19 @@ public class Auth {
 	public Auth(String basePath) {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
+		TxtData txt = new TxtData();
+		platform = txt.readTxtFile(System.getProperty("user.dir")+"/sources/config/platform.txt");
 	}
 	
+	public Auth(String basePath,String platform) {
+		// TODO Auto-generated constructor stub
+		this.basePath = basePath;
+		this.platform = platform;
+	}
+	
+	private String platform = "";
 	private String basePath = null;
-	private String file = System.getProperty("user.dir")+"/sources/config/user.json";
+	private String file = System.getProperty("user.dir")+"/sources/config" + platform +"/user.json";
 	private String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 	
 	@Step("tokens() 登录-获取Token")

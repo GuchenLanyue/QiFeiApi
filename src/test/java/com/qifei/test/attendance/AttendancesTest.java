@@ -14,7 +14,7 @@ public class AttendancesTest extends BaseTest {
 	
 	@Test(dataProvider="SingleCase",description="内勤打卡")
 	public void attendance_In_Test(Map<String, Object> params){
-		Attendance attendance = new Attendance(getBasePath(),getSrcDir());
+		Attendance attendance = new Attendance(basePath);
 		String uuid = attendance.getLocationID();
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = params;
@@ -23,13 +23,13 @@ public class AttendancesTest extends BaseTest {
 		
 		setRequest("AttendanceIn", paramMap);
 		Map<String, Object> location = attendance.getLocation(uuid);
-		Map<String, Object> expected = getExpectedMap();
+		Map<String, Object> expected = expectedMap;
 		for(String key:expected.keySet()){
 			if(location.containsKey(key)){
 				expected.put(key, location.get(key));
 			}
 		}
-		String body = getBodyStr();
+		String body = bodyStr;
 		JsonPath jsonPath = JsonPath.with(body);
 		
 		String time = jsonPath.getString("updated_at");
@@ -43,8 +43,8 @@ public class AttendancesTest extends BaseTest {
 	@Test(dataProvider="SingleCase",description="外勤打卡")
 	public void attendance_Out_Test(Map<String, Object> params){
 		setRequest("AttendanceOut", params);
-		checkResponse(getExpectedMap());
-		Attendance attendance = new Attendance(getBasePath(),getSrcDir());
+		checkResponse(expectedMap);
+		Attendance attendance = new Attendance(basePath);
 		attendance.daily_statistic();
 	}
 }

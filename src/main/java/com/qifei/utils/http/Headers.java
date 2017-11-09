@@ -18,7 +18,6 @@ public class Headers {
 	
 	private String basePath = null;
 	private String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
-
 	public String getAuthorization(){
 		File file = new File(tokenFile);
 		if(!file.exists()){

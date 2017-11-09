@@ -8,8 +8,7 @@ import org.testng.annotations.Test;
 
 import com.qifei.apis.Members;
 import com.qifei.apis.Organization;
-import com.qifei.utils.ExcelReader;
-import com.qifei.utils.JsonUtils;
+
 import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
 
@@ -22,7 +21,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		if(caseName.equals("purchase_2")){
 			System.out.println(caseName);
@@ -30,7 +29,7 @@ public class ProcessTest extends BaseTest {
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -42,11 +41,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"\\temp\\"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -55,13 +54,13 @@ public class ProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
 	public void DeleteOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(getBasePath());
+		Organization organization = new Organization(basePath);
 		organization.deleteOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 	}
 	
 	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
 	public void getOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(getBasePath());
+		Organization organization = new Organization(basePath);
 		//设置部门
 		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 		String organizationStr = "";
@@ -71,7 +70,7 @@ public class ProcessTest extends BaseTest {
 		}
 		//写入txt
 		TxtData txt = new TxtData();
-		String organizationFile = getSrcDir()+"/temp/"+params.get("organization_Name").toString()+".txt";
+		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 		
 		txt.writerText(organizationFile, organizationStr);
@@ -86,7 +85,7 @@ public class ProcessTest extends BaseTest {
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-		String positionFile = getSrcDir()+"/temp/"+params.get("position_Name").toString()+".txt";
+		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
 		txt.writerText(positionFile, positionID);
 	}
 	
@@ -96,11 +95,11 @@ public class ProcessTest extends BaseTest {
 		String caseID = paramMap.get("CaseID").toString();
 		paramMap.remove("CaseID");
 		//新增员工
-		Members member = new Members(getBasePath());
+		Members member = new Members(basePath);
 		String body = member.addMember(paramMap);
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+caseID+".txt";
+		String filename = srcDir+"/temp/"+caseID+".txt";
 		txt.writerText(filename, body);
 		//验证结果
 		member.checkResponse(body);
@@ -117,13 +116,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
 
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -135,11 +134,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -152,12 +151,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -169,11 +168,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -186,12 +185,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -203,11 +202,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -226,12 +225,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -243,11 +242,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"\\temp\\"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -260,12 +259,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -277,11 +276,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"\\temp\\"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -294,12 +293,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -311,11 +310,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"\\temp\\"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"\\temp\\"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -328,13 +327,13 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -346,11 +345,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -363,13 +362,13 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -381,11 +380,11 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -398,12 +397,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -415,11 +414,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -432,12 +431,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -449,11 +448,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -466,12 +465,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -483,11 +482,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -500,12 +499,12 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -517,11 +516,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -534,18 +533,18 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		if(caseName.equals("TransferIn_1")){
 			System.out.println("TransferIn_1");
 		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -557,11 +556,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -574,18 +573,18 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		if(caseName.equals("TransferIn_1")){
 			System.out.println("TransferIn_1");
 		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -597,11 +596,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
@@ -614,18 +613,18 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = getSrcDir()+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		if(caseName.equals("TransferIn_1")){
 			System.out.println("TransferIn_1");
 		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
-		while (checkResponse(getExpectedMap())&&time<15000) {
+		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -637,11 +636,11 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = getSrcDir()+"/temp/"+api+".txt";
-		txt.writerText(filename, getBodyStr());
+		filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(getBodyStr());
+			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);

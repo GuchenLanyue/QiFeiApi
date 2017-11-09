@@ -11,14 +11,14 @@ public class LocationsTest extends BaseTest {
 	@Test(dataProvider="SingleCase",description="新增打卡地点")
 	public void add_Locations_Test(Map<String, Object> params){
 		setRequest("addLocations", params);
-		Map<String, Object> expected = getExpectedMap();
+		Map<String, Object> expected = expectedMap;
 		checkResponse(expected);
 	}
 	
 	@Test(dataProvider="SingleCase",description="更新打卡地点")
 	public void modify_Locations_Test(Map<String, Object> params){
 		setRequest("modifyLocations", params);
-		Map<String, Object> expected = getExpectedMap();
+		Map<String, Object> expected = expectedMap;
 		checkResponse(expected);
 	}
 	

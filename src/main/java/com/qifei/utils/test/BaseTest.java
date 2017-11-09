@@ -29,15 +29,16 @@ import org.testng.ITestContext;
 import org.testng.annotations.AfterTest;
 
 public class BaseTest {
-	private String srcDir = null;
-	private String method = null;
-	private String bodyStr = null;
-	private Response response = null;
-	private String expectedJson = null;
-	private String basePath = null;
-	private String caseName = null;
-	private String filePath = null;
-	private Map<String, Object> expectedMap = new HashMap<>();
+	protected String srcDir = null;
+	protected String method = null;
+	protected String bodyStr = null;
+	protected Response response = null;
+	protected String expectedJson = null;
+	protected String basePath = null;
+	protected String platform = null;
+	protected String caseName = null;
+	protected String filePath = null;
+	protected Map<String, Object> expectedMap = new HashMap<>();
 	
 	public void setSrcDir(ITestContext context){
 		srcDir = System.getProperty("user.dir")+context.getCurrentXmlTest().getParameter("sourcesDir");
@@ -47,32 +48,8 @@ public class BaseTest {
 		basePath = context.getCurrentXmlTest().getParameter("basePath");
 	}
 	
-	public String getFilePath(){
-		return filePath;
-	}
-	
-	public String getSrcDir(){
-		return srcDir;
-	}
-	
-	public String getBasePath(){
-		return basePath;
-	}
-	
-	public String getBodyStr(){
-		return bodyStr;
-	}
-	
-	public Response getResponse(){
-		return response;
-	}
-	
-	public String getExpectedJson(){
-		return expectedJson;
-	}
-	
-	public Map<String, Object> getExpectedMap(){
-		return expectedMap;
+	public void setPlatform(ITestContext context){
+		platform = context.getCurrentXmlTest().getParameter("platform");
 	}
 	
 	@BeforeTest
@@ -80,6 +57,7 @@ public class BaseTest {
 		System.out.println(context.getName()+" Start!");
 		setSrcDir(context);
 		setbasePath(context);
+		setPlatform(context);
 	}
 	
 	@DataProvider(name = "CaseList")
@@ -87,10 +65,10 @@ public class BaseTest {
 		String methodName = testMethod.getName();
 		String[] caseStr = methodName.split("_");
 		method = caseStr[caseStr.length-2];
-		filePath = getSrcDir()+"/case/"+method+".xlsx";
+		filePath = srcDir+"/case/"+method+".xlsx";
 		
 		String sheetName = caseStr[caseStr.length-3];
-		ExcelReader excel = new ExcelReader(getSrcDir());
+		ExcelReader excel = new ExcelReader(srcDir,platform);
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
 		List<Object[]> test_IDs = new ArrayList<Object[]>();
 
@@ -106,9 +84,9 @@ public class BaseTest {
 		String methodName = testMethod.getName();
 		String[] caseStr = methodName.split("_");
 		method = caseStr[caseStr.length-2];
-		filePath = getSrcDir()+"/case/"+method+".xlsx";
+		filePath = srcDir+"/case/"+method+".xlsx";
 		String sheetName = "Params";
-		ExcelReader excel = new ExcelReader(getSrcDir());
+		ExcelReader excel = new ExcelReader(srcDir,platform);
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
 		List<Object[]> test_IDs = new ArrayList<Object[]>();
 		for (Map<String, Object> params:caseList) {
@@ -120,7 +98,7 @@ public class BaseTest {
 	
 	@Step
 	public void setRequest(String api,Map<String, Object> paramMap) {
-		Parameter parameter = new Parameter(getSrcDir());
+		Parameter parameter = new Parameter(srcDir , platform);
 		//设置请求类型，请求路径等基本数据
 		Map<String, Object> baseMap = parameter.setUrlData(api,filePath);
 		baseMap.put("basePath", basePath);
@@ -146,17 +124,6 @@ public class BaseTest {
 			expectedMap.remove("CaseID");
 		}
 		
-		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
-//		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
-//		JsonUtils jsonUtil = new JsonUtils();
-//		if(new File(jsonFile).exists()){
-//			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
-//		}else{
-//			paramMap = jsonUtil.formatMap(paramMap);
-//		}
-		
-//		expectedMap = jsonUtil.formatMap(expectedMap);
-		
 		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
 		Headers header = new Headers(basePath);
@@ -177,7 +144,7 @@ public class BaseTest {
 	@Step
 	public void setRequest(String api,String filePath, String caseName) {
 		this.filePath = filePath;
-		Parameter parameter = new Parameter(getSrcDir());
+		Parameter parameter = new Parameter(srcDir,platform);
 		//获取请求路径，请求类型等基本信息
 		Map<String, Object> baseMap = parameter.setUrlData(api, filePath);
 		baseMap.put("basePath", baseMap.get("BasePath").toString());
@@ -194,7 +161,7 @@ public class BaseTest {
 			if(pathParamStr.contains("${")){
 				String jsonFile = pathParamStr.substring(pathParamStr.indexOf("{")+1, pathParamStr.indexOf("."));
 				String paramPath = pathParamStr.substring(pathParamStr.indexOf(".")+1, pathParamStr.indexOf("}"));
-				jsonFile = getSrcDir()+"\\temp\\"+jsonFile+".txt";
+				jsonFile = srcDir+"/temp/"+jsonFile+".txt";
 				TxtData txt = new TxtData();
 				String jsonStr = txt.readTxtFile(jsonFile);
 				JsonPath jsonPath = JsonPath.with(jsonStr);
@@ -202,8 +169,8 @@ public class BaseTest {
 			}
 			
 			pathParamMap.put(pathParam, pathParamStr);
-			paramMap.remove(pathParam);
 		}
+		
 		//为caseName赋值，并将CaseID从参数值Map中删除。
 		if (paramMap.containsKey("CaseID")) {
 			caseName = paramMap.get("CaseID").toString();
@@ -215,18 +182,7 @@ public class BaseTest {
 		if(expectedMap.containsKey("CaseID")){
 			expectedMap.remove("CaseID");
 		}
-		
-		//Excel读取的所有数据都是double类型，服务器端会对数据类型经行验证，需要做下处理。
-//		JsonUtils jsonUtil = new JsonUtils();
-//		String jsonFile = getSrcDir()+"\\case\\"+api+".json";
-//		File jFile = new File(jsonFile);
-//		if(jFile.exists()){
-//			paramMap = jsonUtil.formatMap(jsonFile,paramMap);
-//		}else{
-//			paramMap = jsonUtil.formatMap(paramMap);
-//		}
-//		
-//		expectedMap = jsonUtil.formatMap(expectedMap);
+
 		//设置header
 		Map<String, Object> headerMap = new HashMap<>();
 		Headers header = new Headers(basePath);
@@ -246,7 +202,7 @@ public class BaseTest {
 	@Step("checkResponse() 校验response")
 	public boolean checkResponse(Map<String, Object> expected) {
 		boolean isContinue = false;
-		String response = getBodyStr();
+		String response = bodyStr;
 		JSONObject responseObj = new JSONObject();
 		JSONObject expections = new JSONObject(expected);
 		if(response.startsWith("{")){
@@ -274,7 +230,7 @@ public class BaseTest {
 	
 	@AfterTest
 	public void AfterTest(ITestContext context) {
-		File file = new File(getSrcDir()+"/temp/access_token.txt");
+		File file = new File(bodyStr+"/temp/access_token.txt");
 		if(file.exists()&&file.isFile()){
 			file.delete();
 		}

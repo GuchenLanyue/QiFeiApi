@@ -25,15 +25,17 @@ import io.qameta.allure.Allure;
 import io.restassured.path.json.JsonPath;
 
 public class ExcelReader {
-	private HashMap<String, Object> map = null;
+	private HashMap<String, Object> map = new HashMap<>();
 	private String src = "";
-//	public ExcelReader() {
-//		// TODO Auto-generated constructor stub
-//	}
+	private String platform = "";
+	public ExcelReader() {
+		// TODO Auto-generated constructor stub
+	}
 
-	public ExcelReader(String src) {
+	public ExcelReader(String src,String platform) {
 		// TODO Auto-generated constructor stub
 		this.src = src;
+		this.platform = platform;
 	}
 	
 	/**
@@ -290,7 +292,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/"+fileName+".xlsx";
+			fileName = src + "/config" + platform + "/" +fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
@@ -325,7 +327,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/"+fileName+".xlsx";
+			fileName = src + "/config" + platform + "/" +fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
@@ -426,7 +428,7 @@ public class ExcelReader {
 	
 	public static void main(String[] args) {
 		String src = System.getProperty("user.dir")+"/sources";
-		ExcelReader excel = new ExcelReader(src);
+		ExcelReader excel = new ExcelReader(src,"release");
 		String fileName = src + "/case/ApprovalTypes.xlsx"; 
 		String sheetName = "Params";
 		String caseName = "trip_2";
