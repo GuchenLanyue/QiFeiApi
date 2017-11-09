@@ -20,7 +20,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -160,31 +159,26 @@ public class BaseTest {
 
 		if(baseMap.get("Path").toString().contains("{Date_today}")){
 			String path = baseMap.get("Path").toString();
-			DateUtils dateUtils = new DateUtils();
-			String date = dateUtils.getToday();
-			int beginIndex = path.indexOf("{Date_today}");
-			int endIndex = path.indexOf("}",beginIndex);
-			path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
-			baseMap.put("Path", path);
-		}else if(baseMap.get("Path").toString().contains("{Date_tomorrow}")){
-			DateUtils dateUtils = new DateUtils();
-			String date = dateUtils.getTomorrow();
-			pathParamMap.put("Date", date);
-		}if(baseMap.get("Path").toString().contains("{")){
-			String path = baseMap.get("Path").toString();
-			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
-			String pathParamStr = paramMap.get(pathParam).toString();
-			if(pathParamStr.contains("${")){
-				String jsonFile = pathParamStr.substring(pathParamStr.indexOf("{")+1, pathParamStr.indexOf("."));
-				String paramPath = pathParamStr.substring(pathParamStr.indexOf(".")+1, pathParamStr.indexOf("}"));
-				jsonFile = srcDir+"/temp/"+jsonFile+".txt";
-				TxtData txt = new TxtData();
-				String jsonStr = txt.readTxtFile(jsonFile);
-				JsonPath jsonPath = JsonPath.with(jsonStr);
-				pathParamStr = jsonPath.getString(paramPath);
+			while (path.contains("{Date_today}")) {
+				DateUtils dateUtils = new DateUtils();
+				String date = dateUtils.getToday();
+				int beginIndex = path.indexOf("{Date_today}");
+				int endIndex = path.indexOf("}",beginIndex);
+				path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
+				baseMap.put("Path", path);
 			}
-			
-			pathParamMap.put(pathParam, pathParamStr);
+		}else if(baseMap.get("Path").toString().contains("{Date_tomorrow}")){
+			String path = baseMap.get("Path").toString();
+			while (path.contains("{Date_tomorrow}")) {
+				DateUtils dateUtils = new DateUtils();
+				String date = dateUtils.getToday();
+				int beginIndex = path.indexOf("{Date_tomorrow}");
+				int endIndex = path.indexOf("}",beginIndex);
+				path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
+				baseMap.put("Path", path);
+			}
+		}if(baseMap.get("Path").toString().contains("{")){			
+			pathParamMap = setPathParamters(baseMap, pathParamMap);
 		}
 		
 		//为caseName赋值，并将CaseID从参数值Map中删除。
@@ -232,6 +226,21 @@ public class BaseTest {
 		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
 		
 		return isContinue;
+	}
+	
+	public Map<String, Object> setPathParamters(Map<String, Object> baseMap,Map<String, Object> paramMap){
+		String path = baseMap.get("Path").toString();
+		Map<String, Object> pathParamMap = new HashMap<>();
+		while (path.contains("{")) {
+			int beginIndex = path.indexOf("{");
+			int endIndex = path.indexOf("}",beginIndex);
+			
+			String pathParam = path.substring(beginIndex+1, endIndex);
+			String pathParamStr = paramMap.get(pathParam).toString();
+			pathParamMap.put(pathParam, pathParamStr);
+		}
+		
+		return pathParamMap;
 	}
 	
 	@Attachment(value = "Response.Body",type = "String")

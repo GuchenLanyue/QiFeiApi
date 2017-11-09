@@ -115,7 +115,7 @@ public class ExcelReader {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		File f = new File(fileName);
 		if (!f.exists()) {
-			Assert.fail("File not found ：" + fileName);
+			Assert.fail("File not found :" + fileName);
 		}
 
 		try {
@@ -266,17 +266,26 @@ public class ExcelReader {
 		while(str1.contains("${")){
 			int startIndex = str1.indexOf("${");
 			int beginIndex = str1.indexOf("{",startIndex);
-			int splitCharIndex = str1.indexOf(".",startIndex);
 			int endIndex = str1.indexOf("}",startIndex);
 			
-			String fileName = str1.substring(beginIndex+1,splitCharIndex);
-			String paramter = str1.substring(splitCharIndex+1,endIndex);
-			
-			TxtData txt = new TxtData();
-			String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
-			JsonPath json = JsonPath.with(body);
-			
-			String value = json.getString(paramter);
+			String fileName = "";
+			String paramter = "";
+			String value = "";
+			if(str1.contains(".")){
+				int splitCharIndex = str1.indexOf(".",startIndex);
+				fileName = str1.substring(beginIndex+1,splitCharIndex);
+				paramter = str1.substring(splitCharIndex+1,endIndex);
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JsonPath json = JsonPath.with(body);
+				value = json.getString(paramter);
+			}else{
+				fileName = str1.substring(beginIndex+1,endIndex);
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JSONObject object = new JSONObject(body);
+				value = object.toString();
+			}
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
 		}
 		
@@ -429,9 +438,9 @@ public class ExcelReader {
 	public static void main(String[] args) {
 		String src = System.getProperty("user.dir")+"/sources";
 		ExcelReader excel = new ExcelReader(src,"release");
-		String fileName = src + "/case/ApprovalTypes.xlsx"; 
-		String sheetName = "Params";
-		String caseName = "trip_2";
+		String fileName = "C:/Users/sam/Desktop/Approval.xlsx"; 
+		String sheetName = "Expectations";
+		String caseName = "Approval_1";
 		Map<String, Object> map = excel.mapFromSheet(fileName, sheetName, caseName);
 		for(String key:map.keySet()){
 			System.out.println(key);
