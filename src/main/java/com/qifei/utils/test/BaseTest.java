@@ -178,7 +178,7 @@ public class BaseTest {
 				baseMap.put("Path", path);
 			}
 		}if(baseMap.get("Path").toString().contains("{")){			
-			pathParamMap = setPathParamters(baseMap, pathParamMap);
+			pathParamMap = setPathParamters(baseMap, paramMap);
 		}
 		
 		//为caseName赋值，并将CaseID从参数值Map中删除。
