@@ -6,6 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import com.qifei.apis.Attendance;
 import com.qifei.apis.Members;
 import com.qifei.apis.Organization;
 
@@ -645,5 +646,57 @@ public class ProcessTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
+	}
+	
+	@Test(dataProvider = "CaseList", description= "考勤流程冒烟测试")
+	public void Attendance_Smoke_Test(Map<String, Object> baseData) {
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+
+		String api = baseData.get("API").toString();
+		long time1 = 15000;
+		if(api.equals("AttendanceStatisticsAPP")|| api.equals("AttendanceStatisticsPC")){
+			try{
+				Thread.sleep(time1);
+			}catch (InterruptedException e){
+				e.printStackTrace();
+			}
+		}
+
+		//删除已有的班次列表
+		if(api.equals("addLocations")){
+			Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
+			attendance.deleteAllSchedules();
+		}
+
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+
+		long time = 5000;
+		while (checkResponse(expectedMap)&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+
+		TxtData txt = new TxtData();
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
+
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(bodyStr);
+			String authorization = "Bearer " + body.getString("access_token");
+			System.out.println(authorization);
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+
 	}
 }

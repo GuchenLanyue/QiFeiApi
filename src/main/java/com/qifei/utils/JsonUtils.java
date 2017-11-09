@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class JsonUtils {
 			return JsonPath.with(br);
 			
 		}else{
-			Assert.fail("文件"+jsonFile+"不存在！");
+			Assert.fail("File not found:"+jsonFile);
 			
 			return null;
 		}
@@ -140,6 +141,7 @@ public class JsonUtils {
 	public boolean compareJSONObject(JSONObject response,JSONObject expections){
 		boolean isContinue = false;
 		for(String key:expections.keySet()){
+			
 			if(expections.get(key) instanceof JSONObject){
 				if(response.get(key).toString().equals("{}")){
 					Assert.assertEquals(response.get(key).toString(), expections.get(key).toString());
@@ -174,6 +176,18 @@ public class JsonUtils {
 					if (isContinue) {
 						return isContinue;
 					}
+				}else if(str2.startsWith("?item[0]")){
+					int startIndex = str2.indexOf("?item[0]");
+					int beginIndex = str2.indexOf("]",startIndex);
+					int index0 = str2.indexOf("[",startIndex);
+					int index1 = str2.indexOf("]",startIndex);
+					
+					String indexStr = str2.substring(index0+1,index1);
+					str2 = str2.substring(beginIndex+1,str2.length());
+					JSONArray array1 = new JSONArray(str1);
+
+					int index = Integer.parseInt(indexStr);
+					str1 = array1.get(index).toString();
 				}
 				Assert.assertEquals(str1,str2,key);
 			}
@@ -187,5 +201,19 @@ public class JsonUtils {
 		for(String key:expected.keySet()){
 			Assert.assertEquals(response.get(key), expected.get(key),key);
 		}
+	}
+	
+	public static void main(String[] args) {
+		String file1 = "C:/Users/sam/Desktop/new1.txt";
+		String file2 = "C:/Users/sam/Desktop/Approval.xlsx";
+		TxtData txt = new TxtData();
+		JSONObject obj1 = new JSONObject(txt.readTxtFile(file1));
+		ExcelReader excel = new ExcelReader();
+		Map<String, Object> map = new HashMap<>();
+		map = excel.mapFromSheet(file2, "Expectations", "Approval_1");
+		map.remove("CaseID");
+		JSONObject obj2 = new JSONObject(map);
+		JsonUtils jsonUtils = new JsonUtils();
+		jsonUtils.compareJSONObject(obj1, obj2);
 	}
 }

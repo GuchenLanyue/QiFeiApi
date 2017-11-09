@@ -18,9 +18,6 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class Attendance {
-	
-	private String basePath = "";
-	
 	public Attendance() {
 		// TODO Auto-generated constructor stub
 	}
@@ -29,6 +26,8 @@ public class Attendance {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
 	}
+	
+	private String basePath = null;
 	
 	@Step("setParams() 设置打卡地点参数")
 	public Map<String,Object> formatParams(Map<String,Object> params){
@@ -148,6 +147,37 @@ public class Attendance {
 		HttpMethods http = new HttpMethods(basePath);
 		http.request(map);
 	}
+
+	@Step("deleteLocations() 删除打卡地点 ")
+	public void deleteSchedules(String id){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path", "/attendance/v1/attendance/settings/"+id);
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "DELETE");
+		//设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+
+		Map<String, Map<String,Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+
+		HttpMethods http = new HttpMethods(basePath);
+		http.request(map);
+	}
+
+	@Step("deleteLocations() 删除打卡地点 ")
+	public void deleteAllSchedules(){
+		List<String> schedules = new ArrayList<>();
+		schedules = getScheduleIDs();
+		if(schedules!=null){
+			for(String id:schedules){
+				deleteSchedules(id);
+			}
+		}
+	}
+
 	
 
 	@Step("getLocations() 获取打卡地点列表")
@@ -204,7 +234,31 @@ public class Attendance {
 		
 		return json.getList("items.uuid");
 	}
-	
+
+	@Step("getSchedules() 获取所有班次列表")
+	public List<String> getScheduleIDs(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("Path","/attendance/v1/attendance/settings");
+	//	baseMap.put("basepath","http://console.t.upvi.com/bapi");
+		baseMap.put("contentType","application/json");
+		baseMap.put("Method","GET");
+
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String,Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+		JsonPath json = JsonPath.with(body);
+		
+		return json.getList("items.id");
+	}
+
 	@Step("getLocation() 获取打卡地点信息")
 	public Map<String, Object> getLocation(String uuid){
 		List<Map<String, Object>> locations = getLocations();
@@ -284,6 +338,7 @@ public class Attendance {
 		HttpMethods http = new HttpMethods(basePath);
 		http.request(map);
 	}
+
 	
 	@Step("daily_statistic()")
 	public void daily_statistic(){
@@ -306,11 +361,11 @@ public class Attendance {
 	}
 	
 	public static void main(String[] args) {
-//		Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
+		Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
 		//新增打卡地点
 //		attendance.addLocations();
 		//获取打卡地点列表
-//		List<String> locations = attendance.getLocationIDs();
+		List<String> locations = attendance.getLocationIDs();
 //		int size = locations.size();
 //		Random random = new Random();
 //		int index = random.nextInt(size);
@@ -322,10 +377,15 @@ public class Attendance {
 //			System.out.println(key+":"+location.get(key));
 //		}
 		
-//		//删除打卡地点
-//		for(String uuid:locations){
-//			attendance.deleteLocations(uuid);
-//		}
+		//删除打卡地点
+		for(String uuid:locations){
+			attendance.deleteLocations(uuid);
+		}
 //		attendance.addLocations();
+
+		List<String> schedules = attendance.getScheduleIDs();
+		for(String id:schedules){
+			attendance.deleteSchedules(id);
+		}
 	}
 }

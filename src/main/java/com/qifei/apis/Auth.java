@@ -32,8 +32,7 @@ public class Auth {
 	}
 	
 	private String platform = "";
-	private String basePath = null;
-	private String file = System.getProperty("user.dir")+"/sources/config" + platform +"/user.json";
+	private String basePath = "";
 	private String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 	
 	@Step("tokens() 登录-获取Token")
@@ -42,9 +41,10 @@ public class Auth {
 		baseMap.put("Path", "/auth/v1/auth/tokens");
 		baseMap.put("contentType", ContentType.JSON);
 		baseMap.put("Method", "POST");
-
+		
 		//通过user.json文件读取登录信息
 		JsonUtils jsonUtil = new JsonUtils();
+		String file = System.getProperty("user.dir")+"/sources/config/" + platform +"/user.json";
 		JsonPath user = jsonUtil.jsonReader(file);
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = user.getMap("user");

@@ -1,7 +1,10 @@
 package com.qifei.test.attendance;
 
+import java.util.List;
 import java.util.Map;
 
+
+import com.qifei.apis.Attendance;
 import org.testng.annotations.Test;
 
 import com.qifei.utils.test.BaseTest;
@@ -29,4 +32,22 @@ public class LocationsTest extends BaseTest {
 //		attendance.deleteLocations(uuid);
 		setRequest("deleteLocations", params);
 	}
+
+	@Test
+	public void testName() throws Exception {
+	}
+
+	@Test(description="删除打卡地点")
+	public void clearData_Test(Map<String, Object> params) {
+		Attendance attendance = new Attendance(basePath);
+		List<String> schedules = attendance.getScheduleIDs();
+		for(String id:schedules){
+			attendance.deleteSchedules(id);
+		}
+
+//		String uuid = attendance.getLocationID();
+//		attendance.deleteLocations(uuid);
+
+	}
+
 }
