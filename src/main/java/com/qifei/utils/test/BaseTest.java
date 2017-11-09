@@ -3,6 +3,7 @@ package com.qifei.utils.test;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 
+import com.qifei.utils.DateUtils;
 import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
 import com.qifei.utils.TxtData;
@@ -19,11 +20,13 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterTest;
@@ -147,14 +150,27 @@ public class BaseTest {
 		Parameter parameter = new Parameter(srcDir,platform);
 		//获取请求路径，请求类型等基本信息
 		Map<String, Object> baseMap = parameter.setUrlData(api, filePath);
-		baseMap.put("basePath", baseMap.get("BasePath").toString());
+//		baseMap.put("basePath", baseMap.get("BasePath").toString());
 		this.caseName = caseName;
 		
 		//获取参数值
 		Map<String, Object> paramMap = parameter.setParams(filePath, caseName);
 		//设置路径参数
 		Map<String, Object> pathParamMap = new HashMap<>();
-		if(baseMap.get("Path").toString().contains("{")){
+
+		if(baseMap.get("Path").toString().contains("{Date_today}")){
+			String path = baseMap.get("Path").toString();
+			DateUtils dateUtils = new DateUtils();
+			String date = dateUtils.getToday();
+			int beginIndex = path.indexOf("{Date_today}");
+			int endIndex = path.indexOf("}",beginIndex);
+			path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
+			baseMap.put("Path", path);
+		}else if(baseMap.get("Path").toString().contains("{Date_tomorrow}")){
+			DateUtils dateUtils = new DateUtils();
+			String date = dateUtils.getTomorrow();
+			pathParamMap.put("Date", date);
+		}if(baseMap.get("Path").toString().contains("{")){
 			String path = baseMap.get("Path").toString();
 			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
 			String pathParamStr = paramMap.get(pathParam).toString();
@@ -204,12 +220,15 @@ public class BaseTest {
 		boolean isContinue = false;
 		String response = bodyStr;
 		JSONObject responseObj = new JSONObject();
+		JSONArray responseArr = new JSONArray();
 		JSONObject expections = new JSONObject(expected);
+		JsonUtils jsonUtil = new JsonUtils();
 		if(response.startsWith("{")){
 			responseObj = new JSONObject(response);
+		}else if(response.startsWith("[")){
+			responseArr = new JSONArray(response);
 		}
 		
-		JsonUtils jsonUtil = new JsonUtils();
 		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
 		
 		return isContinue;
