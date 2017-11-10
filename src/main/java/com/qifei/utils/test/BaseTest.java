@@ -222,7 +222,6 @@ public class BaseTest {
 		}else if(response.startsWith("[")){
 			responseArr = new JSONArray(response);
 		}
-		
 		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
 		
 		return isContinue;

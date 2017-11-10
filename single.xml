@@ -6,7 +6,7 @@
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
-	
+	<!-- 
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Resign">
@@ -27,21 +27,23 @@
 			</class>
 		</classes>
 	</test>
-	
-	<!--  
+	-->
+	 
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Types">
-			    <include name="Types_Temp_Smoke_Test" />
+				<include name="getOrganizationByName_Test" />
+			    <include name="Materialget_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="Types_Temp_Smoke_Test" />
+					<include name="getOrganizationByName_Test" />
+					<include name="Materialget_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	-->
+	
 </suite>

@@ -289,6 +289,35 @@ public class ExcelReader {
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
 		}
 		
+		while(str1.contains("$Array{")){
+			int startIndex = str1.indexOf("$Array{");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+
+			int apiEndIndex = str1.indexOf("[",beginIndex);
+			int indexEnd = str1.indexOf("]",apiEndIndex);
+			int index = Integer.parseInt(str1.substring(apiEndIndex+1,indexEnd));
+			int splitCharIndex = str1.indexOf(".",indexEnd);
+			
+			String fileName = str1.substring(beginIndex+1,apiEndIndex);
+			String paramter = "";
+			String value = "";
+			if(str1.contains(".")){
+				paramter = str1.substring(splitCharIndex+1,endIndex);
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JSONArray array = new JSONArray(body);
+				JsonPath json = JsonPath.with(array.get(index).toString());
+				value = json.getString(paramter);
+			}else{
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JSONArray array = new JSONArray(body);
+				value = array.get(index).toString();
+			}
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+		}
+		
 		while(str1.contains("$csv{")){
 			int startIndex = str1.indexOf("$csv{");
 			int beginIndex = str1.indexOf("{",startIndex);

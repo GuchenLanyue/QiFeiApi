@@ -66,21 +66,6 @@
 		</classes>
 	</test>
 	
-	<test name="辞职_辞退" preserve-order="true">
-		<groups>
-			<define name="Offboard">
-				<include name="Offboard_Smoke_Test" />
-			</define>
-		</groups>
-		<classes>
-			<class name="com.qifei.test.ProcessTest">
-				<methods>
-					<include name="Offboard_Smoke_Test" />
-				</methods>
-			</class>
-		</classes>
-	</test>
-	
 	<test name="请假审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Leave">
@@ -261,7 +246,20 @@
 		</classes>
 	</test>
 	
-	
+	<test name="辞职_辞退" preserve-order="true">
+		<groups>
+			<define name="Offboard">
+				<include name="Offboard_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Offboard_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 	<!--  
 	<test name="审批流程设置" preserve-order="true">
 		<groups>
