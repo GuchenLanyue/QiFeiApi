@@ -24,9 +24,6 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("purchase_2")){
-			System.out.println(caseName);
-		}
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
@@ -157,6 +154,7 @@ public class ProcessTest extends BaseTest {
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
+		
 		while (checkResponse(expectedMap)&&time<15000) {
 			try {
 				Thread.sleep(time);
@@ -536,9 +534,6 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("TransferIn_1")){
-			System.out.println("TransferIn_1");
-		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+api+".txt";
@@ -576,9 +571,6 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("TransferIn_1")){
-			System.out.println("TransferIn_1");
-		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+api+".txt";
@@ -616,9 +608,6 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("TransferIn_1")){
-			System.out.println("TransferIn_1");
-		}
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+api+".txt";
@@ -693,7 +682,6 @@ public class ProcessTest extends BaseTest {
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			System.out.println(authorization);
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}

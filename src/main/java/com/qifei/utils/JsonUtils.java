@@ -165,31 +165,36 @@ public class JsonUtils {
 					return isContinue;
 				}
 			}else {
-				String str1 = response.get(key).toString();
-				String str2 = expections.get(key).toString();
-				if(str2.contains("?normal{")){
-					int startIndex = str2.indexOf("?normal{");
-					int beginIndex = str2.indexOf("{",startIndex);
-					int endIndex = str2.indexOf("}",beginIndex);
-					str2 = str2.substring(beginIndex+1,endIndex);
-					isContinue = !str1.equals(str2);
+				JsonPath actualJson = JsonPath.with(response.toString());
+
+				String actual = "";
+				if(actualJson.get(key)!=null){
+					actual = actualJson.get(key).toString();
+				}
+				String expected = expections.get(key).toString();
+				if(expected.contains("?normal{")){
+					int startIndex = expected.indexOf("?normal{");
+					int beginIndex = expected.indexOf("{",startIndex);
+					int endIndex = expected.indexOf("}",beginIndex);
+					expected = expected.substring(beginIndex+1,endIndex);
+					isContinue = !actual.equals(expected);
 					if (isContinue) {
 						return isContinue;
 					}
-				}else if(str2.startsWith("?item[0]")){
-					int startIndex = str2.indexOf("?item[0]");
-					int beginIndex = str2.indexOf("]",startIndex);
-					int index0 = str2.indexOf("[",startIndex);
-					int index1 = str2.indexOf("]",startIndex);
+				}else if(expected.startsWith("?item[0]")){
+					int startIndex = expected.indexOf("?item[0]");
+					int beginIndex = expected.indexOf("]",startIndex);
+					int index0 = expected.indexOf("[",startIndex);
+					int index1 = expected.indexOf("]",startIndex);
 					
-					String indexStr = str2.substring(index0+1,index1);
-					str2 = str2.substring(beginIndex+1,str2.length());
-					JSONArray array1 = new JSONArray(str1);
+					String indexStr = expected.substring(index0+1,index1);
+					expected = expected.substring(beginIndex+1,expected.length());
+					JSONArray array1 = new JSONArray(actual);
 
 					int index = Integer.parseInt(indexStr);
-					str1 = array1.get(index).toString();
+					actual = array1.get(index).toString();
 				}
-				Assert.assertEquals(str1,str2,key);
+				Assert.assertEquals(actual,expected,key);
 			}
 		}
 		
@@ -208,6 +213,15 @@ public class JsonUtils {
 		String file2 = "C:/Users/sam/Desktop/Approval.xlsx";
 		TxtData txt = new TxtData();
 		JSONObject obj1 = new JSONObject(txt.readTxtFile(file1));
+		JsonPath jsonPath = JsonPath.with(txt.readTxtFile(file1));
+		String str = "aaa{}bbb{}ccc{}";
+		int index = str.indexOf("{");
+		do {
+			System.out.println(index);
+			index = str.indexOf("{",index+1);
+		} while (index < str.lastIndexOf("{"));
+		System.out.println(index);
+		System.out.println(jsonPath.get("items[0].related_form_record_id").toString());
 		ExcelReader excel = new ExcelReader();
 		Map<String, Object> map = new HashMap<>();
 		map = excel.mapFromSheet(file2, "Expectations", "Approval_1");

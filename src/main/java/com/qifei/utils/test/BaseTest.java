@@ -234,7 +234,12 @@ public class BaseTest {
 
 		int beginIndex = path.indexOf("{");
 		int endIndex = path.indexOf("}",beginIndex);
-		
+		while (beginIndex < path.lastIndexOf("{")) {
+			String pathParam = path.substring(beginIndex+1, endIndex);
+			String pathParamStr = paramMap.get(pathParam).toString();
+			pathParamMap.put(pathParam, pathParamStr);
+		}
+		beginIndex = path.lastIndexOf("{");
 		String pathParam = path.substring(beginIndex+1, endIndex);
 		String pathParamStr = paramMap.get(pathParam).toString();
 		pathParamMap.put(pathParam, pathParamStr);
