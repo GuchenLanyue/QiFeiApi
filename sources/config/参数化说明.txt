@@ -1,0 +1,47 @@
+1.验证List中子元素中指定字段的值。
+如：需要验证以下Json中related_form_record_id的值，则将Excel的title的值设置为：items[0].related_form_record_id。
+{
+    "total_count": 12,
+    "items": [
+        {
+            "uuid": "10466b57-c52d-11e7-a3c1-5254001aba5d",
+            "created_at": "2017-11-09T17:05:00+08:00",
+            "updated_at": "2017-11-09T17:05:00+08:00",
+            "deleted_at": "0001-01-01T00:00:00Z",
+            "is_deleted": false,
+            "reshuffle_date": "2017-10-24T11:10:20+08:00",
+            "tenant_id": "00b19169-fc38-4e51-a99f-98f31ccaa46d",
+            "target_id": "b8a23753-0f75-11e7-9aa4-00163e007053",
+            "target_type": "employee",
+            "related_form_record_id": "081bb2e9-c52d-11e7-a3c1-5254001aba5d",
+            "related_form": "employee_adjust",
+            "content": "调动到organization_3部门position_3职位",
+            "operator_id": "",
+            "service_order_id": "",
+            "status": "finished",
+            "process_time": "2017-11-09T17:05:00+08:00"
+        },
+        {
+            "uuid": "34e4a2f8-bf7a-11e7-98c2-5254001aba5d",
+            "created_at": "2017-11-02T11:02:05+08:00",
+            "updated_at": "2017-11-02T11:02:05+08:00",
+            "deleted_at": "0001-01-01T00:00:00Z",
+            "is_deleted": false,
+            "reshuffle_date": "2017-10-24T11:10:20+08:00",
+            "tenant_id": "00b19169-fc38-4e51-a99f-98f31ccaa46d",
+            "target_id": "b8a23753-0f75-11e7-9aa4-00163e007053",
+            "target_type": "employee",
+            "related_form_record_id": "2dd9c3c6-bf7a-11e7-98c2-5254001aba5d",
+            "related_form": "employee_adjust",
+            "content": "调动到organization_3部门position_3职位",
+            "operator_id": "",
+            "service_order_id": "",
+            "status": "finished",
+            "process_time": "2017-11-02T11:02:05+08:00"
+        }
+    ]
+}
+2.获取某个接口response中指定字段的值。如需要用的Auth接口中返回的user_name,写法如下：${Auth.user_name}
+3.获取某个接口整个response。${Auth}
+4.获取Excel中配置的值${文件名.Sheet表名.CaseID.指定列Title}如：${data.Auth.user_10.user_name}
+5.是否等于某个接口response中指定字段的值，等于则正常执行，不等于则等待5秒之后再次请求，15之后依旧不相等则报错。?temp{Auth.user_name}}或?csv{data.Auth.user_10.user_name}
