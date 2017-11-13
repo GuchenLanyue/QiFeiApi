@@ -289,6 +289,66 @@ public class ExcelReader {
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
 		}
 		
+		while(str1.contains("$temp{")){
+			int startIndex = str1.indexOf("$temp{");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			String formulaStr = str1.substring(beginIndex+1,endIndex);
+			String[] formulaArr = formulaStr.split("\\?");
+			String[] exceptArr = formulaArr[0].split("\\.");
+			String[] formula = formulaArr[1].split("=");
+			String fileName = "";
+			String paramter = "";
+			String value = "";
+			
+			if(exceptArr.length==2){
+				fileName = exceptArr[0];
+				paramter = exceptArr[1];
+				
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JsonPath json = JsonPath.with(body);
+				JSONObject jsonObject = new JSONObject(body);
+				
+				List<Object> list = new ArrayList<>();
+				String exceptValue = formula[1].substring(1, formula[1].length()-1);
+				list = json.getList(paramter+"."+formula[0]);
+				int index = 0;
+				for(index = 0; index < list.size(); index ++ ){
+					if(list.get(index).equals(exceptValue)){
+						break;
+					}else{
+						continue;
+					}
+				}
+				JSONArray jsonArray = jsonObject.getJSONArray(paramter);
+				value = jsonArray.getJSONObject(index).toString();
+			}else{
+				fileName = exceptArr[0];
+				paramter = exceptArr[1];
+				
+				TxtData txt = new TxtData();
+				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				JsonPath json = JsonPath.with(body);
+				List<String> list = new ArrayList<>();
+				String exceptValue = formula[1].substring(1, formula[1].length()-1);
+				list = json.getList(paramter+"."+formula[0]);
+				int index = 0;
+				for(index = 0; index < list.size(); index ++ ){
+					if(list.get(index).equals(exceptValue)){
+						break;
+					}else{
+						continue;
+					}
+				}
+				paramter = exceptArr[1]+"["+index+"]."+formulaArr[0].substring(formulaArr[0].indexOf(exceptArr[2]), formulaArr[0].length());
+				value = json.get(paramter).toString();
+			}
+			
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+		}
+		
 		while(str1.contains("$Array{")){
 			int startIndex = str1.indexOf("$Array{");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -369,6 +429,46 @@ public class ExcelReader {
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.today}")){
+			int startIndex = str1.indexOf("{Date.today}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String today = date.getToday();
+			str1 = str1.substring(0,beginIndex)+today+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.tomorrow}")){
+			int startIndex = str1.indexOf("{Date.tomorrow}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String tomorrow = date.getTomorrow();
+			str1 = str1.substring(0,beginIndex)+tomorrow+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.LastMonth}")){
+			int startIndex = str1.indexOf("{Date.LastMonth}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getTheLastMonth();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.Month}")){
+			int startIndex = str1.indexOf("{Date.Month}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getMonth();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
 		if(str1.startsWith("{")){

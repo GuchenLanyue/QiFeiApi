@@ -24,6 +24,9 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
+		if(caseName.equals("Offboard_resign1")){
+			System.out.println(caseName);
+		}
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;
@@ -85,6 +88,15 @@ public class ProcessTest extends BaseTest {
 		//写入txt
 		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
 		txt.writerText(positionFile, positionID);
+	}
+	
+	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
+	public void allTypes_Test(Map<String, Object> params){		
+		setRequest("approvalTypes", params);
+		//写入txt
+		TxtData txt = new TxtData();
+		String positionFile = srcDir+"/temp/AllTypes.txt";
+		txt.writerText(positionFile, bodyStr);
 	}
 	
 	@Test(dataProvider="SingleCase",description="新增员工")
@@ -662,7 +674,18 @@ public class ProcessTest extends BaseTest {
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-
+		
+		TxtData txt = new TxtData();
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
+		if(caseName.equals("Locations_Add_01")){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		long time = 5000;
 		while (checkResponse(expectedMap)&&time<15000) {
 			try {
@@ -674,11 +697,9 @@ public class ProcessTest extends BaseTest {
 			setRequest(api,filePath,caseName);
 			time += 5000;
 		}
-
-		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		
 		txt.writerText(filename, bodyStr);
-
+		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");

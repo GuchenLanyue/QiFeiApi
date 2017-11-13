@@ -164,12 +164,10 @@ public class JsonUtils {
 				if (isContinue) {
 					return isContinue;
 				}
-			}else {
-				JsonPath actualJson = JsonPath.with(response.toString());
-
+			}else {				
 				String actual = "";
-				if(actualJson.get(key)!=null){
-					actual = actualJson.get(key).toString();
+				if(response.get(key)!=null){
+					actual = response.get(key).toString();
 				}
 				String expected = expections.get(key).toString();
 				if(expected.contains("?normal{")){

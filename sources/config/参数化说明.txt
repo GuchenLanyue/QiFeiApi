@@ -43,7 +43,7 @@
 }
 2.获取某个接口response中指定字段的值。如需要用的Auth接口中返回的user_name,写法如下：${Auth.user_name}
 3.获取某个接口整个response。${Auth}
-4.获取Excel中配置的值${文件名.Sheet表名.CaseID.指定列Title}如：${data.Auth.user_10.user_name}
+4.获取Excel中配置的值${文件名.Sheet表名.CaseID.指定列Title}如：$csv{data.Auth.user_10.user_name}
 5.是否等于某个接口response中指定字段的值，等于则正常执行，不等于则等待5秒之后再次请求，15之后依旧不相等则报错。?temp{Auth.user_name}}或?csv{data.Auth.user_10.user_name}
 6.获取某个接口response（该字段直接返回一个List）中指定字段的值，$Array{Auth[0].key1}获取的值为："value1"；$Array{Auth[0]}获取的值为：{key1=value1, key2=value2};
 [
@@ -56,3 +56,4 @@
         "key2": "value4"
     }
 ]
+7.通过同路径下其他字段的值获取某个接口response（该字段直接返回一个List）中指定字段的值。如：通过AllTypes.items.name='通用审批'来获取AllTypes.items.uuid的值。$temp{AllTypes.items.uuid?name='通用审批'}。

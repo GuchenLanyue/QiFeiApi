@@ -32,15 +32,13 @@
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Types">
-				<include name="getOrganizationByName_Test" />
-			    <include name="Materialget_Smoke_Test" />
+				<include name="allTypes_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="getOrganizationByName_Test" />
-					<include name="Materialget_Smoke_Test" />
+					<include name="allTypes_Test" />
 				</methods>
 			</class>
 		</classes>
