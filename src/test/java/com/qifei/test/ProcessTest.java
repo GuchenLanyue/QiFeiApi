@@ -24,9 +24,7 @@ public class ProcessTest extends BaseTest {
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
-		if(caseName.equals("Offboard_resign1")){
-			System.out.println(caseName);
-		}
+
 		setRequest(api,filePath,caseName);
 		
 		long time = 5000;

@@ -36,6 +36,21 @@
 		</classes>
 	</test>
 	
+	<test name="获取审批类型列表" preserve-order="true">
+		<groups>
+			<define name="AllTypes">
+				<include name="allTypes_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="allTypes_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
 	<test name="转正" preserve-order="true">
 		<groups>
 			<define name="Join_Formal">

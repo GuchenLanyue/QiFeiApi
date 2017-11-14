@@ -159,37 +159,33 @@ public class ExcelReader {
 		return map;
 	}
 
-	@SuppressWarnings("deprecation")
 	public Object getCell(Cell cell) {
-		// DecimalFormat df = new DecimalFormat("#");
-		if (cell != null){	
-			switch (cell.getCellType()) {
-			case Cell.CELL_TYPE_NUMERIC:
+		// DecimalFormat df = new DecimalFormat("#");		
+		switch (cell.getCellTypeEnum()) {
+			case _NONE:
+				return "";
+			case NUMERIC:
 				if (HSSFDateUtil.isCellDateFormatted(cell)) {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
 				}
-				// return df.format(cell.getNumericCellValue());
 				return cell.getNumericCellValue();
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				// System.out.println(cell.getStringCellValue());
 				return replace(cell.getStringCellValue());
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				return cell.getCellFormula();
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return "";
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				return cell.getBooleanCellValue() + "";
-			case Cell.CELL_TYPE_ERROR:
+			case ERROR:
 				return cell.getErrorCellValue() + "";
 			default:
 				return "";
-			}
-		}else{
-			return "";
 		}
 	}
-
+	
 	/**
 	 * 获取指定行的数据
 	 * 

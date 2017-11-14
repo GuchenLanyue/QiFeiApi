@@ -29,16 +29,16 @@
 	</test>
 	-->
 	 
-	<test name="加班审批流程测试" preserve-order="true">
+	<test name="请假审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Types">
-				<include name="allTypes_Test" />
+			<define name="Leave">
+				<include name="Leave_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="allTypes_Test" />
+					<include name="Leave_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>

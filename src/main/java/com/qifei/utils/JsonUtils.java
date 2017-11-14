@@ -164,10 +164,15 @@ public class JsonUtils {
 				if (isContinue) {
 					return isContinue;
 				}
+			}else if(expections.get(key) instanceof Double){
+				Double expected = Double.parseDouble(expections.get(key).toString());
+				Double actual = Double.parseDouble(response.get(key).toString());
+				Assert.assertEquals(actual,expected,key);
 			}else {				
 				String actual = "";
-				if(response.get(key)!=null){
-					actual = response.get(key).toString();
+				JsonPath jsonPath = JsonPath.with(response.toString());
+				if(jsonPath.get(key)!=null){
+					actual = jsonPath.get(key).toString();
 				}
 				String expected = expections.get(key).toString();
 				if(expected.contains("?normal{")){
@@ -211,18 +216,18 @@ public class JsonUtils {
 		String file2 = "C:/Users/sam/Desktop/Approval.xlsx";
 		TxtData txt = new TxtData();
 		JSONObject obj1 = new JSONObject(txt.readTxtFile(file1));
-		JsonPath jsonPath = JsonPath.with(txt.readTxtFile(file1));
-		String str = "aaa{}bbb{}ccc{}";
-		int index = str.indexOf("{");
-		do {
-			System.out.println(index);
-			index = str.indexOf("{",index+1);
-		} while (index < str.lastIndexOf("{"));
-		System.out.println(index);
-		System.out.println(jsonPath.get("items[0].related_form_record_id").toString());
+//		JsonPath jsonPath = JsonPath.with(txt.readTxtFile(file1));
+//		String str = "aaa{}bbb{}ccc{}";
+//		int index = str.indexOf("{");
+//		do {
+//			System.out.println(index);
+//			index = str.indexOf("{",index+1);
+//		} while (index < str.lastIndexOf("{"));
+//		System.out.println(index);
+//		System.out.println(jsonPath.get("items[0].related_form_record_id").toString());
 		ExcelReader excel = new ExcelReader();
 		Map<String, Object> map = new HashMap<>();
-		map = excel.mapFromSheet(file2, "Expectations", "Approval_1");
+		map = excel.mapFromSheet(file2, "Expectations", "Approval_2");
 		map.remove("CaseID");
 		JSONObject obj2 = new JSONObject(map);
 		JsonUtils jsonUtils = new JsonUtils();
