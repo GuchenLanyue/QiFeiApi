@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="tests" thread-count="1">
+	<parameter name="platform" value="release" />
+	<parameter name="sourcesDir" value="/sources" />
+	<parameter name="CaseList" value="/case/CaseList.xlsx" />
+	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
+	 
+	<test name="请假审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Leave">
+				<include name="Leave_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Leave_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="外出审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Out">
+				<include name="Out_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Out_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="补卡审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Resign_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Resign_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="加班审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="OverTime_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="OverTime_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="出差审批流程测试" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="Trip_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Trip_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+</suite>
