@@ -6,6 +6,96 @@
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	 
+	<test name="考勤流程测试" preserve-order="true">
+		<groups>
+			<define name="Leave">
+				<include name="Attendance_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="Attendance_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="获取子部门ID" preserve-order="true">
+		<groups>
+			<define name="GetOrganizationByName">
+				<include name="getOrganizationByName_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="getOrganizationByName_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="新增员工" preserve-order="true">
+		<groups>
+			<define name="AddMember">
+				<include name="addMember_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="addMember_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="获取审批类型列表" preserve-order="true">
+		<groups>
+			<define name="AllTypes">
+				<include name="allTypes_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="allTypes_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="转正" preserve-order="true">
+		<groups>
+			<define name="Join_Formal">
+				<include name="join_Formal_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="join_Formal_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="调岗" preserve-order="true">
+		<groups>
+			<define name="Adjust">
+				<include name="adjust_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ProcessTest">
+				<methods>
+					<include name="adjust_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
 	<test name="请假审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Leave">
@@ -80,5 +170,4 @@
 			</class>
 		</classes>
 	</test>
-	
 </suite>

@@ -158,7 +158,60 @@ public class ExcelReader {
 
 		return map;
 	}
+	
+	/**
+	 * 获取指定Case的数据
+	 * 
+	 * @param fileName
+	 *            文件名(全路径)
+	 * @param sheetName
+	 *            sheet表名
+	 * @param caseName
+	 *            用例名
+	 * @return HashMap<key,value> key:首行cell的值，value:指定行cell的值
+	 */
+	public HashMap<String, Object> mapFromSheet(Workbook workbook, String sheetName, String caseName) {
 
+//		Workbook workbook = null;
+		Sheet sheet = null;
+		int rowNum = 0;
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+
+		sheet = workbook.getSheet(sheetName);
+
+		for (int i = sheet.getFirstRowNum(); i < sheet.getLastRowNum() + 1; i++) {
+
+			Row row = sheet.getRow(i);
+			if (row.getLastCellNum() == 0) {
+				continue;
+			}
+
+			if (row.getCell(0).toString().equals(caseName)) {
+				rowNum = i;
+				break;
+			}
+		}
+
+		Assert.assertTrue(rowNum != 0, "Not found API " + caseName +" in sheet:[" + sheetName + "]!");
+
+		for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
+			if (sheet.getRow(0).getCell(i).toString() == null) {
+				throw new IllegalArgumentException(sheetName + "第1行第" + i + "列的值为空!!!");
+			}
+
+			if (sheet.getRow(rowNum).getCell(i) == null) {
+				map.put(sheet.getRow(0).getCell(i).toString(), "");
+			} else {
+				Cell cell = sheet.getRow(rowNum).getCell(i);
+				map.put(sheet.getRow(0).getCell(i).toString(), getCell(cell));
+			}
+
+		}
+
+		return map;
+	}
+	
 	public Object getCell(Cell cell) {
 		// DecimalFormat df = new DecimalFormat("#");
 		if(cell != null){
@@ -468,6 +521,46 @@ public class ExcelReader {
 			
 			DateUtils date = new DateUtils();
 			String month = date.getMonth();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.TheLastMonth}")){
+			int startIndex = str1.indexOf("{Date.LastMonth}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getLastMonth();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.ThisMonth}")){
+			int startIndex = str1.indexOf("{Date.Month}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getThisMonth();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.TheLastYear}")){
+			int startIndex = str1.indexOf("{Date.LastMonth}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getTheLastYear();
+			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
+		}
+		
+		while(str1.contains("{Date.Year}")){
+			int startIndex = str1.indexOf("{Date.Month}");
+			int beginIndex = str1.indexOf("{",startIndex);
+			int endIndex = str1.indexOf("}",startIndex);
+			
+			DateUtils date = new DateUtils();
+			String month = date.getYear();
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		

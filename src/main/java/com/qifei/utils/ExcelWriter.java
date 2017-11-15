@@ -43,12 +43,13 @@ public class ExcelWriter {
 		JSONObject responseObject = new JSONObject(responseJson);
 		
 		ExcelWriter excel = new ExcelWriter();
-		excel.createExcel(baseObject,paramObject,responseObject);
+		File file = new File("C:/Users/sam/Desktop/apis/qifei.xlsx");
+		excel.createExcel(file,baseObject,paramObject,responseObject);
+		excel.editExcel(file, "Base", "reshuffle_logs", "API", "edit");
 	}
 	
-	public void createExcel(JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
+	public void createExcel(File file,JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
 		Workbook wb = null;
-		File file = new File("C:/Users/sam/Desktop/apis/qifei.xlsx");
 		try {
 			if(file.exists()){
 				FileInputStream inputStream = new FileInputStream(file);
@@ -111,6 +112,71 @@ public class ExcelWriter {
 			titleCell.setCellValue(key);
 			valueCell.setCellValue(json.get(key).toString());
 			i++;
+		}
+		
+		return wb;
+	}
+	
+	public void editExcel(File file,String sheet,String caseID,String title,Object obj){
+		Workbook wb = null;
+		try {
+			if(file.exists()){
+				FileInputStream inputStream = new FileInputStream(file);
+				wb = new XSSFWorkbook(inputStream);
+			}else{
+				wb = new XSSFWorkbook();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		wb = editSheet(wb,sheet,caseID,title,obj);
+		
+		try {
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
+			FileOutputStream outputStream = new FileOutputStream(file);
+			
+			wb.write(outputStream);
+			outputStream.flush();
+			outputStream.close();
+			wb.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Workbook editSheet(Workbook workbook,String sheetName,String caseID,String title,Object obj){
+		Workbook wb = workbook;
+		int sheets = wb.getNumberOfSheets();
+		Sheet sheet = null;
+		for(int i=0;i<sheets;i++){
+			if(wb.getSheetName(i).equals(sheetName)){
+				sheet = wb.getSheet(sheetName);
+				break;
+			}else{
+				continue;
+			}
+		}
+
+//		Sheet paramterSheet = wb.createSheet("Params");
+		for(int rownum=0;rownum<sheet.getLastRowNum();rownum++){
+			Row row = sheet.getRow(rownum);
+			if(row.getCell(0).toString().equals(caseID)){
+				Row titleRow = sheet.getRow(0);
+				for(int cellnum=0;cellnum<titleRow.getLastCellNum();cellnum++){
+					Cell cell = titleRow.getCell(cellnum);
+					if(cell.getStringCellValue().equals(title)){
+						row.getCell(cellnum).setCellValue(obj.toString());
+						return workbook;
+					}
+				}
+			}
 		}
 		
 		return wb;

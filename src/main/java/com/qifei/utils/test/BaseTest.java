@@ -237,8 +237,11 @@ public class BaseTest {
 			String pathParam = path.substring(beginIndex+1, endIndex);
 			String pathParamStr = paramMap.get(pathParam).toString();
 			pathParamMap.put(pathParam, pathParamStr);
+			beginIndex = path.indexOf("{",beginIndex+1);
+			endIndex = path.indexOf("}",beginIndex);
 		}
 		beginIndex = path.lastIndexOf("{");
+		endIndex = path.indexOf("}",beginIndex);
 		String pathParam = path.substring(beginIndex+1, endIndex);
 		String pathParamStr = paramMap.get(pathParam).toString();
 		pathParamMap.put(pathParam, pathParamStr);

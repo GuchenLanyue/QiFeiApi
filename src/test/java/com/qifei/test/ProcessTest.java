@@ -649,6 +649,7 @@ public class ProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "考勤流程冒烟测试")
 	public void Attendance_Smoke_Test(Map<String, Object> baseData) {
+
 		if(baseData.get("API").toString().equals("")){
 			return;
 		}
@@ -671,6 +672,15 @@ public class ProcessTest extends BaseTest {
 
 		String filePath = srcDir+"/case/"+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
+		
+		if(api.equals("AttendanceStatisticsAPP")){
+			try{
+				Thread.sleep(1000);
+			}catch (InterruptedException e){
+				e.printStackTrace();
+			}
+		}
+		
 		setRequest(api,filePath,caseName);
 		
 		TxtData txt = new TxtData();

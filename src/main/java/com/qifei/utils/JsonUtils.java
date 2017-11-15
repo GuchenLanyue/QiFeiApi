@@ -173,6 +173,8 @@ public class JsonUtils {
 				JsonPath jsonPath = JsonPath.with(response.toString());
 				if(jsonPath.get(key)!=null){
 					actual = jsonPath.get(key).toString();
+				}else{
+					actual = "null";
 				}
 				String expected = expections.get(key).toString();
 				if(expected.contains("?normal{")){
