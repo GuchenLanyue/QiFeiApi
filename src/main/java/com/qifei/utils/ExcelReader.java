@@ -160,29 +160,33 @@ public class ExcelReader {
 	}
 
 	public Object getCell(Cell cell) {
-		// DecimalFormat df = new DecimalFormat("#");		
-		switch (cell.getCellTypeEnum()) {
-			case _NONE:
-				return "";
-			case NUMERIC:
-				if (HSSFDateUtil.isCellDateFormatted(cell)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
-				}
-				return cell.getNumericCellValue();
-			case STRING:
-				// System.out.println(cell.getStringCellValue());
-				return replace(cell.getStringCellValue());
-			case FORMULA:
-				return cell.getCellFormula();
-			case BLANK:
-				return "";
-			case BOOLEAN:
-				return cell.getBooleanCellValue() + "";
-			case ERROR:
-				return cell.getErrorCellValue() + "";
-			default:
-				return "";
+		// DecimalFormat df = new DecimalFormat("#");
+		if(cell != null){
+			switch (cell.getCellTypeEnum()) {
+				case _NONE:
+					return "";
+				case NUMERIC:
+					if (HSSFDateUtil.isCellDateFormatted(cell)) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+					}
+					return cell.getNumericCellValue();
+				case STRING:
+					// System.out.println(cell.getStringCellValue());
+					return replace(cell.getStringCellValue());
+				case FORMULA:
+					return cell.getCellFormula();
+				case BLANK:
+					return "";
+				case BOOLEAN:
+					return cell.getBooleanCellValue() + "";
+				case ERROR:
+					return cell.getErrorCellValue() + "";
+				default:
+					return "";
+			}
+		}else{
+			return "";
 		}
 	}
 	
