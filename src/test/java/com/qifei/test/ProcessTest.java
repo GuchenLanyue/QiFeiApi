@@ -1,5 +1,6 @@
 package com.qifei.test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import org.testng.annotations.Test;
 import com.qifei.apis.Attendance;
 import com.qifei.apis.Members;
 import com.qifei.apis.Organization;
-
+import com.qifei.utils.ExcelWriter;
 import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
 
@@ -40,7 +41,7 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"\\temp\\"+api+".txt";
+		String filename = srcDir+"\\temp\\"+caseName+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
@@ -117,6 +118,31 @@ public class ProcessTest extends BaseTest {
 		member.checkResponse(body);
 	}
 	
+	@Test(dataProvider="SingleCase",description="新增员工")
+	public void addMember2_Test(Map<String, Object> params){
+		Map<String, Object> paramMap = params;
+		String caseID = paramMap.get("CaseID").toString();
+		paramMap.remove("CaseID");
+		//新增员工
+		Members member = new Members(basePath);
+		String body = member.addMember(paramMap);
+		
+		TxtData txt = new TxtData();
+		String filename = srcDir+"/temp/"+caseID+".txt";
+		txt.writerText(filename, body);
+		//验证结果
+		member.checkResponse(body);
+		JsonPath response = new JsonPath(body);
+		//到岗
+		member.join(response.get("uuid").toString());
+		ExcelWriter excel = new ExcelWriter();
+		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_id", response.get("uuid").toString());
+		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_no", response.get("employee_no").toString());
+		excel.editExcel(file, "Auth", params.get("name").toString(), "user_name", response.get("name").toString());
+		member.checkResponse(body);
+	}
+	
 	@Test(dataProvider = "CaseList", description= "调整审批流程冒烟测试")
 	public void adjust_Smoke_Test(Map<String, Object> baseData) {
 		if(baseData.get("API").toString().equals("")){
@@ -190,6 +216,40 @@ public class ProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="辞职审批测试")
 	public void Offboard_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
+		
+		long time = 5000;
+		while (checkResponse(expectedMap)&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = srcDir+"/temp/"+api+".txt";
+		txt.writerText(filename, bodyStr);
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(bodyStr);
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
+	}
+	
+	@Test(dataProvider="CaseList",description="辞职审批测试")
+	public void Offboard2_Smoke_Test(Map<String, Object> baseData){
 		if(baseData.get("API").toString().equals("")){
 			return;
 		}

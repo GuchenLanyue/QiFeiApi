@@ -133,6 +133,7 @@ public class Members {
 		Map<String, Object> paramMap = new HashMap<>();
 		//设置请求参数
 		paramMap.put("status", "probation");
+		paramMap.put("uuid", uuid);
 		
 		//设置路径参数
 		Map<String, Object> pathParamMap = new HashMap<>();

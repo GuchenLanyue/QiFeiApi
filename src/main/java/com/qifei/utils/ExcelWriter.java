@@ -45,7 +45,7 @@ public class ExcelWriter {
 		ExcelWriter excel = new ExcelWriter();
 		File file = new File("C:/Users/sam/Desktop/apis/qifei.xlsx");
 		excel.createExcel(file,baseObject,paramObject,responseObject);
-		excel.editExcel(file, "Base", "reshuffle_logs", "API", "edit");
+		excel.editExcel(file, "Base", "reshuffle_logs1", "API", "edit");
 	}
 	
 	public void createExcel(File file,JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
@@ -163,8 +163,13 @@ public class ExcelWriter {
 				continue;
 			}
 		}
-
+		
+		if(sheet == null){
+			sheet = wb.createSheet(sheetName);
+		}
+		
 //		Sheet paramterSheet = wb.createSheet("Params");
+		boolean found = false;
 		for(int rownum=0;rownum<sheet.getLastRowNum();rownum++){
 			Row row = sheet.getRow(rownum);
 			if(row.getCell(0).toString().equals(caseID)){
@@ -173,8 +178,24 @@ public class ExcelWriter {
 					Cell cell = titleRow.getCell(cellnum);
 					if(cell.getStringCellValue().equals(title)){
 						row.getCell(cellnum).setCellValue(obj.toString());
-						return workbook;
+						found = true;
+						return wb;
 					}
+				}
+			}
+		}
+		
+		if(!found){
+			Row row = sheet.createRow(sheet.getLastRowNum()+1);
+			Cell cell = row.createCell(0);
+			cell.setCellValue(caseID);
+			Row titleRow = sheet.getRow(0);
+			for(int cellnum=1;cellnum<titleRow.getLastCellNum();cellnum++){
+				Cell titleCell = titleRow.getCell(cellnum);
+				row.createCell(cellnum);
+				if(titleCell.getStringCellValue().equals(title)){
+					row.getCell(cellnum).setCellValue(obj.toString());
+					return wb;
 				}
 			}
 		}
