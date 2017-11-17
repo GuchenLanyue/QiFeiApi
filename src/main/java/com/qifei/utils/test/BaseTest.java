@@ -137,6 +137,7 @@ public class BaseTest {
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		response = http.request(map);
+		saveResponseBody(response);
 	}
 
 	@Step
@@ -201,6 +202,7 @@ public class BaseTest {
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		response = http.request(map);
+		saveResponseBody(response);
 	}
 	
 	@Step("checkResponse() 校验response")
@@ -246,7 +248,6 @@ public class BaseTest {
 	@Attachment(value = "Response.Body",type = "String")
 	public String saveResponseBody(Response response) {
 		String body = response.getBody().asString();
-		Allure.addAttachment("Response.body", body);
 		
 		if(body.length()>0&&body.contains("{")){
 			body = body.substring(body.indexOf("{"), body.lastIndexOf("}")+1);

@@ -89,7 +89,7 @@ public class ProcessTest extends BaseTest {
 		txt.writerText(positionFile, positionID);
 	}
 	
-	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
+	@Test(dataProvider = "SingleCase", description= "获取所有审批类型")
 	public void allTypes_Test(Map<String, Object> params){		
 		setRequest("approvalTypes", params);
 		//写入txt
