@@ -137,8 +137,6 @@ public class BaseTest {
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		response = http.request(map);
-		
-		saveResponseBody(response);
 	}
 
 	@Step
@@ -203,8 +201,6 @@ public class BaseTest {
 		map.put("pathParams", pathParamMap);
 		HttpMethods http = new HttpMethods(basePath);
 		response = http.request(map);
-		//保存response
-		saveResponseBody(response);
 	}
 	
 	@Step("checkResponse() 校验response")

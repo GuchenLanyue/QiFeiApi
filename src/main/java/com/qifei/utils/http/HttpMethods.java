@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.testng.Assert;
 
 import io.qameta.allure.Step;
@@ -118,8 +119,8 @@ public class HttpMethods {
 			.extract()
 				.response();
 
+		requestLog(map);
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -151,8 +152,8 @@ public class HttpMethods {
 			.extract()
 				.response();
 		
+		requestLog(map);
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -183,9 +184,8 @@ public class HttpMethods {
 //				.statusCode(200)
 			.extract()
 				.response();
-		
+		requestLog(map);
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -217,7 +217,6 @@ public class HttpMethods {
 				.response();
 		
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -250,7 +249,6 @@ public class HttpMethods {
 				.response();
 
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -283,7 +281,6 @@ public class HttpMethods {
 				.response();
 		
 		responseLog(response);
-		
 		return response;
 	}
 	
@@ -327,7 +324,7 @@ public class HttpMethods {
 	}
 	
 	@Description("将请求数据添加到测试报告中")
-	public void requestLog(){
+	public void requestLog(Map<String, Map<String,Object>> params){
 		String requestBody = " ";
 		if(paramMap==null){
 			return;
@@ -338,7 +335,7 @@ public class HttpMethods {
 			requestBody=requestBody+"&"+str;
 		}
 		
-		Allure.addAttachment("RequestBody:", requestBody.substring(requestBody.indexOf('&')+1, requestBody.length()));
+		Allure.addAttachment("Request:", new JSONObject(params).toString());
 	}
 	
 	@Description("将响应数据添加到测试报告中")
