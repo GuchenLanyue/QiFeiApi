@@ -84,7 +84,7 @@ public class TxtData {
 			e.printStackTrace();
 		}
 		if(str.length()==0){
-			Assert.fail(filePath+" is none.");
+			Assert.fail(filePath+" content is empty.");
 		}
 		return str.substring(0, str.length()-2);
 	}
