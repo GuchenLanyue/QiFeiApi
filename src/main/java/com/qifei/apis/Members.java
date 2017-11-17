@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.testng.Assert;
 
 import com.qifei.utils.RandomValue;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
 import io.restassured.response.Response;
-import junit.framework.Assert;
 
 public class Members {
 	public Members() {
@@ -124,7 +124,7 @@ public class Members {
 		baseMap.put("Path", "/hr/v1/formrecords/{uuid}?form=employee");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "PUT");
-		
+
 		// 设置Authorization
 		String authorization = new Headers(basePath).getAuthorization();
 		Map<String, Object> headerMap = new HashMap<>();

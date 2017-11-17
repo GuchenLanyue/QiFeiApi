@@ -6,14 +6,12 @@ import org.testng.annotations.DataProvider;
 import com.qifei.utils.DateUtils;
 import com.qifei.utils.ExcelReader;
 import com.qifei.utils.JsonUtils;
-import com.qifei.utils.TxtData;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 import java.io.File;

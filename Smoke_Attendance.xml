@@ -6,34 +6,18 @@
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
 	
-	<test name="获取子部门ID" preserve-order="true">
+	<test name="考勤流程测试" preserve-order="true">
 		<groups>
-			<define name="GetOrganizationByName">
-				<include name="getOrganizationByName_Test" />
+			<define name="Leave">
+				<include name="Attendance_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ProcessTest">
 				<methods>
-					<include name="getOrganizationByName_Test" />
+					<include name="Attendance_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	
-	<test name="新增员工" preserve-order="true">
-		<groups>
-			<define name="AddMember">
-				<include name="addMember_Test" />
-			</define>
-		</groups>
-		<classes>
-			<class name="com.qifei.test.ProcessTest">
-				<methods>
-					<include name="addMember_Test" />
-				</methods>
-			</class>
-		</classes>
-	</test>
-	
 </suite>

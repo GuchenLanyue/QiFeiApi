@@ -84,7 +84,7 @@ public class TxtData {
 			e.printStackTrace();
 		}
 		if(str.length()==0){
-			System.out.println("pause");
+			Assert.fail(filePath+" is none.");
 		}
 		return str.substring(0, str.length()-2);
 	}

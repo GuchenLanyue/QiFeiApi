@@ -217,6 +217,19 @@ public class JsonUtils {
 		String file1 = "C:/Users/sam/Desktop/new1.txt";
 		String file2 = "C:/Users/sam/Desktop/Approval.xlsx";
 		TxtData txt = new TxtData();
+		
+		try {
+			Class.forName("com.qifei.utils.TxtData").getMethod("readTxtFile",String.class);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		JSONObject obj1 = new JSONObject(txt.readTxtFile(file1));
 //		JsonPath jsonPath = JsonPath.with(txt.readTxtFile(file1));
 //		String str = "aaa{}bbb{}ccc{}";
