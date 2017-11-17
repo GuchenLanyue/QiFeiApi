@@ -96,6 +96,18 @@ public class ProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String positionFile = srcDir+"/temp/AllTypes.txt";
 		txt.writerText(positionFile, bodyStr);
+		JsonPath response = JsonPath.with(bodyStr);
+		ExcelWriter excel = new ExcelWriter();
+		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		List<Object> form_names = response.getList("items.form_name");
+		List<Object> names = response.getList("items.name");
+		List<Object> ids = response.getList("items.uuid");
+		for(int i=0;i<form_names.size();i++){
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "type_id", ids.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "name", names.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "uuid", response.get("items["+i+"].process_list[0].uuid"));
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "created_by", response.get("items["+i+"].created_by"));
+		}
 	}
 	
 	@Test(dataProvider="SingleCase",description="新增员工")
@@ -110,6 +122,7 @@ public class ProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+caseID+".txt";
 		txt.writerText(filename, body);
+
 		//验证结果
 		member.checkResponse(body);
 		JsonPath response = new JsonPath(body);

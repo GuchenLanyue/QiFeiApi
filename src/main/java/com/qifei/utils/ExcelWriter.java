@@ -45,7 +45,7 @@ public class ExcelWriter {
 		ExcelWriter excel = new ExcelWriter();
 		File file = new File("C:/Users/sam/Desktop/apis/qifei.xlsx");
 		excel.createExcel(file,baseObject,paramObject,responseObject);
-		excel.editExcel(file, "Base", "reshuffle_logs1", "API", "edit");
+		excel.editExcel(file, "Base", "reshuffle_logs", "API1", "edit");
 	}
 	
 	public void createExcel(File file,JSONObject baseJson,JSONObject paramJson,JSONObject expectJson){
@@ -169,34 +169,60 @@ public class ExcelWriter {
 		}
 		
 //		Sheet paramterSheet = wb.createSheet("Params");
-		boolean found = false;
+		boolean caseFound = false;
+		boolean titleFound = false;
 		for(int rownum=0;rownum<sheet.getLastRowNum();rownum++){
 			Row row = sheet.getRow(rownum);
 			if(row.getCell(0).toString().equals(caseID)){
+				caseFound = true;
 				Row titleRow = sheet.getRow(0);
 				for(int cellnum=0;cellnum<titleRow.getLastCellNum();cellnum++){
 					Cell cell = titleRow.getCell(cellnum);
 					if(cell.getStringCellValue().equals(title)){
-						row.getCell(cellnum).setCellValue(obj.toString());
-						found = true;
+						titleFound = true;
+						if(row.getLastCellNum()>cellnum){
+							row.createCell(cellnum).setCellValue(obj.toString());
+						}else{
+							row.createCell(cellnum).setCellValue(obj.toString());
+						}
+						
 						return wb;
 					}
+				}
+				
+				if(!titleFound){
+					Cell cell = titleRow.createCell(titleRow.getLastCellNum());
+					cell.setCellValue(title);
+					Row caseRow = sheet.getRow(rownum);
+					Cell caseCell = caseRow.createCell(titleRow.getLastCellNum()-1);
+					caseCell.setCellValue(obj.toString());
+					return wb;
 				}
 			}
 		}
 		
-		if(!found){
+		if(!caseFound){
 			Row row = sheet.createRow(sheet.getLastRowNum()+1);
 			Cell cell = row.createCell(0);
 			cell.setCellValue(caseID);
 			Row titleRow = sheet.getRow(0);
+
 			for(int cellnum=1;cellnum<titleRow.getLastCellNum();cellnum++){
 				Cell titleCell = titleRow.getCell(cellnum);
 				row.createCell(cellnum);
 				if(titleCell.getStringCellValue().equals(title)){
+					titleFound = true;
 					row.getCell(cellnum).setCellValue(obj.toString());
 					return wb;
 				}
+			}
+			
+			if(!titleFound){
+				Cell titleCell = titleRow.createCell(titleRow.getLastCellNum());
+				titleCell.setCellValue(title);
+				Cell caseCell = row.createCell(titleRow.getLastCellNum()-1);
+				caseCell.setCellValue(obj.toString());
+				return wb;
 			}
 		}
 		
