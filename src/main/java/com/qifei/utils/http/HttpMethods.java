@@ -94,7 +94,7 @@ public class HttpMethods {
 	public Response post(Map<String, Map<String,Object>> map){
 		Response response = given()
 				.log().method()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 //				.log().all()
 				.log().uri()
 //				.log().params()
@@ -126,7 +126,7 @@ public class HttpMethods {
 	@Step("get() 发起请求")
 	public Response get(Map<String, Map<String,Object>> map){
 		Response response = given()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 				.log().method()
 //				.log().all()
 				.log().uri()
@@ -159,7 +159,7 @@ public class HttpMethods {
 	@Step("put() 发起请求")
 	public Response put(Map<String, Map<String,Object>> map){
 		Response response = given()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 				.log().method()
 //				.log().all()
 				.log().uri()
@@ -192,7 +192,7 @@ public class HttpMethods {
 	@Step("delete() 发起请求")
 	public Response delete(Map<String, Map<String,Object>> map){
 		Response response = given()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 				.log().method()
 //				.log().all()
 				.log().uri()
@@ -225,7 +225,7 @@ public class HttpMethods {
 	public Response postNobody(Map<String, Map<String,Object>> map){
 		Response response = given()
 				.log().method()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 //				.log().all()
 				.log().uri()
 //				.log().params()
@@ -257,7 +257,7 @@ public class HttpMethods {
 	@Step("get() 发起请求")
 	public Response getNobody(Map<String, Map<String,Object>> map){
 		Response response = given()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 				.log().method()
 //				.log().all()
 				.log().uri()
@@ -290,7 +290,7 @@ public class HttpMethods {
 	@Step("put() 发起请求")
 	public Response putNobody(Map<String, Map<String,Object>> map){
 		Response response = given()
-				.proxy("127.0.0.1", 8888)
+				//.proxy("127.0.0.1", 8888)
 				.log().method()
 //				.log().all()
 				.log().uri()
@@ -368,7 +368,7 @@ public class HttpMethods {
 		map.put("base", baseMap);
 		
 		given()
-		.proxy("127.0.0.1", 8888)
+		//.proxy("127.0.0.1", 8888)
 		.log().method()
 		.log().uri()
 		.headers(headerMap)
