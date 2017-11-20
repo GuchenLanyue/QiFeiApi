@@ -171,7 +171,7 @@ public class ExcelWriter {
 //		Sheet paramterSheet = wb.createSheet("Params");
 		boolean caseFound = false;
 		boolean titleFound = false;
-		for(int rownum=0;rownum<sheet.getLastRowNum();rownum++){
+		for(int rownum=0;rownum<sheet.getLastRowNum()+1;rownum++){
 			Row row = sheet.getRow(rownum);
 			if(row.getCell(0).toString().equals(caseID)){
 				caseFound = true;

@@ -31,10 +31,10 @@ public class Approval extends BaseTest {
 		List<Object> names = response.getList("items.name");
 		List<Object> ids = response.getList("items.uuid");
 		for(int i=0;i<form_names.size();i++){
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "type_id", ids.get(i).toString());
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "name", names.get(i).toString());
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "uuid", response.get("items["+i+"].process_list[0].uuid"));
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "created_by", response.get("items["+i+"].created_by"));
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "type_id", ids.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "name", names.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "uuid", response.get("items["+i+"].process_list[0].uuid"));
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "created_by", response.get("items["+i+"].created_by"));
 		}
 	}
 	
