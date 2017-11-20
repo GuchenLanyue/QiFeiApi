@@ -16,7 +16,52 @@ import com.qifei.utils.test.BaseTest;
 
 import io.restassured.path.json.JsonPath;
 
-public class Approval extends BaseTest {
+public class Approval extends BaseTest {	
+	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
+	public void getOrganizationByName_Test(Map<String, Object> params){
+		Organization organization = new Organization(basePath);
+		//设置部门
+		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
+		String organizationStr = "";
+		if(organizationID.equals("")){
+			organizationStr = organization.addOrganization(params.get("organization_Name").toString());
+			organizationID = JsonPath.with(organizationStr).getString("uuid");
+		}
+		//写入txt
+		TxtData txt = new TxtData();
+		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
+		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
+		txt.writerText(organizationFile, organizationStr);
+		//写入excel
+		JsonPath response = JsonPath.with(organizationStr);
+		ExcelWriter excel = new ExcelWriter();
+		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		excel.editExcel(file, "organization", response.get("name").toString(), "name", response.get("name").toString());
+		excel.editExcel(file, "organization", response.get("name").toString(), "uuid", response.get("uuid").toString());
+		excel.editExcel(file, "organization", response.get("name").toString(), "leader_ID", response.get("leader_ID").toString());
+		excel.editExcel(file, "organization", response.get("name").toString(), "user_id", response.get("user_id").toString());
+
+		//设置岗位
+		String positionID=null;
+		List<String> positions = organization.getPositionsID(organizationID);
+		if(positions.size()==0){
+			positionID = organization.addPosition(organizationID, params.get("position_Name").toString());
+		}else{
+			String body = organization.getPositions(organizationID);
+			JSONObject obj = new JSONObject(body);
+			positionID = obj.getJSONArray("items").get(0).toString();
+		}
+		//写入txt
+		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
+		txt.writerText(positionFile, positionID);
+		response = JsonPath.with(positionID);
+		//写入excel
+		excel.editExcel(file, "position", response.get("name").toString(), "name", response.get("name").toString());
+		excel.editExcel(file, "position", response.get("name").toString(), "uuid", response.get("uuid").toString());
+		excel.editExcel(file, "position", response.get("name").toString(), "organization", response.get("organization").toString());
+		excel.editExcel(file, "position", response.get("name").toString(), "organization_ID", response.get("organization_ID").toString());
+	}
+	
 	@Test(dataProvider = "SingleCase", description= "获取所有审批类型")
 	public void allTypes_Test(Map<String, Object> params){		
 		setRequest("approvalTypes", params);
@@ -44,37 +89,6 @@ public class Approval extends BaseTest {
 		checkResponse();
 	}
 	
-	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
-	public void getOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(basePath);
-		//设置部门
-		String organizationID = organization.getOrganizationID(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
-		String organizationStr = "";
-		if(organizationID.equals("")){
-			organizationStr = organization.addOrganization(params.get("organization_Name").toString());
-			organizationID = JsonPath.with(organizationStr).getString("uuid");
-		}
-		//写入txt
-		TxtData txt = new TxtData();
-		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
-		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
-		
-		txt.writerText(organizationFile, organizationStr);
-		//设置岗位
-		String positionID=null;
-		List<String> positions = organization.getPositionsID(organizationID);
-		if(positions.size()==0){
-			positionID = organization.addPosition(organizationID, params.get("position_Name").toString());
-		}else{
-			String body = organization.getPositions(organizationID);
-			JSONObject obj = new JSONObject(body);
-			positionID = obj.getJSONArray("items").get(0).toString();
-		}
-		//写入txt
-		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
-		txt.writerText(positionFile, positionID);
-	}
-	
 	@Test(dataProvider="SingleCase",description="新增员工")
 	public void addMember_Test(Map<String, Object> params){
 		Map<String, Object> paramMap = params;
@@ -82,7 +96,7 @@ public class Approval extends BaseTest {
 		paramMap.remove("CaseID");
 		//新增员工
 		Members member = new Members(basePath);
-		String body = member.addMember(paramMap);
+		String body = member.addMember();
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+caseID+".txt";

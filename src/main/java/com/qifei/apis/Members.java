@@ -49,11 +49,11 @@ public class Members {
 		params.put("mobile", random.getTel());
 		Date date = new Date();
 		params.put("employee_no", "ZZ_"+date.getTime());
-		params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
-		params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
-		params.put("join_date", "");
-		params.put("field_6", "21");
-		params.put("field_8", "510723199007195415");
+//		params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
+//		params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
+//		params.put("join_date", "");
+//		params.put("field_6", "21");
+//		params.put("field_8", "510723199007195415");
 		
 		//设置入职日期
 		Calendar calendar = new GregorianCalendar();
@@ -101,9 +101,9 @@ public class Members {
 		this.params.put("employee_no", "ZZ_"+date.getTime());
 //		this.params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
 //		this.params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
-		RandomValue random = new RandomValue();
-		this.params.put("mobile", random.getTel());
-		this.params.put("name", random.getChineseName());
+//		RandomValue random = new RandomValue();
+//		this.params.put("mobile", random.getTel());
+//		this.params.put("name", random.getChineseName());
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		map.put("base", baseMap);
 		map.put("headers", headerMap);
