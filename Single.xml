@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Suite" parallel="tests" thread-count="5">
+<suite name="Suite" parallel="tests" thread-count="1">
 	<parameter name="platform" value="release" />
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	
-	<test name="获取子部门ID" preserve-order="true">
+ 
+	<test name="获取部门id" preserve-order="true">
 		<groups>
-			<define name="GetOrganizationByName">
+			<define name="ApprovalTypes">
 				<include name="getOrganizationByName_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.Approval">
 				<methods>
 					<include name="getOrganizationByName_Test" />
 				</methods>
@@ -21,14 +21,45 @@
 		</classes>
 	</test>
 	
+	<test name="获取所有审批类型" preserve-order="true">
+		<groups>
+			<define name="AllTypes">
+				<include name="AllTypes_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.Approval">
+				<methods>
+					<include name="allTypes_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="审批类型设置" preserve-order="true">
+		<groups>
+			<define name="ApprovalTypes">
+				<include name="ApprovalTypes_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.Approval">
+				<methods>
+					<include name="ApprovalTypes_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<!-- 
 	<test name="新增员工" preserve-order="true">
 		<groups>
-			<define name="AddMember">
+			<define name="ApprovalTypes">
 				<include name="addMember_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.Approval">
 				<methods>
 					<include name="addMember_Test" />
 				</methods>
@@ -36,4 +67,19 @@
 		</classes>
 	</test>
 	
+	<test name="调整" preserve-order="true">
+		<groups>
+			<define name="ApprovalTypes">
+				<include name="Adjust_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.Approval">
+				<methods>
+					<include name="Adjust_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	-->
 </suite>

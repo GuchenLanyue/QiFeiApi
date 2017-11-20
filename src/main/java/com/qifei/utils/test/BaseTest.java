@@ -223,6 +223,24 @@ public class BaseTest {
 		return isContinue;
 	}
 	
+	@Step("checkResponse() 校验response")
+	public boolean checkResponse() {
+		boolean isContinue = false;
+		String response = bodyStr;
+		JSONObject responseObj = new JSONObject();
+		JSONArray responseArr = new JSONArray();
+		JSONObject expections = new JSONObject(expectedMap);
+		JsonUtils jsonUtil = new JsonUtils();
+		if(response.startsWith("{")){
+			responseObj = new JSONObject(response);
+		}else if(response.startsWith("[")){
+			responseArr = new JSONArray(response);
+		}
+		isContinue = jsonUtil.compareJSONObject(responseObj, expections);
+		
+		return isContinue;
+	}
+	
 	public Map<String, Object> setPathParamters(Map<String, Object> baseMap,Map<String, Object> paramMap){
 		String path = baseMap.get("Path").toString();
 		Map<String, Object> pathParamMap = new HashMap<>();
