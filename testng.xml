@@ -35,17 +35,33 @@
 			</class>
 		</classes>
 	</test>
-	-->
-	<test name="考勤流程测试" preserve-order="true">
+	
+	<test name="获取所有审批类型" preserve-order="true">
 		<groups>
-			<define name="Leave">
-				<include name="allTypes_Test" />
+			<define name="AllTypes">
+				<include name="AllTypes_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.Approval">
 				<methods>
 					<include name="allTypes_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	-->
+	
+	<test name="考勤流程测试" preserve-order="true">
+		<groups>
+			<define name="Leave">
+				<include name="addMember2_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.Approval">
+				<methods>
+					<include name="addMember2_Test" />
 				</methods>
 			</class>
 		</classes>

@@ -331,7 +331,7 @@ public class ExcelReader {
 				TxtData txt = new TxtData();
 				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
 				JsonPath json = JsonPath.with(body);
-				value = json.getString(paramter);
+				value = json.get(paramter);
 			}else{
 				fileName = str1.substring(beginIndex+1,endIndex);
 				TxtData txt = new TxtData();
@@ -339,7 +339,11 @@ public class ExcelReader {
 				JSONObject object = new JSONObject(body);
 				value = object.toString();
 			}
+			
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+			if(str1.equals("null")){
+				str1="";
+			}
 		}
 		
 		while(str1.contains("$temp{")){

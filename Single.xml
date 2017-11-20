@@ -9,12 +9,12 @@
 	<!-- 
 	<test name="获取部门id" preserve-order="true">
 		<groups>
-			<define name="ApprovalTypes">
+			<define name="getOrganizationByName">
 				<include name="getOrganizationByName_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.ApprovalTest">
 				<methods>
 					<include name="getOrganizationByName_Test" />
 				</methods>
@@ -29,14 +29,14 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.ApprovalTest">
 				<methods>
 					<include name="allTypes_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	-->
+	
 	<test name="审批类型设置" preserve-order="true">
 		<groups>
 			<define name="ApprovalTypes">
@@ -44,7 +44,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.ApprovalTest">
 				<methods>
 					<include name="ApprovalTypes_Test" />
 				</methods>
@@ -54,32 +54,47 @@
 	
 	<test name="新增员工" preserve-order="true">
 		<groups>
-			<define name="ApprovalTypes">
+			<define name="addMember">
 				<include name="addMember_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.ApprovalTest">
 				<methods>
 					<include name="addMember_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	<!--  
+	-->
+	<!-- 
 	<test name="调整" preserve-order="true">
 		<groups>
-			<define name="ApprovalTypes">
+			<define name="Adjust">
 				<include name="Adjust_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.ApprovalTest">
 				<methods>
 					<include name="Adjust_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	-->
+	 -->
+	<test name="转正" preserve-order="true">
+		<groups>
+			<define name="Formal">
+				<include name="Formal_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ApprovalTest">
+				<methods>
+					<include name="Formal_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>
