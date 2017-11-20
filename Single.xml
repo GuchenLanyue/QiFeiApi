@@ -5,7 +5,8 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
- 
+ 	
+	<!-- 
 	<test name="获取部门id" preserve-order="true">
 		<groups>
 			<define name="ApprovalTypes">
@@ -20,7 +21,7 @@
 			</class>
 		</classes>
 	</test>
-	
+	 
 	<test name="获取所有审批类型" preserve-order="true">
 		<groups>
 			<define name="AllTypes">
@@ -35,7 +36,7 @@
 			</class>
 		</classes>
 	</test>
-	
+	-->
 	<test name="审批类型设置" preserve-order="true">
 		<groups>
 			<define name="ApprovalTypes">
@@ -50,8 +51,7 @@
 			</class>
 		</classes>
 	</test>
-
-	<!-- 
+	
 	<test name="新增员工" preserve-order="true">
 		<groups>
 			<define name="ApprovalTypes">
@@ -66,7 +66,7 @@
 			</class>
 		</classes>
 	</test>
-	
+	<!--  
 	<test name="调整" preserve-order="true">
 		<groups>
 			<define name="ApprovalTypes">
