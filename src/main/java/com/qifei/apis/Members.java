@@ -31,7 +31,7 @@ public class Members {
 	
 	// 新增员工
 	@SuppressWarnings("static-access")
-	public String addMember() {
+	public String addMember(String organization_ID,String position_ID) {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/hr/v1/formrecords?form=employee");
@@ -49,8 +49,8 @@ public class Members {
 		params.put("mobile", random.getTel());
 		Date date = new Date();
 		params.put("employee_no", "ZZ_"+date.getTime());
-//		params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
-//		params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
+		params.put("organization_ID", organization_ID);
+		params.put("position_ID", position_ID);
 //		params.put("join_date", "");
 //		params.put("field_6", "21");
 //		params.put("field_8", "510723199007195415");
@@ -164,6 +164,6 @@ public class Members {
 	}
 	public static void main(String[] args) {
 		Members members = new Members("http://console.t.upvi.com/bapi");
-		members.addMember();
+//		members.addMember();
 	}
 }
