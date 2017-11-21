@@ -16,7 +16,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<aspectj.version>1.8.10</aspectj.version>
-		<testNG>Single.xml</testNG>
+		<testNG>Smoke_Approval.xml</testNG>
 	</properties>
 
 	<dependencies>
