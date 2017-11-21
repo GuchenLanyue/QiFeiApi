@@ -97,7 +97,9 @@ public class ApprovalTest extends BaseTest {
 		paramMap.remove("CaseID");
 		//新增员工
 		Members member = new Members(basePath);
-		String body = member.addMember();
+		String organization_ID = paramMap.get("organization_ID").toString();
+		String position_ID = paramMap.get("position_ID").toString();
+		String body = member.addMember(organization_ID,position_ID);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+caseID+".txt";
