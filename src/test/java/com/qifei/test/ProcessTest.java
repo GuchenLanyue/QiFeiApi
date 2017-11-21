@@ -94,6 +94,7 @@ public class ProcessTest extends BaseTest {
 		//写入txt
 		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
 		txt.writerText(positionFile, positionID);
+		response = JsonPath.with(positionID);
 		//写入excel
 		excel.editExcel(file, "position", response.get("name").toString(), "uuid", response.get("uuid").toString());
 		excel.editExcel(file, "position", response.get("name").toString(), "organization", response.get("organization").toString());
@@ -128,7 +129,9 @@ public class ProcessTest extends BaseTest {
 		paramMap.remove("CaseID");
 		//新增员工
 		Members member = new Members(basePath);
-		String body = member.addMember();
+		String organization_ID = paramMap.get("organization_ID").toString();
+		String position_ID = paramMap.get("position_ID").toString();
+		String body = member.addMember(organization_ID,position_ID);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+"/temp/"+caseID+".txt";
