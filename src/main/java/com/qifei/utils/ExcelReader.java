@@ -3,6 +3,7 @@ package com.qifei.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -502,8 +503,8 @@ public class ExcelReader {
 			double value1 = Double.parseDouble(valueStr1);
 			double value2 = Double.parseDouble(valueStr2);
 			double value = value1 + value2;
-			
-			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+			DecimalFormat df = new DecimalFormat("#.00");
+			str1 = str1.substring(0,startIndex) + df.format(value) + str1.substring(endIndex+1,str1.length());
 		}
 		
 		while(str1.contains("{Date.today}")){
