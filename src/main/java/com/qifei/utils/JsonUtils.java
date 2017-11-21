@@ -198,6 +198,8 @@ public class JsonUtils {
 
 					int index = Integer.parseInt(indexStr);
 					actual = array1.get(index).toString();
+				}else if(expected.equals("##")){
+					continue;
 				}
 				Assert.assertEquals(actual,expected,key);
 			}
