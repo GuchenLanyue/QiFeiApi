@@ -331,7 +331,7 @@ public class ExcelReader {
 				TxtData txt = new TxtData();
 				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
 				JsonPath json = JsonPath.with(body);
-				value = json.get(paramter);
+				value = json.get(paramter).toString();
 			}else{
 				fileName = str1.substring(beginIndex+1,endIndex);
 				TxtData txt = new TxtData();
@@ -488,6 +488,24 @@ public class ExcelReader {
 			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
 		}
 		
+		/**
+		 * $sum(${ApprovalOld.number_statistics[0].total_money},${purchase.total_price})
+		 * */
+		while(str1.contains("$sum(")){
+			int startIndex = str1.indexOf("$sum(");
+			int beginIndex = str1.indexOf("(",startIndex);
+			int splitCharIndex = str1.indexOf(",",startIndex);
+			int endIndex = str1.indexOf(")",startIndex);
+			
+			String valueStr1 = str1.substring(beginIndex+1,splitCharIndex);
+			String valueStr2 = str1.substring(splitCharIndex+1,endIndex);
+			double value1 = Double.parseDouble(valueStr1);
+			double value2 = Double.parseDouble(valueStr2);
+			double value = value1 + value2;
+			
+			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
+		}
+		
 		while(str1.contains("{Date.today}")){
 			int startIndex = str1.indexOf("{Date.today}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -539,7 +557,7 @@ public class ExcelReader {
 		}
 		
 		while(str1.contains("{Date.ThisMonth}")){
-			int startIndex = str1.indexOf("{Date.Month}");
+			int startIndex = str1.indexOf("{Date.ThisMonth}");
 			int beginIndex = str1.indexOf("{",startIndex);
 			int endIndex = str1.indexOf("}",startIndex);
 			
@@ -559,7 +577,7 @@ public class ExcelReader {
 		}
 		
 		while(str1.contains("{Date.Year}")){
-			int startIndex = str1.indexOf("{Date.Month}");
+			int startIndex = str1.indexOf("{Date.Year}");
 			int beginIndex = str1.indexOf("{",startIndex);
 			int endIndex = str1.indexOf("}",startIndex);
 			
@@ -587,7 +605,11 @@ public class ExcelReader {
 			}
 			return list;
 		}else if(str1.startsWith("!!Int")){
-			str1 = str1.substring(5,str1.length());
+			if(str1.contains(".")){
+				str1 = str1.substring(5,str1.indexOf("."));
+			}else{
+				str1 = str1.substring(5,str1.length());
+			}
 			return Integer.parseInt(str1);
 		}else if(str1.startsWith("!!Double")){
 			str1 = str1.substring(8,str1.length());
@@ -668,9 +690,14 @@ public class ExcelReader {
 		String sheetName = "Expectations";
 		String caseName = "Approval_1";
 		Map<String, Object> map = excel.mapFromSheet(fileName, sheetName, caseName);
-		for(String key:map.keySet()){
-			System.out.println(key);
-			System.out.println(map.get(key).toString());
+		JSONObject obj = new JSONObject(map);
+		for(String key:obj.keySet()){
+			System.out.println(key+":"+obj.get(key).toString());
+			if(key.equals("int")){
+				JsonUtils json = new JsonUtils();
+				TxtData txt = new TxtData();
+				json.compareJSONObject(new JSONObject(txt.readTxtFile("C:/Users/sam/Desktop/new 1.txt")),obj.getJSONObject(key));
+			}
 		}
 	}
 }
