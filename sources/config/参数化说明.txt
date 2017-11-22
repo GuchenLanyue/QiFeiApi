@@ -58,3 +58,12 @@
 ]
 7.通过同路径下其他字段的值获取某个接口response（该字段直接返回一个List）中指定字段的值。如：通过AllTypes.items.name='通用审批'来获取AllTypes.items.uuid的值。$temp{AllTypes.items.uuid?name='通用审批'}。
 8.在已有数据基础上求和$sum(${ApprovalOld.number_statistics[0].total_money},${purchase.total_price})
+9.日期：
+{Date.Year}：今年，格式："yyyy"。
+{Date.TheLastYear}：去年，格式："yyyy"。
+{Date.ThisMonth}：当前月，格式"MM"。
+{Date.Month}：当前月，格式"yyyy-MM".
+{Date.LastMonth}:上个月，格式"yyyy-MM".
+{Date.TheLastMonth}:上个月，格式"MM"。
+{Date.today}:今天，格式"yyyy-MM-dd".
+{Date.tomorrow}:明天，格式"yyyy-MM-dd".

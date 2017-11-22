@@ -1,6 +1,9 @@
 package com.qifei.test;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,11 +14,13 @@ import com.qifei.apis.Approval;
 import com.qifei.apis.Attendance;
 import com.qifei.apis.Members;
 import com.qifei.apis.Organization;
+import com.qifei.utils.DateUtils;
 import com.qifei.utils.ExcelWriter;
 import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
 
 import io.restassured.path.json.JsonPath;
+import junit.framework.Assert;
 
 public class ApprovalTest extends BaseTest {	
 	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
@@ -640,6 +645,37 @@ public class ApprovalTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
-
+	}
+	
+	@Test(dataProvider = "SingleCase", description= "获取审批明细")
+	public void approval_ApprovalDetails_Test(Map<String,Object> params){
+//		setRequest("ApprovalDetailsDefault",params);
+		setRequest("ApprovalDetailsCustomer",params);
+		JsonPath json = JsonPath.with(bodyStr);
+		List<String> list = json.getList("items");
+		for(int i = 0 ;i < list.size() ; i++){
+			String dateStr = json.getString("items["+i+"].created_at");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+08:00");  
+		    Date actualDate = null;
+			try {
+				actualDate = sdf.parse(dateStr.replace("T", " "));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			sdf = new SimpleDateFormat("yyyy-MM-dd");  
+			DateUtils dateUtils = new DateUtils();
+			String firstDate = dateUtils.getMonth() + "-01";
+			Date expectedDate = null;
+			try {
+				expectedDate = sdf.parse(firstDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Assert.assertTrue("\""+json.getString("items["+i+"].uuid")+"\""+" Approval time early of "+dateUtils.getMonth()+"-01", actualDate.getTime()>expectedDate.getTime());
+		}
 	}
 }

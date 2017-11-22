@@ -1,5 +1,6 @@
 package com.qifei.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -102,8 +103,15 @@ public class DateUtils {
 		return dateString;
 	}
 	public static void main(String[] args) {
-		DateUtils dateUtils = new DateUtils();
-		System.out.println(dateUtils.getLastMonth());
-		System.out.println(dateUtils.getThisMonth());
+		String dateStr = "2017-11-22 13:17:51+08:00";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+08:00");  
+	    Date date = null;
+		try {
+			date = sdf.parse(dateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		System.out.println(date.getTime());
 	}
 }

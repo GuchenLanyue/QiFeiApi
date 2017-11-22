@@ -103,12 +103,28 @@ public class BaseTest {
 		baseMap.put("basePath", basePath);
 		//设置路径参数
 		Map<String, Object> pathParamMap = new HashMap<>();
-		if(baseMap.get("Path").toString().contains("{")){
+		if(baseMap.get("Path").toString().contains("{Date_today}")){
 			String path = baseMap.get("Path").toString();
-			String pathParam = path.substring(path.indexOf("{")+1, path.lastIndexOf("}"));
-			if(paramMap.containsKey(pathParam)){
-				pathParamMap.put(pathParam, paramMap.get(pathParam));
+			while (path.contains("{Date_today}")) {
+				DateUtils dateUtils = new DateUtils();
+				String date = dateUtils.getToday();
+				int beginIndex = path.indexOf("{Date_today}");
+				int endIndex = path.indexOf("}",beginIndex);
+				path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
+				baseMap.put("Path", path);
 			}
+		}else if(baseMap.get("Path").toString().contains("{Date_tomorrow}")){
+			String path = baseMap.get("Path").toString();
+			while (path.contains("{Date_tomorrow}")) {
+				DateUtils dateUtils = new DateUtils();
+				String date = dateUtils.getToday();
+				int beginIndex = path.indexOf("{Date_tomorrow}");
+				int endIndex = path.indexOf("}",beginIndex);
+				path = path.substring(0, beginIndex)+date+path.substring(endIndex+1, path.length());
+				baseMap.put("Path", path);
+			}
+		}if(baseMap.get("Path").toString().contains("{")){			
+			pathParamMap = setPathParamters(baseMap, paramMap);
 		}
 		
 		//为caseName赋值，并将CaseID从参数值Map中删除。

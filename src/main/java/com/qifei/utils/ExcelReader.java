@@ -3,10 +3,11 @@ package com.qifei.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +21,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import org.testng.Assert;
 
 import io.qameta.allure.Allure;
+
 import io.restassured.path.json.JsonPath;
 
 public class ExcelReader {
@@ -225,6 +229,10 @@ public class ExcelReader {
 					if (HSSFDateUtil.isCellDateFormatted(cell)) {
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 						return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+					}
+					double number = cell.getNumericCellValue();
+					if((int)number==number){
+						return (int)number;
 					}
 					return cell.getNumericCellValue();
 				case STRING:
@@ -510,6 +518,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,startIndex) + f1 + str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy-MM-dd
 		while(str1.contains("{Date.today}")){
 			int startIndex = str1.indexOf("{Date.today}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -520,6 +529,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+today+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy-MM-dd
 		while(str1.contains("{Date.tomorrow}")){
 			int startIndex = str1.indexOf("{Date.tomorrow}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -530,6 +540,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+tomorrow+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy-MM
 		while(str1.contains("{Date.LastMonth}")){
 			int startIndex = str1.indexOf("{Date.LastMonth}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -540,6 +551,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy-MM
 		while(str1.contains("{Date.Month}")){
 			int startIndex = str1.indexOf("{Date.Month}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -550,6 +562,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//MM
 		while(str1.contains("{Date.TheLastMonth}")){
 			int startIndex = str1.indexOf("{Date.LastMonth}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -560,6 +573,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//MM
 		while(str1.contains("{Date.ThisMonth}")){
 			int startIndex = str1.indexOf("{Date.ThisMonth}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -570,6 +584,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy
 		while(str1.contains("{Date.TheLastYear}")){
 			int startIndex = str1.indexOf("{Date.LastMonth}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -580,6 +595,7 @@ public class ExcelReader {
 			str1 = str1.substring(0,beginIndex)+month+str1.substring(endIndex+1,str1.length());
 		}
 		
+		//yyyy
 		while(str1.contains("{Date.Year}")){
 			int startIndex = str1.indexOf("{Date.Year}");
 			int beginIndex = str1.indexOf("{",startIndex);
@@ -705,7 +721,7 @@ public class ExcelReader {
 //		}
 		double f = 287863.00;  
 		BigDecimal b = new BigDecimal(f);  
-		double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();  
-		System.out.println(f1);
+		double f1 = b.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+		System.out.println((int)f1==f1);
 	}
 }
