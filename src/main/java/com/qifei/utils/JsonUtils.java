@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,8 +168,9 @@ public class JsonUtils {
 			}else if(expections.get(key) instanceof Double){
 				Double expected = Double.parseDouble(expections.get(key).toString());
 				Double actual = Double.parseDouble(response.get(key).toString());
-				Assert.assertEquals(actual,expected,key);
-			}else {				
+				DecimalFormat df = new DecimalFormat("#.00");
+				Assert.assertEquals(df.format(actual),df.format(expected),key);
+			}else {
 				String actual = "";
 				JsonPath jsonPath = JsonPath.with(response.toString());
 				if(jsonPath.get(key)!=null){

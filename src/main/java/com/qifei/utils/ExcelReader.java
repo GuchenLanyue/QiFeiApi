@@ -3,7 +3,9 @@ package com.qifei.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -503,8 +505,9 @@ public class ExcelReader {
 			double value1 = Double.parseDouble(valueStr1);
 			double value2 = Double.parseDouble(valueStr2);
 			double value = value1 + value2;
-			DecimalFormat df = new DecimalFormat("#.00");
-			str1 = str1.substring(0,startIndex) + df.format(value) + str1.substring(endIndex+1,str1.length());
+			BigDecimal b = new BigDecimal(value);  
+			double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();  
+			str1 = str1.substring(0,startIndex) + f1 + str1.substring(endIndex+1,str1.length());
 		}
 		
 		while(str1.contains("{Date.today}")){
@@ -685,20 +688,24 @@ public class ExcelReader {
 	}
 	
 	public static void main(String[] args) {
-		String src = System.getProperty("user.dir")+"/sources";
-		ExcelReader excel = new ExcelReader(src,"release");
-		String fileName = "C:/Users/sam/Desktop/Approval.xlsx"; 
-		String sheetName = "Expectations";
-		String caseName = "Approval_1";
-		Map<String, Object> map = excel.mapFromSheet(fileName, sheetName, caseName);
-		JSONObject obj = new JSONObject(map);
-		for(String key:obj.keySet()){
-			System.out.println(key+":"+obj.get(key).toString());
-			if(key.equals("int")){
-				JsonUtils json = new JsonUtils();
-				TxtData txt = new TxtData();
-				json.compareJSONObject(new JSONObject(txt.readTxtFile("C:/Users/sam/Desktop/new 1.txt")),obj.getJSONObject(key));
-			}
-		}
+//		String src = System.getProperty("user.dir")+"/sources";
+//		ExcelReader excel = new ExcelReader(src,"release");
+//		String fileName = "C:/Users/sam/Desktop/Approval.xlsx"; 
+//		String sheetName = "Expectations";
+//		String caseName = "Approval_1";
+//		Map<String, Object> map = excel.mapFromSheet(fileName, sheetName, caseName);
+//		JSONObject obj = new JSONObject(map);
+//		for(String key:obj.keySet()){
+//			System.out.println(key+":"+obj.get(key).toString());
+//			if(key.equals("int")){
+//				JsonUtils json = new JsonUtils();
+//				TxtData txt = new TxtData();
+//				json.compareJSONObject(new JSONObject(txt.readTxtFile("C:/Users/sam/Desktop/new 1.txt")),obj.getJSONObject(key));
+//			}
+//		}
+		double f = 287863.00;  
+		BigDecimal b = new BigDecimal(f);  
+		double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();  
+		System.out.println(f1);
 	}
 }
