@@ -72,7 +72,7 @@ public class ProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
-		txt.writerText(organizationFile, organizationStr);
+//		txt.writerText(organizationFile, organizationStr);
 		//写入excel
 		JsonPath response = JsonPath.with(organizationStr);
 		ExcelWriter excel = new ExcelWriter();
@@ -93,7 +93,7 @@ public class ProcessTest extends BaseTest {
 		}
 		//写入txt
 		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
-		txt.writerText(positionFile, positionID);
+//		txt.writerText(positionFile, positionID);
 		response = JsonPath.with(positionID);
 		//写入excel
 		excel.editExcel(file, "position", response.get("name").toString(), "uuid", response.get("uuid").toString());
