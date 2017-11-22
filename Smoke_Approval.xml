@@ -143,7 +143,7 @@
 	
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="OverTime">
 				<include name="OverTime_Smoke_Test" />
 			</define>
 		</groups>
@@ -158,7 +158,7 @@
 	
 	<test name="出差审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="Trip">
 				<include name="Trip_Smoke_Test" />
 			</define>
 		</groups>
@@ -173,7 +173,7 @@
 	
 	<test name="项目审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="Project">
 				<include name="Project_Smoke_Test" />
 			</define>
 		</groups>
@@ -188,7 +188,7 @@
 	
 	<test name="通用审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="General">
 				<include name="General_Smoke_Test" />
 			</define>
 		</groups>
@@ -203,7 +203,7 @@
 	
 	<test name="物品领用审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="Materialget">
 				<include name="Materialget_Smoke_Test" />
 			</define>
 		</groups>
@@ -218,7 +218,7 @@
 	
 	<test name="合同审批流程测试" preserve-order="true">
 		<groups>
-			<define name="Resign">
+			<define name="Contract">
 				<include name="Contract_Smoke_Test" />
 			</define>
 		</groups>
