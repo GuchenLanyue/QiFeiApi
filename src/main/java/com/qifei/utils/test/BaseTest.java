@@ -9,7 +9,6 @@ import com.qifei.utils.JsonUtils;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
-import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -277,7 +276,7 @@ public class BaseTest {
 	
 	@AfterTest
 	public void AfterTest(ITestContext context) {
-		File file = new File(bodyStr+"/temp/access_token.txt");
+		File file = new File(srcDir+"/temp/access_token.txt");
 		if(file.exists()&&file.isFile()){
 			file.delete();
 		}
