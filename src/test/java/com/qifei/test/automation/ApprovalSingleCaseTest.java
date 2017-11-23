@@ -1,61 +1,53 @@
-package com.qifei.test;
+package com.qifei.test.automation;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import com.qifei.apis.Approval;
 import com.qifei.apis.Attendance;
-import com.qifei.apis.Members;
+import com.qifei.apis.Employee;
 import com.qifei.apis.Organization;
+import com.qifei.utils.DateUtils;
 import com.qifei.utils.ExcelWriter;
 import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
 
 import io.restassured.path.json.JsonPath;
+import junit.framework.Assert;
 
-public class ProcessTest extends BaseTest {
-	@Test(dataProvider="CaseList",description="审批类型设置")
-	public void Types_Temp_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
+public class ApprovalSingleCaseTest extends BaseTest {
+	@Test(dataProvider = "SingleCase", description= "获取所有审批类型")
+	public void allTypes_Test(Map<String, Object> params){		
+		setRequest("approvalTypes", params);
+		//写入txt
 		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+caseName+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
+		String positionFile = srcDir+File.separator+"temp"+File.separator+"AllTypes.txt";
+		txt.writerText(positionFile, bodyStr);
+		JsonPath response = JsonPath.with(bodyStr);
+		ExcelWriter excel = new ExcelWriter();
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
+		List<Object> form_names = response.getList("items.form_name");
+		List<Object> names = response.getList("items.name");
+		List<Object> ids = response.getList("items.uuid");
+		for(int i=0;i<form_names.size();i++){
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "type_id", ids.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "name", names.get(i).toString());
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "uuid", response.get("items["+i+"].process_list[0].uuid"));
+			excel.editExcel(file, "AllTypes", form_names.get(i).toString()+response.get("items["+i+"].sub_category"), "created_by", response.get("items["+i+"].created_by"));
 		}
 	}
 	
-	@Test(dataProvider = "SingleCase", description= "删除子部门，为整体流程测试做准备")
-	public void DeleteOrganizationByName_Test(Map<String, Object> params){
-		Organization organization = new Organization(basePath);
-		organization.deleteOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
+	@Test(dataProvider="SingleCase",description="审批类型设置")
+	public void ApprovalTypes_Test(Map<String, Object> params){
+		setRequest("approvalTypes", params);
+		checkResponse();
 	}
 	
 	@Test(dataProvider="SingleCase",description="获取子部门id，否则连续新建子部门造成的垃圾数据太多")
@@ -69,14 +61,15 @@ public class ProcessTest extends BaseTest {
 			organizationID = JsonPath.with(organizationStr).getString("uuid");
 		}
 		//写入txt
-//		TxtData txt = new TxtData();
-//		String organizationFile = srcDir+File.separator+"temp"+File.separator+params.get("organization_Name").toString()+".txt";
+		TxtData txt = new TxtData();
+		String organizationFile = srcDir+File.separator+"temp"+File.separator+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
-//		txt.writerText(organizationFile, organizationStr);
+		txt.writerText(organizationFile, organizationStr);
 		//写入excel
 		JsonPath response = JsonPath.with(organizationStr);
 		ExcelWriter excel = new ExcelWriter();
 		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
+		excel.editExcel(file, "organization", response.get("name").toString(), "name", response.get("name").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "uuid", response.get("uuid").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "leader_ID", response.get("leader_ID").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "user_id", response.get("user_id").toString());
@@ -92,34 +85,14 @@ public class ProcessTest extends BaseTest {
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-//		String positionFile = srcDir+File.separator+"temp"+File.separator+params.get("position_Name").toString()+".txt";
-//		txt.writerText(positionFile, positionID);
+		String positionFile = srcDir+File.separator+"temp"+File.separator+params.get("position_Name").toString()+".txt";
+		txt.writerText(positionFile, positionID);
 		response = JsonPath.with(positionID);
 		//写入excel
+		excel.editExcel(file, "position", response.get("name").toString(), "name", response.get("name").toString());
 		excel.editExcel(file, "position", response.get("name").toString(), "uuid", response.get("uuid").toString());
 		excel.editExcel(file, "position", response.get("name").toString(), "organization", response.get("organization").toString());
 		excel.editExcel(file, "position", response.get("name").toString(), "organization_ID", response.get("organization_ID").toString());
-	}
-	
-	@Test(dataProvider = "SingleCase", description= "获取所有审批类型")
-	public void allTypes_Test(Map<String, Object> params){		
-		setRequest("approvalTypes", params);
-		//写入txt
-		TxtData txt = new TxtData();
-		String positionFile = srcDir+File.separator+"temp"+File.separator+"AllTypes.txt";
-		txt.writerText(positionFile, bodyStr);
-		JsonPath response = JsonPath.with(bodyStr);
-		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
-		List<Object> form_names = response.getList("items.form_name");
-		List<Object> names = response.getList("items.name");
-		List<Object> ids = response.getList("items.uuid");
-		for(int i=0;i<form_names.size();i++){
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "type_id", ids.get(i).toString());
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "name", names.get(i).toString());
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "uuid", response.get("items["+i+"].process_list[0].uuid"));
-			excel.editExcel(file, "AllTypes", form_names.get(i).toString(), "created_by", response.get("items["+i+"].created_by"));
-		}
 	}
 	
 	@Test(dataProvider="SingleCase",description="新增员工")
@@ -128,10 +101,10 @@ public class ProcessTest extends BaseTest {
 		String caseID = paramMap.get("CaseID").toString();
 		paramMap.remove("CaseID");
 		//新增员工
-		Members member = new Members(basePath);
+		Employee member = new Employee(basePath);
 		String organization_ID = paramMap.get("organization_ID").toString();
 		String position_ID = paramMap.get("position_ID").toString();
-		String body = member.addMember(organization_ID,position_ID);
+		String body = member.addEmployee(organization_ID,position_ID);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+caseID+".txt";
@@ -145,173 +118,44 @@ public class ProcessTest extends BaseTest {
 		member.checkResponse(body);
 	}
 	
-	@Test(dataProvider="SingleCase",description="新增员工")
-	public void addMember2_Test(Map<String, Object> params){
-		Map<String, Object> paramMap = params;
-		String caseID = paramMap.get("CaseID").toString();
-		paramMap.remove("CaseID");
-		//新增员工
-		Members member = new Members(basePath);
-		String body = member.addMember(paramMap);
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+caseID+".txt";
-		txt.writerText(filename, body);
-		//验证结果
-		member.checkResponse(body);
-		JsonPath response = new JsonPath(body);
-		//到岗
-		member.join(response.get("uuid").toString());
-		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
-		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_id", response.get("uuid").toString());
-		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_no", response.get("employee_no").toString());
-		excel.editExcel(file, "Auth", params.get("name").toString(), "user_name", response.get("name").toString());
-		member.checkResponse(body);
+	@Test(dataProvider="SingleCase",description="转正")
+	public void Formal_Test(Map<String, Object> params){
+		setRequest("Formal", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "调整审批流程冒烟测试")
-	public void adjust_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-
-		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider = "SingleCase", description= "调整")
+	public void Adjust_Test(Map<String, Object> params) {
+		setRequest("Adjust", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="CaseList",description="转正审批测试")
-	public void join_Formal_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-	
-	@Test(dataProvider="CaseList",description="辞职审批测试")
-	public void Offboard_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-	
-	@Test(dataProvider="CaseList",description="辞职审批测试")
-	public void Offboard2_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider="SingleCase",description="辞职")
+	public void Offboard_Test(Map<String, Object> params){
+		setRequest("Offboard", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		approval.cancel(uuid);
 	}
 	
 	@Test(dataProvider="SingleCase")
 	public void OvertimeRequest_Test(Map<String, Object> params){
 		setRequest("OvertimeRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		approval.cancel(uuid);
 	}
 	
 	
@@ -801,6 +645,37 @@ public class ProcessTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
-
+	}
+	
+	@Test(dataProvider = "SingleCase", description= "获取审批明细")
+	public void approval_ApprovalDetails_Test(Map<String,Object> params){
+//		setRequest("ApprovalDetailsDefault",params);
+		setRequest("ApprovalDetailsCustomer",params);
+		JsonPath json = JsonPath.with(bodyStr);
+		List<String> list = json.getList("items");
+		for(int i = 0 ;i < list.size() ; i++){
+			String dateStr = json.getString("items["+i+"].created_at");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+08:00");  
+		    Date actualDate = null;
+			try {
+				actualDate = sdf.parse(dateStr.replace("T", " "));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			sdf = new SimpleDateFormat("yyyy-MM-dd");  
+			DateUtils dateUtils = new DateUtils();
+			String firstDate = dateUtils.getMonth() + "-01";
+			Date expectedDate = null;
+			try {
+				expectedDate = sdf.parse(firstDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Assert.assertTrue("\""+json.getString("items["+i+"].uuid")+"\""+" Approval time early of "+dateUtils.getMonth()+"-01", actualDate.getTime()>expectedDate.getTime());
+		}
 	}
 }

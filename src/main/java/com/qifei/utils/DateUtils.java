@@ -19,6 +19,10 @@ public class DateUtils {
 		return dateString;
 	}
 	
+	/**
+	 * *
+	 * @return "yyyy-MM-dd"
+	 */
 	public String getToday(){
 		Date date = new Date();
 		Calendar calendar = new GregorianCalendar();
@@ -55,6 +59,8 @@ public class DateUtils {
 		return dateString;
 	}
 	
+	/**
+	 * @return "MM"*/
 	public String getThisMonth(){
 		Date date = new Date();
 		Calendar calendar = new GregorianCalendar();
@@ -91,6 +97,8 @@ public class DateUtils {
 		return dateString;
 	}
 	
+	/**
+	 * @return "yyyy"*/
 	public String getYear(){
 		Date date = new Date();
 		Calendar calendar = new GregorianCalendar();
@@ -102,6 +110,7 @@ public class DateUtils {
 		
 		return dateString;
 	}
+	
 	public static void main(String[] args) {
 		String dateStr = "2017-11-22 13:17:51+08:00";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+08:00");  

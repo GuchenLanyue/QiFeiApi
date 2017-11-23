@@ -35,6 +35,7 @@ public class Auth {
 	private String platform = "";
 	private String basePath = "";
 	private String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
+	private Response response = null;
 	
 	@Step("tokens() 登录-获取Token")
 	public String tokens(){
@@ -55,7 +56,7 @@ public class Auth {
 		map.put("params", paramMap);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.request(map);
+		response = http.request(map);
 		JsonPath body = JsonPath.with(http.getBody(response));
 		
 		String authorization = "Bearer " + body.getString("access_token");
@@ -78,7 +79,7 @@ public class Auth {
 		map.put("params", params);
 		
 		HttpMethods http = new HttpMethods(basePath);
-		Response response = http.request(map);
+		response = http.request(map);
 		JsonPath body = JsonPath.with(http.getBody(response));
 		
 		String authorization = "Bearer " + body.getString("access_token");
@@ -87,6 +88,10 @@ public class Auth {
 		txt.writerText(tokenFile, authorization);
 		
 		return authorization;
+	}
+	
+	public Response getResponse(){
+		return response;
 	}
 	
 	public static void main(String[] args) {
