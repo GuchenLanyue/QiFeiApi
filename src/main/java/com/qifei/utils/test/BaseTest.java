@@ -64,7 +64,7 @@ public class BaseTest {
 		String methodName = testMethod.getName();
 		String[] caseStr = methodName.split("_");
 		method = caseStr[caseStr.length-2];
-		filePath = srcDir+"/case/"+method+".xlsx";
+		filePath = srcDir+File.separator+"case"+File.separator+method+".xlsx";
 		
 		String sheetName = caseStr[caseStr.length-3];
 		ExcelReader excel = new ExcelReader(srcDir,platform);
@@ -83,7 +83,7 @@ public class BaseTest {
 		String methodName = testMethod.getName();
 		String[] caseStr = methodName.split("_");
 		method = caseStr[caseStr.length-2];
-		filePath = srcDir+"/case/"+method+".xlsx";
+		filePath = srcDir+File.separator+"case"+File.separator+method+".xlsx";
 		String sheetName = "Params";
 		ExcelReader excel = new ExcelReader(srcDir,platform);
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
@@ -292,7 +292,7 @@ public class BaseTest {
 	
 	@AfterTest
 	public void AfterTest(ITestContext context) {
-		File file = new File(srcDir+"/temp/access_token.txt");
+		File file = new File(srcDir+File.separator+"temp"+File.separator+"access_token.txt");
 		if(file.exists()&&file.isFile()){
 			file.delete();
 		}

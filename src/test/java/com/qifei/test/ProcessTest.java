@@ -23,7 +23,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
@@ -41,13 +41,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"\\temp\\"+caseName+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+caseName+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -70,7 +70,7 @@ public class ProcessTest extends BaseTest {
 		}
 		//写入txt
 		TxtData txt = new TxtData();
-		String organizationFile = srcDir+"/temp/"+params.get("organization_Name").toString()+".txt";
+		String organizationFile = srcDir+File.separator+"temp"+File.separator+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 //		txt.writerText(organizationFile, organizationStr);
 		//写入excel
@@ -92,7 +92,7 @@ public class ProcessTest extends BaseTest {
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-		String positionFile = srcDir+"/temp/"+params.get("position_Name").toString()+".txt";
+		String positionFile = srcDir+File.separator+"temp"+File.separator+params.get("position_Name").toString()+".txt";
 //		txt.writerText(positionFile, positionID);
 		response = JsonPath.with(positionID);
 		//写入excel
@@ -134,7 +134,7 @@ public class ProcessTest extends BaseTest {
 		String body = member.addMember(organization_ID,position_ID);
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+caseID+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+caseID+".txt";
 		txt.writerText(filename, body);
 
 		//验证结果
@@ -155,7 +155,7 @@ public class ProcessTest extends BaseTest {
 		String body = member.addMember(paramMap);
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+caseID+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+caseID+".txt";
 		txt.writerText(filename, body);
 		//验证结果
 		member.checkResponse(body);
@@ -177,7 +177,7 @@ public class ProcessTest extends BaseTest {
 		}
 
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
@@ -195,13 +195,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -212,7 +212,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -230,13 +230,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -247,7 +247,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -264,13 +264,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -281,7 +281,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -298,13 +298,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -321,7 +321,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -338,13 +338,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"\\temp\\"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -355,7 +355,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -372,13 +372,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"\\temp\\"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -389,7 +389,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
@@ -406,13 +406,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"\\temp\\"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -423,7 +423,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
@@ -441,13 +441,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -458,7 +458,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
@@ -476,13 +476,13 @@ public class ProcessTest extends BaseTest {
 		}
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -493,7 +493,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
@@ -510,13 +510,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -527,7 +527,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
@@ -544,13 +544,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -561,7 +561,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
@@ -578,13 +578,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -595,7 +595,7 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 
@@ -612,13 +612,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -629,11 +629,11 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
@@ -649,13 +649,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = srcDir+"/temp/"+api+".txt";
+		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -666,11 +666,11 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
@@ -686,13 +686,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = srcDir+"/temp/"+api+".txt";
+		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -703,11 +703,11 @@ public class ProcessTest extends BaseTest {
 			return;
 		}
 		String api = baseData.get("API").toString();
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		
 		long time = 5000;
@@ -723,13 +723,13 @@ public class ProcessTest extends BaseTest {
 		}
 
 		txt = new TxtData();
-		filename = srcDir+"/temp/"+api+".txt";
+		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 	}
@@ -757,7 +757,7 @@ public class ProcessTest extends BaseTest {
 			attendance.deleteAllSchedules();
 		}
 
-		String filePath = srcDir+"/case/"+baseData.get("FilePath");
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		
 		if(api.equals("AttendanceStatisticsAPP")){
@@ -771,7 +771,7 @@ public class ProcessTest extends BaseTest {
 		setRequest(api,filePath,caseName);
 		
 		TxtData txt = new TxtData();
-		String filename = srcDir+"/temp/"+api+".txt";
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
 		if(caseName.equals("Locations_Add_01")){
 			try {
@@ -798,7 +798,7 @@ public class ProcessTest extends BaseTest {
 		if(api.equals("Auth")){
 			JsonPath body = JsonPath.with(bodyStr);
 			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
 

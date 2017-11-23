@@ -1,5 +1,6 @@
 package com.qifei.apis;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class Auth {
 		// TODO Auto-generated constructor stub
 		this.basePath = basePath;
 		TxtData txt = new TxtData();
-		platform = txt.readTxtFile(System.getProperty("user.dir")+"/sources/config/platform.txt");
+		platform = txt.readTxtFile(System.getProperty("user.dir")+File.separator+"sources"+File.separator+"config"+File.separator+"platform.txt");
 	}
 	
 	public Auth(String basePath,String platform) {
@@ -33,7 +34,7 @@ public class Auth {
 	
 	private String platform = "";
 	private String basePath = "";
-	private String tokenFile = System.getProperty("user.dir")+"/sources/temp/access_token.txt";
+	private String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 	
 	@Step("tokens() 登录-获取Token")
 	public String tokens(){
@@ -44,7 +45,7 @@ public class Auth {
 		
 		//通过user.json文件读取登录信息
 		JsonUtils jsonUtil = new JsonUtils();
-		String file = System.getProperty("user.dir")+"/sources/config/" + platform +"/user.json";
+		String file = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"config"+File.separator + platform +File.separator+"user.json";
 		JsonPath user = jsonUtil.jsonReader(file);
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap = user.getMap("user");
