@@ -65,7 +65,22 @@
 			</class>
 		</classes>
 	</test>
-	-->
+
+	<test name="转正" preserve-order="true">
+		<groups>
+			<define name="Formal">
+				<include name="Formal_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.ApprovalTest">
+				<methods>
+					<include name="Formal_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
 	<!-- 
 	<test name="调整" preserve-order="true">
 		<groups>
@@ -81,17 +96,18 @@
 			</class>
 		</classes>
 	</test>
+	-->
 	
-	<test name="转正" preserve-order="true">
+	<test name="审批明细" preserve-order="true">
 		<groups>
-			<define name="Formal">
-				<include name="Formal_Test" />
+			<define name="ApprovalDetails">
+				<include name="approval_ApprovalDetails_Test" />
 			</define>
 		</groups>
 		<classes>
 			<class name="com.qifei.test.ApprovalTest">
 				<methods>
-					<include name="Formal_Test" />
+					<include name="approval_ApprovalDetails_Test" />
 				</methods>
 			</class>
 		</classes>
