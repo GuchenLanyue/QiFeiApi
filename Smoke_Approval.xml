@@ -5,7 +5,7 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	<!--
+	
 	<test name="获取子部门ID" preserve-order="true">
 		<groups>
 			<define name="GetOrganizationByName">
@@ -95,7 +95,7 @@
 			</class>
 		</classes>
 	</test>
-	-->
+	
 	<test name="请假审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Leave">
@@ -110,7 +110,7 @@
 			</class>
 		</classes>
 	</test>
-	<!-- 
+	 
 	<test name="外出审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Out">
@@ -275,5 +275,5 @@
 			</class>
 		</classes>
 	</test>
-	-->
+	
 </suite>
