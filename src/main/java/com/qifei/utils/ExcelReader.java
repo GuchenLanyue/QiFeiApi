@@ -340,13 +340,13 @@ public class ExcelReader {
 				fileName = str1.substring(beginIndex+1,splitCharIndex);
 				paramter = str1.substring(splitCharIndex+1,endIndex);
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JsonPath json = JsonPath.with(body);
 				value = json.get(paramter).toString();
 			}else{
 				fileName = str1.substring(beginIndex+1,endIndex);
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JSONObject object = new JSONObject(body);
 				value = object.toString();
 			}
@@ -375,7 +375,7 @@ public class ExcelReader {
 				paramter = exceptArr[1];
 				
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JsonPath json = JsonPath.with(body);
 				JSONObject jsonObject = new JSONObject(body);
 				
@@ -397,7 +397,7 @@ public class ExcelReader {
 				paramter = exceptArr[1];
 				
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JsonPath json = JsonPath.with(body);
 				List<String> list = new ArrayList<>();
 				String exceptValue = formula[1].substring(1, formula[1].length()-1);
@@ -433,13 +433,13 @@ public class ExcelReader {
 			if(str1.contains(".")){
 				paramter = str1.substring(splitCharIndex+1,endIndex);
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JSONArray array = new JSONArray(body);
 				JsonPath json = JsonPath.with(array.get(index).toString());
 				value = json.getString(paramter);
 			}else{
 				TxtData txt = new TxtData();
-				String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+				String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 				JSONArray array = new JSONArray(body);
 				value = array.get(index).toString();
 			}
@@ -458,7 +458,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/config/" + platform + "/" +fileName+".xlsx";
+			fileName = src + File.separator+"config"+File.separator + platform + File.separator + fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) + value + str1.substring(endIndex+1,str1.length());
@@ -474,7 +474,7 @@ public class ExcelReader {
 			String paramter = str1.substring(splitCharIndex+1,endIndex);
 			
 			TxtData txt = new TxtData();
-			String body = txt.readTxtFile(src + "/temp/"+fileName+".txt");
+			String body = txt.readTxtFile(src + File.separator+"temp"+File.separator+fileName+".txt");
 			JsonPath json = JsonPath.with(body);
 			
 			String value = json.getString(paramter);
@@ -493,7 +493,7 @@ public class ExcelReader {
 			String sheetName = str1.substring(splitCharIndex1+1,splitCharIndex2);
 			String caseName = str1.substring(splitCharIndex2+1,splitCharIndex3);
 			String key = str1.substring(splitCharIndex3+1,endIndex);
-			fileName = src + "/config/" + platform + "/" +fileName+".xlsx";
+			fileName = src + File.separator+"config"+File.separator + platform + File.separator +fileName+".xlsx";
 			Map<String, Object> map = mapFromSheet(fileName, sheetName, caseName);
 			String value = map.get(key).toString();
 			str1 = str1.substring(0,startIndex) +"?normal{"+ value + "}" + str1.substring(endIndex+1,str1.length());
@@ -676,7 +676,6 @@ public class ExcelReader {
 				jsonObj = new JSONObject(jsonStr);
 			} catch (Exception e) {
 				// TODO: handle exception
-				System.out.println(jsonStr);
 				e.printStackTrace();
 			}
 		}
