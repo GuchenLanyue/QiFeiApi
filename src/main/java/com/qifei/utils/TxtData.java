@@ -30,7 +30,7 @@ public class TxtData {
 		if (f.exists()) {
 			f.delete();
 		}
-		
+		System.out.println(fileName);
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
