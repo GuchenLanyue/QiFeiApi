@@ -69,14 +69,14 @@ public class ProcessTest extends BaseTest {
 			organizationID = JsonPath.with(organizationStr).getString("uuid");
 		}
 		//写入txt
-		TxtData txt = new TxtData();
-		String organizationFile = srcDir+File.separator+"temp"+File.separator+params.get("organization_Name").toString()+".txt";
+//		TxtData txt = new TxtData();
+//		String organizationFile = srcDir+File.separator+"temp"+File.separator+params.get("organization_Name").toString()+".txt";
 		organizationStr = organization.getOrganization(params.get("parent_organization_ID").toString(), params.get("organization_Name").toString());
 //		txt.writerText(organizationFile, organizationStr);
 		//写入excel
 		JsonPath response = JsonPath.with(organizationStr);
 		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
 		excel.editExcel(file, "organization", response.get("name").toString(), "uuid", response.get("uuid").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "leader_ID", response.get("leader_ID").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "user_id", response.get("user_id").toString());
@@ -92,7 +92,7 @@ public class ProcessTest extends BaseTest {
 			positionID = obj.getJSONArray("items").get(0).toString();
 		}
 		//写入txt
-		String positionFile = srcDir+File.separator+"temp"+File.separator+params.get("position_Name").toString()+".txt";
+//		String positionFile = srcDir+File.separator+"temp"+File.separator+params.get("position_Name").toString()+".txt";
 //		txt.writerText(positionFile, positionID);
 		response = JsonPath.with(positionID);
 		//写入excel
@@ -106,11 +106,11 @@ public class ProcessTest extends BaseTest {
 		setRequest("approvalTypes", params);
 		//写入txt
 		TxtData txt = new TxtData();
-		String positionFile = srcDir+"/temp/AllTypes.txt";
+		String positionFile = srcDir+File.separator+"temp"+File.separator+"AllTypes.txt";
 		txt.writerText(positionFile, bodyStr);
 		JsonPath response = JsonPath.with(bodyStr);
 		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
 		List<Object> form_names = response.getList("items.form_name");
 		List<Object> names = response.getList("items.name");
 		List<Object> ids = response.getList("items.uuid");
@@ -163,7 +163,7 @@ public class ProcessTest extends BaseTest {
 		//到岗
 		member.join(response.get("uuid").toString());
 		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
 		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_id", response.get("uuid").toString());
 		excel.editExcel(file, "Auth", params.get("name").toString(), "employee_no", response.get("employee_no").toString());
 		excel.editExcel(file, "Auth", params.get("name").toString(), "user_name", response.get("name").toString());

@@ -41,7 +41,7 @@ public class ApprovalTest extends BaseTest {
 		//写入excel
 		JsonPath response = JsonPath.with(organizationStr);
 		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
 		excel.editExcel(file, "organization", response.get("name").toString(), "name", response.get("name").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "uuid", response.get("uuid").toString());
 		excel.editExcel(file, "organization", response.get("name").toString(), "leader_ID", response.get("leader_ID").toString());
@@ -73,11 +73,11 @@ public class ApprovalTest extends BaseTest {
 		setRequest("approvalTypes", params);
 		//写入txt
 		TxtData txt = new TxtData();
-		String positionFile = srcDir+"/temp/AllTypes.txt";
+		String positionFile = srcDir+File.separator+"temp"+File.separator+"AllTypes.txt";
 		txt.writerText(positionFile, bodyStr);
 		JsonPath response = JsonPath.with(bodyStr);
 		ExcelWriter excel = new ExcelWriter();
-		File file = new File(srcDir+"/config/"+platform+"/data.xlsx");
+		File file = new File(srcDir+File.separator+"config"+File.separator+platform+File.separator+"data.xlsx");
 		List<Object> form_names = response.getList("items.form_name");
 		List<Object> names = response.getList("items.name");
 		List<Object> ids = response.getList("items.uuid");
