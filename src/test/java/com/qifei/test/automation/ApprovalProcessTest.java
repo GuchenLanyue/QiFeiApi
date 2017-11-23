@@ -772,10 +772,4 @@ public class ApprovalProcessTest extends BaseTest {
 			txt.writerText(tokenFile, authorization);
 		}
 	}
-	
-	@Test(description="离职所有待转正员工")
-	public void cleanEmploee_Test(){
-		Employee employee = new Employee(basePath);
-		employee.clean("probation");
-	}
 }

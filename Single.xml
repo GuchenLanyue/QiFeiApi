@@ -111,4 +111,19 @@
 			</class>
 		</classes>
 	</test>
+	
+	<test name="清空待转正离职人员" preserve-order="true">
+		<groups>
+			<define name="CleanEmploee">
+				<include name="cleanEmploee_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="cleanEmploee_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>

@@ -678,4 +678,10 @@ public class ApprovalSingleCaseTest extends BaseTest {
 			Assert.assertTrue("\""+json.getString("items["+i+"].uuid")+"\""+" Approval time early of "+dateUtils.getMonth()+"-01", actualDate.getTime()>expectedDate.getTime());
 		}
 	}
+	
+	@Test(description="离职所有待转正员工")
+	public void cleanEmploee_Test(){
+		Employee employee = new Employee(basePath);
+		employee.clean("probation");
+	}
 }
