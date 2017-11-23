@@ -36,6 +36,7 @@ public class TxtData {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("写入文件失败");
 		}
 
 		try {

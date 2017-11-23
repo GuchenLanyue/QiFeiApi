@@ -110,7 +110,7 @@
 			</class>
 		</classes>
 	</test>
-	
+	<!-- 
 	<test name="外出审批流程测试" preserve-order="true">
 		<groups>
 			<define name="Out">
@@ -140,7 +140,7 @@
 			</class>
 		</classes>
 	</test>
-	<!--  
+	 
 	<test name="加班审批流程测试" preserve-order="true">
 		<groups>
 			<define name="OverTime">
