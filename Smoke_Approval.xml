@@ -13,7 +13,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="getOrganizationByName_Test" />
 				</methods>
@@ -28,7 +28,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="addMember_Test" />
 				</methods>
@@ -43,7 +43,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="allTypes_Test" />
 				</methods>
@@ -58,7 +58,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="join_Formal_Smoke_Test" />
 				</methods>
@@ -73,7 +73,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="adjust_Smoke_Test" />
 				</methods>
@@ -88,7 +88,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Offboard_Smoke_Test" />
 				</methods>
@@ -103,7 +103,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Leave_Smoke_Test" />
 				</methods>
@@ -118,7 +118,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Out_Smoke_Test" />
 				</methods>
@@ -133,7 +133,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Resign_Smoke_Test" />
 				</methods>
@@ -148,7 +148,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="OverTime_Smoke_Test" />
 				</methods>
@@ -163,7 +163,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Trip_Smoke_Test" />
 				</methods>
@@ -178,7 +178,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Project_Smoke_Test" />			
 				</methods>
@@ -193,7 +193,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="General_Smoke_Test" />			
 				</methods>
@@ -208,7 +208,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Materialget_Smoke_Test" />
 				</methods>
@@ -223,7 +223,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Contract_Smoke_Test" />				
 				</methods>
@@ -238,7 +238,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="Purchase_Smoke_Test" />
 				</methods>
@@ -253,7 +253,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="reimbursement_Smoke_Test" />
 				</methods>
@@ -268,7 +268,7 @@
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
 					<include name="payment_Smoke_Test" />
 				</methods>
@@ -276,4 +276,18 @@
 		</classes>
 	</test>
 	
+	<test name="付款流程设置" preserve-order="true">
+		<groups>
+			<define name="CleanEmploee">
+				<include name="cleanEmploee_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
+				<methods>
+					<include name="cleanEmploee_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>
