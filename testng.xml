@@ -5,52 +5,83 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	<!-- 
-	<test name="离职" preserve-order="true">
+	<!--  
+	<test name="获取子部门ID" preserve-order="true">
 		<groups>
-			<define name="Resign">
-				<include name="Offboard2_Smoke_Test" />
+			<define name="GetOrganizationByName">
+				<include name="getOrganizationByName_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
-					<include name="Offboard2_Smoke_Test" />
+					<include name="getOrganizationByName_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 	
-	<test name="新增成员" preserve-order="true">
+	<test name="新增员工" preserve-order="true">
 		<groups>
-			<define name="Resign">
-				<include name="addMember2_Test" />
+			<define name="AddMember">
+				<include name="addMember_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.ProcessTest">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
-					<include name="addMember2_Test" />
+					<include name="addMember_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 	
-	<test name="获取所有审批类型" preserve-order="true">
+	<test name="转正" preserve-order="true">
 		<groups>
-			<define name="AllTypes">
-				<include name="AllTypes_Test" />
+			<define name="Join_Formal">
+				<include name="join_Formal_Smoke_Test" />
 			</define>
 		</groups>
 		<classes>
-			<class name="com.qifei.test.Approval">
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
 				<methods>
-					<include name="allTypes_Test" />
+					<include name="join_Formal_Smoke_Test" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 	-->
+	  
+	<test name="调岗" preserve-order="true">
+		<groups>
+			<define name="Adjust">
+				<include name="adjust_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
+				<methods>
+					<include name="adjust_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<!--
+	<test name="辞职_辞退" preserve-order="true">
+		<groups>
+			<define name="Offboard">
+				<include name="Offboard_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
+				<methods>
+					<include name="Offboard_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
 	
 	<test name="考勤流程测试" preserve-order="true">
 		<groups>
@@ -67,4 +98,19 @@
 		</classes>
 	</test>
 	
+	<test name="采购流程设置" preserve-order="true">
+		<groups>
+			<define name="Purchase">
+				<include name="Purchase_Smoke_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalProcessTest">
+				<methods>
+					<include name="Purchase_Smoke_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	-->
 </suite>
