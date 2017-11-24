@@ -305,7 +305,7 @@
 			</class>
 		</classes>
 	</test>
-	
+	<!--  
 	<test name="清空待转正离职人员" preserve-order="true">
 		<groups>
 			<define name="CleanEmploee">
@@ -320,4 +320,5 @@
 			</class>
 		</classes>
 	</test>
+	-->
 </suite>
