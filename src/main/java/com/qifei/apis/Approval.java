@@ -1,5 +1,6 @@
 package com.qifei.apis;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +10,11 @@ import org.json.JSONObject;
 
 import com.qifei.utils.DateUtils;
 import com.qifei.utils.ExcelReader;
+import com.qifei.utils.TxtData;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
+import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import junit.framework.Assert;
@@ -31,6 +34,7 @@ public class Approval {
 	/**
 	 * @description 获取所有审批类型
 	 * */
+	@Step("getAllTypes() 获取所有审批类型")
 	public String getAllTypes(){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -55,6 +59,7 @@ public class Approval {
 	
 	/**
 	 * @description 设置审批流程*/
+	@Step("setApprovalType() 设置审批流程")
 	public Response setApprovalType(String approval,String sub_category){
 		String types = getAllTypes();
 		JsonPath type = JsonPath.with(types);
@@ -76,6 +81,7 @@ public class Approval {
 	
 	/**
 	 * @description 设置审批流程*/
+	@Step("setApprovalType() 设置审批流程")
 	public Response setApprovalType(String typeID,String processID,String sub_category){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -143,6 +149,7 @@ public class Approval {
 	
 	/**
 	 * @description 搜索审批明细*/
+	@Step("search_approval() 搜索审批明细")
 	public Response search_approval(String title){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -178,6 +185,7 @@ public class Approval {
 	/**
 	 * @description 撤回审批
 	 * */
+	@Step("cancel() 撤回审批")
 	public String cancel(String process_id){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -207,6 +215,7 @@ public class Approval {
 	
 	/**
 	 * @description 审批通过 */
+	@Step("approval() 审批通过")
 	public String approval(String instance_id,String task_id){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -240,6 +249,7 @@ public class Approval {
 	
 	/**
 	 * @description 获取审批列表 */
+	@Step("getInstances() 获取审批列表")
 	public String getInstances(String uuid){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -267,26 +277,30 @@ public class Approval {
 			if(form_record_id.equals(uuid)){
 				break;
 			}else{
+				try {
+					Thread.sleep(5000);
+					time += 5000;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				response = http.request(map);
 				json = JsonPath.with(http.getBody(response));
 				form_record_id = json.get("items[0].form_record_id").toString();
 			}
-			
-			try {
-				Thread.sleep(5000);
-				time += 5000;
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}while(time < 15000);
-		Assert.assertEquals("not found approval:"+uuid+".", uuid, form_record_id);
+		TxtData txtData = new TxtData();
+		String filename = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"GetInstances.txt";
+		txtData.writerText(filename, http.getBody(response));
 		
+		Assert.assertEquals("not found approval:"+uuid+".", uuid, form_record_id);
+
 		return json.get("items[0].uuid").toString();
 	}
 	
 	/**
 	 * @description 获取审批详情*/
+	@Step("getInstanceInfo() 获取审批详情")
 	public String getInstanceInfo(String uuid){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -317,6 +331,7 @@ public class Approval {
 	/**
 	 * @description 辞职
 	 * */
+	@Step("offboard() 辞职")
 	public Response offboard(Map<String, Object> params){
 		Map<String, Object> paramMap = params;
 		Map<String, Object> baseMap = new HashMap<>();

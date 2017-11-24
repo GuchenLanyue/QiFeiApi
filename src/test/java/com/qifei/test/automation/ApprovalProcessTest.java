@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import com.qifei.apis.Approval;
 import com.qifei.apis.Attendance;
 import com.qifei.apis.Employee;
 import com.qifei.apis.Organization;
@@ -19,9 +20,7 @@ import io.restassured.path.json.JsonPath;
 public class ApprovalProcessTest extends BaseTest {
 	@Test(dataProvider="CaseList",description="审批类型设置")
 	public void Types_Temp_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
@@ -172,27 +171,23 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "调整审批流程冒烟测试")
 	public void adjust_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-
+		
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
+		
+		//验证response
+		checkResponse(expectedMap);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
@@ -208,25 +203,18 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="转正")
 	public void join_Formal_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
 		
-		long time = 5000;
-		
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
 		
 		TxtData txt = new TxtData();
@@ -243,26 +231,20 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="辞职审批测试")
 	public void Offboard_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-		
+		//验证response
+		checkResponse(expectedMap);
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -277,25 +259,20 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="辞职审批测试")
 	public void Offboard2_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
+		//验证response
+		checkResponse(expectedMap);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
@@ -307,35 +284,24 @@ public class ApprovalProcessTest extends BaseTest {
 			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
 			txt.writerText(tokenFile, authorization);
 		}
-	}
-	
-	@Test(dataProvider="SingleCase")
-	public void OvertimeRequest_Test(Map<String, Object> params){
-		setRequest("OvertimeRequest", params);
-	}
-	
+	}	
 	
 	@Test(dataProvider="CaseList",description="请假审批流程测试")
 	public void Leave_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
+		//验证response
+		checkResponse(expectedMap);
 		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
@@ -351,26 +317,18 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="外出审批流程测试")
 	public void Out_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -385,26 +343,18 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="补卡审批流程测试")
 	public void Resign_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -419,27 +369,19 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="加班审批流程测试")
 	public void OverTime_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -454,27 +396,19 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider="CaseList",description="出差审批流程测试")
 	public void Trip_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 
 		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-		
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -489,26 +423,18 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "项目审批流程冒烟测试")
 	public void Project_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -523,26 +449,18 @@ public class ApprovalProcessTest extends BaseTest {
 
 	@Test(dataProvider = "CaseList", description= "通用审批流程冒烟测试")
 	public void General_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -557,26 +475,18 @@ public class ApprovalProcessTest extends BaseTest {
 
 	@Test(dataProvider = "CaseList", description= "物品领用审批流程冒烟测试")
 	public void Materialget_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -591,26 +501,18 @@ public class ApprovalProcessTest extends BaseTest {
 
 	@Test(dataProvider = "CaseList", description= "合同审批流程冒烟测试")
 	public void Contract_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
 		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -625,9 +527,7 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "采购审批流程冒烟测试")
 	public void Purchase_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
@@ -635,19 +535,13 @@ public class ApprovalProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		txt = new TxtData();
 		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -662,9 +556,7 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "报销审批流程冒烟测试")
 	public void reimbursement_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
@@ -672,19 +564,13 @@ public class ApprovalProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		txt = new TxtData();
 		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -699,9 +585,7 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "付款审批流程冒烟测试")
 	public void payment_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
+
 		String api = baseData.get("API").toString();
 		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
 		String caseName = baseData.get("Case").toString();
@@ -709,19 +593,13 @@ public class ApprovalProcessTest extends BaseTest {
 		TxtData txt = new TxtData();
 		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
+		//获取审批id
+		if (api.equals("GetInstances")) {
+			Approval approval = new Approval(basePath);
+			String uuid = expectedMap.get("items[0].form_record_id").toString();
+			approval.getInstances(uuid);
+			return;
 		}
-
 		txt = new TxtData();
 		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
 		txt.writerText(filename, bodyStr);
@@ -736,10 +614,6 @@ public class ApprovalProcessTest extends BaseTest {
 	
 	@Test(dataProvider = "CaseList", description= "考勤流程冒烟测试")
 	public void Attendance_Smoke_Test(Map<String, Object> baseData) {
-
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
 
 		String api = baseData.get("API").toString();
 		long time1 = 15000;

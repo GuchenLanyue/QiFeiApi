@@ -183,6 +183,7 @@ public class ApprovalSingleCaseTest extends BaseTest {
 		JsonPath jsonPath = JsonPath.with(approval.getInstanceInfo(instance_id));
 		approval.approval(instance_id, jsonPath.getString("tasks[0].uuid"));
 		//发起调整审批
+		paramMap.put("comment", "调整审批测试");
 		setRequest("Adjust", paramMap);
 		
 		Map<String,Object> expectionMap = expectedMap;

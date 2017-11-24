@@ -69,8 +69,14 @@ public class BaseTest {
 		String sheetName = caseStr[caseStr.length-3];
 		ExcelReader excel = new ExcelReader(srcDir,platform);
 		List<Map<String, Object>> caseList = excel.mapList(1,filePath, sheetName);
+		for(int i=0; i< caseList.size(); i++){
+			Map<String, Object> map = new HashMap<>();
+			map = caseList.get(i);
+			if(map.get("API").equals("")){
+				caseList.remove(i);
+			}
+		}
 		List<Object[]> test_IDs = new ArrayList<Object[]>();
-
 		for (Map<String, Object> baseData:caseList) {
 			test_IDs.add(new Object[]{baseData});
 		}
