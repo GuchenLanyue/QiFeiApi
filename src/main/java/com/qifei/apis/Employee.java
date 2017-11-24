@@ -18,6 +18,7 @@ import com.qifei.utils.RandomValue;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
 
+import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -36,6 +37,7 @@ public class Employee {
 	
 	// 新增员工
 	@SuppressWarnings("static-access")
+	@Step("addEmployee() 新增成员")
 	public String addEmployee(String organization_ID,String position_ID) {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -79,6 +81,7 @@ public class Employee {
 	}
 
 	// 新增员工
+	@Step("addEmployee() 新增成员")
 	public String addEmployee() {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -122,6 +125,7 @@ public class Employee {
 		
 	// 新增员工
 	@SuppressWarnings("static-access")
+	@Step("addEmployee() 新增成员")
 	public String addEmployee(Map<String, Object> params) {
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -156,6 +160,7 @@ public class Employee {
 	}
 
 	//到岗
+	@Step("formal() 到岗")
 	public String join(String uuid){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -193,6 +198,7 @@ public class Employee {
 	
 	/**
 	 * @description 转正*/
+	@Step("formal() 转正")
 	public String formal(Map<String,Object> paramMap){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -226,6 +232,7 @@ public class Employee {
 	}
 		
 	//验证返回值
+	@Step("checkResponse() 验证审批结果")
 	public void checkResponse(String body){
 		JSONObject obj = new JSONObject(body);
 		for(String key:obj.keySet()){
@@ -237,6 +244,7 @@ public class Employee {
 	
 	/**
 	 * @description 获取所有员工 */
+	@Step("getEmployees() 获取所有员工")
 	public Response getEmployees(){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -262,6 +270,7 @@ public class Employee {
 	
 	/**
 	 * @description 获取发展轨迹*/
+	@Step("reshuffle_logs() 获取发展轨迹")
 	public Response reshuffle_logs(String employee_id){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -291,6 +300,7 @@ public class Employee {
 	
 	/**
 	 * 辞职所有指定状态的员工*/
+	@Step("clean() 辞职所有指定状态的员工")
 	public void clean(String statu){
 		Response response = getEmployees();
 		JsonPath json = JsonPath.with(response.getBody().asString());
