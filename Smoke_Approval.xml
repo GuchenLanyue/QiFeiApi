@@ -276,7 +276,7 @@
 		</classes>
 	</test>
 	
-	<test name="付款流程设置" preserve-order="true">
+	<test name="离职所有待转正员工" preserve-order="true">
 		<groups>
 			<define name="CleanEmploee">
 				<include name="cleanEmploee_Test" />
