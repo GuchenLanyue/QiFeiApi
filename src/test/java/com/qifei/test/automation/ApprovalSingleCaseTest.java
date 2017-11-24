@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,6 @@ import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import com.qifei.apis.Approval;
-import com.qifei.apis.Attendance;
 import com.qifei.apis.Employee;
 import com.qifei.apis.Organization;
 import com.qifei.utils.DateUtils;
@@ -23,6 +23,7 @@ import io.restassured.path.json.JsonPath;
 import junit.framework.Assert;
 
 public class ApprovalSingleCaseTest extends BaseTest {
+	
 	@Test(dataProvider = "SingleCase", description= "获取所有审批类型")
 	public void allTypes_Test(Map<String, Object> params){		
 		setRequest("approvalTypes", params);
@@ -120,534 +121,256 @@ public class ApprovalSingleCaseTest extends BaseTest {
 	
 	@Test(dataProvider="SingleCase",description="转正")
 	public void Formal_Test(Map<String, Object> params){
-		setRequest("Formal", params);
-		checkResponse();
+		Employee employee = new Employee(basePath);
+		String body = employee.addEmployee();
+		JsonPath user = JsonPath.with(body);
+		employee.join(user.getString("uuid"));
+		employee.checkResponse(body);
+		
+		Map<String,Object> paramMap = params;
+		paramMap.put("organization", "");
+		paramMap.put("organization_ID", "");
+		paramMap.put("position", "");
+		paramMap.put("position_ID", "");
+		paramMap.put("employee_ID", user.getString("uuid"));
+		paramMap.put("employee_no", "microfastup-"+user.getString("employee_no"));
+		paramMap.put("employee", user.getString("name"));
+		
+		setRequest("Formal", paramMap);
+		Map<String,Object> expectionMap = expectedMap;
+		expectionMap.put("organization", "");
+		expectionMap.put("organization_ID", "");
+		expectionMap.put("position", "");
+		expectionMap.put("position_ID", "");
+		expectionMap.put("employee_ID", user.getString("uuid"));
+		expectionMap.put("employee_no", "microfastup-"+user.getString("employee_no"));
+		expectionMap.put("employee", user.getString("name"));
+		
+		checkResponse(expectionMap);
 		JsonPath response = JsonPath.with(bodyStr);
 		String uuid = response.get("uuid").toString();
 		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
 		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "SingleCase", description= "调整")
+	@Test(dataProvider="SingleCase",description= "调整")
 	public void Adjust_Test(Map<String, Object> params) {
-		setRequest("Adjust", params);
-		checkResponse();
+		Employee employee = new Employee(basePath);
+		//新增员工
+		String body = employee.addEmployee();
+		JsonPath user = JsonPath.with(body);
+		//到岗
+		employee.join(user.getString("uuid"));
+		employee.checkResponse(body);
+		//设置转正请求参数
+		Map<String,Object> paramMap = params;
+		paramMap.put("organization", "");
+		paramMap.put("organization_ID", "");
+		paramMap.put("position", "");
+		paramMap.put("position_ID", "");
+		paramMap.put("employee_ID", user.getString("uuid"));
+		paramMap.put("employee_no", "microfastup-"+user.getString("employee_no"));
+		paramMap.put("employee", user.getString("name"));
+		Approval approval = new Approval(basePath);
+		//设置转正流程
+		approval.setApprovalType("employee_probation","");
+		//发起转正审批
+		String formal = employee.formal(paramMap);
+		JsonPath formalJson = JsonPath.with(formal);
+		//审批通过
+		String instance_id = approval.getInstances(formalJson.getString("uuid"));
+		JsonPath jsonPath = JsonPath.with(approval.getInstanceInfo(instance_id));
+		approval.approval(instance_id, jsonPath.getString("tasks[0].uuid"));
+		//发起调整审批
+		setRequest("Adjust", paramMap);
+		
+		Map<String,Object> expectionMap = expectedMap;
+		expectionMap.put("organization", "");
+		expectionMap.put("organization_ID", "");
+		expectionMap.put("position", "");
+		expectionMap.put("position_ID", "");
+		expectionMap.put("employee_ID", user.getString("uuid"));
+		expectionMap.put("employee_no", formalJson.getString("employee_no"));
+		expectionMap.put("employee", formalJson.getString("name"));
+		expectionMap.put("comment", "调整审批测试");
+		checkResponse(expectionMap);
 		JsonPath response = JsonPath.with(bodyStr);
 		String uuid = response.get("uuid").toString();
-		Approval approval = new Approval(basePath);
+		//获取审批id
+		uuid = approval.getInstances(uuid);
+		//撤销审批
 		approval.cancel(uuid);
 	}
 	
 	@Test(dataProvider="SingleCase",description="辞职")
 	public void Offboard_Test(Map<String, Object> params){
-		setRequest("Offboard", params);
-		checkResponse();
+		Employee employee = new Employee(basePath);
+		String body = employee.addEmployee();
+		JsonPath user = JsonPath.with(body);
+		employee.join(user.getString("uuid"));
+		employee.checkResponse(body);
+		
+		Map<String,Object> paramMap = params;
+		paramMap.put("organization", "");
+		paramMap.put("organization_ID", "");
+		paramMap.put("position", "");
+		paramMap.put("position_ID", "");
+		paramMap.put("employee_ID", user.getString("uuid"));
+		paramMap.put("employee_no", "microfastup-"+user.getString("employee_no"));
+		paramMap.put("employee", user.getString("name"));
+		
+		setRequest("Offboard", paramMap);
+		Map<String,Object> expectionMap = expectedMap;
+		expectionMap.put("organization", "");
+		expectionMap.put("organization_ID", "");
+		expectionMap.put("position", "");
+		expectionMap.put("position_ID", "");
+		expectionMap.put("employee_ID", user.getString("uuid"));
+		expectionMap.put("employee_no", "microfastup-"+user.getString("employee_no"));
+		expectionMap.put("employee", user.getString("name"));
+		
+		checkResponse(expectionMap);
 		JsonPath response = JsonPath.with(bodyStr);
 		String uuid = response.get("uuid").toString();
 		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
 		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="SingleCase")
+	@Test(dataProvider="SingleCase",description="加班")
 	public void OvertimeRequest_Test(Map<String, Object> params){
 		setRequest("OvertimeRequest", params);
 		checkResponse();
 		JsonPath response = JsonPath.with(bodyStr);
 		String uuid = response.get("uuid").toString();
 		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
 		approval.cancel(uuid);
 	}
 	
-	
-	@Test(dataProvider="CaseList",description="请假审批流程测试")
-	public void Leave_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider="SingleCase",description="请假")
+	public void LeaveRequest_Test(Map<String, Object> params){
+		setRequest("LeaveRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="CaseList",description="外出审批流程测试")
-	public void Out_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider="SingleCase",description="外出")
+	public void OutRequest_Test(Map<String, Object> params){
+		setRequest("OutRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="CaseList",description="补卡审批流程测试")
-	public void Resign_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider="SingleCase",description="补卡")
+	public void ResignRequest_Test(Map<String, Object> params){
+		setRequest("ResignRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="CaseList",description="加班审批流程测试")
-	public void OverTime_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider="SingleCase",description="出差")
+	public void TripRequest_Test(Map<String, Object> params){
+		setRequest("TripRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider="CaseList",description="出差审批流程测试")
-	public void Trip_Smoke_Test(Map<String, Object> baseData){
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
+	@Test(dataProvider = "SingleCase", description= "项目")
+	public void ProjectRequest_Test(Map<String, Object> params) {
+		setRequest("ProjectRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
+	}
 
-		setRequest(api,filePath,caseName);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider = "SingleCase", description= "通用")
+	public void GeneralRequest_Test(Map<String, Object> params) {
+		setRequest("GeneralRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
+	}
+
+	@Test(dataProvider = "SingleCase", description= "物品领用")
+	public void MaterialgetRequest_Test(Map<String, Object> params) {
+		setRequest("MaterialgetRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
+	}
+
+	@Test(dataProvider = "SingleCase", description= "合同")
+	public void ContractRequest_Test(Map<String, Object> params) {
+		setRequest("ContractRequest", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "项目审批流程冒烟测试")
-	public void Project_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-
-	@Test(dataProvider = "CaseList", description= "通用审批流程冒烟测试")
-	public void General_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-
-	@Test(dataProvider = "CaseList", description= "物品领用审批流程冒烟测试")
-	public void Materialget_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-
-	@Test(dataProvider = "CaseList", description= "合同审批流程冒烟测试")
-	public void Contract_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider = "SingleCase", description= "采购")
+	public void purchase_Test(Map<String, Object> params) {
+		setRequest("purchase", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "采购审批流程冒烟测试")
-	public void Purchase_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		txt = new TxtData();
-		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider = "SingleCase", description= "报销")
+	public void reimbursement_Test(Map<String, Object> params) {
+		setRequest("reimbursement", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "报销审批流程冒烟测试")
-	public void reimbursement_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		txt = new TxtData();
-		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
+	@Test(dataProvider = "SingleCase", description= "付款")
+	public void payment_Test(Map<String, Object> params) {
+		setRequest("payment", params);
+		checkResponse();
+		JsonPath response = JsonPath.with(bodyStr);
+		String uuid = response.get("uuid").toString();
+		Approval approval = new Approval(basePath);
+		uuid = approval.getInstances(uuid);
+		approval.cancel(uuid);
 	}
 	
-	@Test(dataProvider = "CaseList", description= "付款审批流程冒烟测试")
-	public void payment_Smoke_Test(Map<String, Object> baseData) {
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-		String api = baseData.get("API").toString();
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		setRequest(api,filePath,caseName);
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-
-		txt = new TxtData();
-		filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-	
-	@Test(dataProvider = "CaseList", description= "考勤流程冒烟测试")
-	public void Attendance_Smoke_Test(Map<String, Object> baseData) {
-
-		if(baseData.get("API").toString().equals("")){
-			return;
-		}
-
-		String api = baseData.get("API").toString();
-		long time1 = 15000;
-		if(api.equals("AttendanceStatisticsAPP")|| api.equals("AttendanceStatisticsPC")){
-			try{
-				Thread.sleep(time1);
-			}catch (InterruptedException e){
-				e.printStackTrace();
-			}
-		}
-
-		//删除已有的班次列表
-		if(api.equals("addLocations")){
-			Attendance attendance = new Attendance("http://console.t.upvi.com/bapi");
-			attendance.deleteAllSchedules();
-		}
-
-		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
-		String caseName = baseData.get("Case").toString();
-		
-		if(api.equals("AttendanceStatisticsAPP")){
-			try{
-				Thread.sleep(1000);
-			}catch (InterruptedException e){
-				e.printStackTrace();
-			}
-		}
-		
-		setRequest(api,filePath,caseName);
-		
-		TxtData txt = new TxtData();
-		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
-		txt.writerText(filename, bodyStr);
-		if(caseName.equals("Locations_Add_01")){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		long time = 5000;
-		while (checkResponse(expectedMap)&&time<15000) {
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setRequest(api,filePath,caseName);
-			time += 5000;
-		}
-		
-		txt.writerText(filename, bodyStr);
-		
-		if(api.equals("Auth")){
-			JsonPath body = JsonPath.with(bodyStr);
-			String authorization = "Bearer " + body.getString("access_token");
-			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
-			txt.writerText(tokenFile, authorization);
-		}
-	}
-	
-	@Test(dataProvider = "SingleCase", description= "获取审批明细")
+	@Test(dataProvider = "SingleCase", description= "审批统计-审批明细")
 	public void approval_ApprovalDetails_Test(Map<String,Object> params){
 //		setRequest("ApprovalDetailsDefault",params);
 		setRequest("ApprovalDetailsCustomer",params);
