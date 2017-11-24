@@ -206,7 +206,7 @@ public class ApprovalProcessTest extends BaseTest {
 		}
 	}
 	
-	@Test(dataProvider="SingleCase",description="转正")
+	@Test(dataProvider="CaseList",description="转正")
 	public void join_Formal_Smoke_Test(Map<String, Object> baseData){
 		if(baseData.get("API").toString().equals("")){
 			return;
