@@ -246,11 +246,25 @@ public class Employee {
 		for(int i=0; i<status.size(); i++){
 			if(status.get(i).equals(statu)){
 				String employeeID = json.getString("items["+i+"].uuid");
+				String organization = json.getString("items["+i+"].organization");
+				String organization_ID = json.getString("items["+i+"].organization_ID");
+				String position = json.getString("items["+i+"].position");
+				String position_ID = json.getString("items["+i+"].position_ID");
+				if(organization==null){
+					organization = "";
+					organization_ID = "";
+				}
+				
+				if(position==null){
+					position = "";
+					position_ID = "";
+				}
+				
 				params.put("employee_ID", employeeID);
-				params.put("organization", json.getString("items["+i+"].organization"));
-				params.put("organization_ID", json.getString("items["+i+"].organization_ID"));
-				params.put("position", json.getString("items["+i+"].position"));
-				params.put("position_ID", json.getString("items["+i+"].position_ID"));
+				params.put("organization", organization);
+				params.put("organization_ID", organization_ID);
+				params.put("position", position);
+				params.put("position_ID", position_ID);
 				params.put("employee", json.getString("items["+i+"].name"));
 				//离职
 				Response offboard = approval.offboard(params);
