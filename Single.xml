@@ -5,7 +5,7 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	<!--  
+ 
 	<test name="获取部门id" preserve-order="true">
 		<groups>
 			<define name="getOrganizationByName">
@@ -35,7 +35,7 @@
 			</class>
 		</classes>
 	</test>
-	-->
+
 	<test name="转正" preserve-order="true">
 		<groups>
 			<define name="Formal">
