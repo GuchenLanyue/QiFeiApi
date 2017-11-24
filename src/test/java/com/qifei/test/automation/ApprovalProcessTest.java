@@ -207,8 +207,38 @@ public class ApprovalProcessTest extends BaseTest {
 	}
 	
 	@Test(dataProvider="SingleCase",description="转正")
-	public void join_Formal_Smoke_Test(Map<String, Object> params){
+	public void join_Formal_Smoke_Test(Map<String, Object> baseData){
+		if(baseData.get("API").toString().equals("")){
+			return;
+		}
+		String api = baseData.get("API").toString();
+		String filePath = srcDir+File.separator+"case"+File.separator+baseData.get("FilePath");
+		String caseName = baseData.get("Case").toString();
+		setRequest(api,filePath,caseName);
 		
+		long time = 5000;
+		
+		while (checkResponse(expectedMap)&&time<15000) {
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setRequest(api,filePath,caseName);
+			time += 5000;
+		}
+		
+		TxtData txt = new TxtData();
+		String filename = srcDir+File.separator+"temp"+File.separator+api+".txt";
+		txt.writerText(filename, bodyStr);
+		
+		if(api.equals("Auth")){
+			JsonPath body = JsonPath.with(bodyStr);
+			String authorization = "Bearer " + body.getString("access_token");
+			String tokenFile = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"access_token.txt";
+			txt.writerText(tokenFile, authorization);
+		}
 	}
 	
 	@Test(dataProvider="CaseList",description="辞职审批测试")

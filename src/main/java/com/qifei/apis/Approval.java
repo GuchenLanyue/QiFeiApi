@@ -55,7 +55,28 @@ public class Approval {
 	
 	/**
 	 * @description 设置审批流程*/
-	public Response setApprovalType(String typeID,String processID){
+	public Response setApprovalType(String approval,String sub_category){
+		String types = getAllTypes();
+		JsonPath type = JsonPath.with(types);
+		List<String> form_names = type.getList("items.form_name");
+		String typeID = "";
+		String processID = "";
+		for(int i=0; i<form_names.size(); i++){
+			if(form_names.get(i).equals(approval)){
+				typeID = type.getString("items["+i+"].uuid");
+				processID = type.getString("items["+i+"].process_list[0].uuid");
+				break;
+			}
+		}
+		
+		Response response = setApprovalType(typeID, processID, sub_category);
+		
+		return response;
+	}
+	
+	/**
+	 * @description 设置审批流程*/
+	public Response setApprovalType(String typeID,String processID,String sub_category){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
 		baseMap.put("Path", "/automation/v1/approval/types/{type_id}/op/all");
@@ -72,7 +93,7 @@ public class Approval {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("notice_type", "approval_start");
 		paramMap.put("duplicate_type", "duplicate");
-		paramMap.put("sub_category", "resign");
+		paramMap.put("sub_category", sub_category);
 		
 		Auth auth = new Auth(basePath);
 		auth.tokens();

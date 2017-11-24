@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.mozilla.javascript.ast.NewExpression;
 import org.testng.Assert;
 
+import com.qifei.utils.DateUtils;
 import com.qifei.utils.RandomValue;
 import com.qifei.utils.http.Headers;
 import com.qifei.utils.http.HttpMethods;
@@ -46,7 +48,6 @@ public class Employee {
 		headerMap.put("Authorization", authorization);
 		
 		// 设置参数
-//		Map<String, Object> params = new HashMap<>();
 		RandomValue random = new RandomValue();
 		params.put("name", random.getChineseName());
 		params.put("mobile", random.getTel());
@@ -54,9 +55,6 @@ public class Employee {
 		params.put("employee_no", "ZZ_"+date.getTime());
 		params.put("organization_ID", organization_ID);
 		params.put("position_ID", position_ID);
-//		params.put("join_date", "");
-//		params.put("field_6", "21");
-//		params.put("field_8", "510723199007195415");
 		
 		//设置入职日期
 		Calendar calendar = new GregorianCalendar();
@@ -81,6 +79,48 @@ public class Employee {
 	}
 
 	// 新增员工
+	public String addEmployee() {
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/hr/v1/formrecords?form=employee");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+		// 设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		// 设置参数
+//		Map<String, Object> params = new HashMap<>();
+		RandomValue random = new RandomValue();
+		params.put("name", random.getChineseName());
+		params.put("mobile", random.getTel());
+		Date date = new Date();
+		params.put("employee_no", "ZZ_"+date.getTime());
+		
+		//设置入职日期
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+		date = calendar.getTime(); // 这个时间就是日期往后推一天的结果
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String dateString = formatter.format(date)+"T10:00:00+08:00";
+		params.put("join_date", dateString);
+		
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+
+		// 发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+
+		return body;
+	}
+		
+	// 新增员工
 	@SuppressWarnings("static-access")
 	public String addEmployee(Map<String, Object> params) {
 		Map<String, Object> baseMap = new HashMap<>();
@@ -102,11 +142,6 @@ public class Employee {
 		String dateString = formatter.format(date)+"T10:00:00+08:00";
 		this.params.put("join_date", dateString);
 		this.params.put("employee_no", "ZZ_"+date.getTime());
-//		this.params.put("organization_ID", "696434ed-b965-11e7-b707-5254001aba5d");
-//		this.params.put("position_ID", "69b25559-b965-11e7-b707-5254001aba5d");
-//		RandomValue random = new RandomValue();
-//		this.params.put("mobile", random.getTel());
-//		this.params.put("name", random.getChineseName());
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		map.put("base", baseMap);
 		map.put("headers", headerMap);
@@ -156,6 +191,40 @@ public class Employee {
 		return body;
 	}
 	
+	/**
+	 * @description 转正*/
+	public String formal(Map<String,Object> paramMap){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/hr/v1/formrecords?form=employee_probation");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "POST");
+
+		// 设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		
+		DateUtils dateUtils = new DateUtils();	
+		Map<String,Object> params = paramMap;
+		params.put("need_notify_employee", "n");
+		params.put("effective_date", dateUtils.getToday()+"T11:10:20+08:00");
+		params.put("notify_content", "");
+		params.put("comment", "转正测试");
+		
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("params", params);
+		
+		// 发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		String body = http.getBody(response);
+
+		return body;
+	}
+		
 	//验证返回值
 	public void checkResponse(String body){
 		JSONObject obj = new JSONObject(body);
@@ -228,20 +297,8 @@ public class Employee {
 		List<String> status = json.getList("items.status");
 		Approval approval = new Approval(basePath);
 		Map<String,Object> params = new HashMap<>();
-		String types = approval.getAllTypes();
-		JsonPath type = JsonPath.with(types);
-		List<String> names = type.getList("items.form_name");
-		String typeID = "";
-		String processID = "";
-		for(int i=0; i<names.size(); i++){
-			if(names.get(i).equals("employee_offboard")){
-				typeID = type.getString("items["+i+"].uuid");
-				processID = type.getString("items["+i+"].process_list[0].uuid");
-				break;
-			}
-		}
-		
-		approval.setApprovalType(typeID, processID);
+				
+		approval.setApprovalType("employee_offboard", "resign");
 		
 		for(int i=0; i<status.size(); i++){
 			if(status.get(i).equals(statu)){
