@@ -63,6 +63,8 @@ public class Auth {
 		
 		TxtData txt = new TxtData();
 		txt.writerText(tokenFile, authorization);
+		String auth = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator + "Auth.txt";
+		txt.writerText(auth, http.getBody(response));
 		
 		return authorization;
 	}
@@ -80,12 +82,13 @@ public class Auth {
 		
 		HttpMethods http = new HttpMethods(basePath);
 		response = http.request(map);
-		JsonPath body = JsonPath.with(http.getBody(response));
-		
+		JsonPath body = JsonPath.with(http.getBody(response));		
 		String authorization = "Bearer " + body.getString("access_token");
 		
 		TxtData txt = new TxtData();
 		txt.writerText(tokenFile, authorization);
+		String auth = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator + "Auth.txt";
+		txt.writerText(auth, http.getBody(response));
 		
 		return authorization;
 	}
