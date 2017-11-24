@@ -5,7 +5,7 @@
 	<parameter name="sourcesDir" value="/sources" />
 	<parameter name="CaseList" value="/case/CaseList.xlsx" />
 	<parameter name="basePath" value="http://console.t.upvi.com/bapi" />
-	<!-- 
+	<!--  
 	<test name="获取部门id" preserve-order="true">
 		<groups>
 			<define name="getOrganizationByName">
@@ -35,7 +35,7 @@
 			</class>
 		</classes>
 	</test>
-
+	-->
 	<test name="转正" preserve-order="true">
 		<groups>
 			<define name="Formal">
@@ -51,7 +51,6 @@
 		</classes>
 	</test>
 	
-	
 	<test name="调整" preserve-order="true">
 		<groups>
 			<define name="Adjust">
@@ -66,7 +65,202 @@
 			</class>
 		</classes>
 	</test>
-	-->
+	
+	<test name="辞职" preserve-order="true">
+		<groups>
+			<define name="Offboard">
+				<include name="Offboard_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="Offboard_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="加班" preserve-order="true">
+		<groups>
+			<define name="Overtime">
+				<include name="OvertimeRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="OvertimeRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="请假" preserve-order="true">
+		<groups>
+			<define name="Leave">
+				<include name="LeaveRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="LeaveRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="外出" preserve-order="true">
+		<groups>
+			<define name="Out">
+				<include name="OutRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="OutRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="补卡" preserve-order="true">
+		<groups>
+			<define name="Resign">
+				<include name="ResignRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="ResignRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="出差" preserve-order="true">
+		<groups>
+			<define name="Trip">
+				<include name="TripRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="TripRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="项目" preserve-order="true">
+		<groups>
+			<define name="Project">
+				<include name="ProjectRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="ProjectRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="通用" preserve-order="true">
+		<groups>
+			<define name="General">
+				<include name="GeneralRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="GeneralRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="物品领用" preserve-order="true">
+		<groups>
+			<define name="Materialget">
+				<include name="MaterialgetRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="MaterialgetRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="合同" preserve-order="true">
+		<groups>
+			<define name="Contract">
+				<include name="ContractRequest_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="ContractRequest_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+		
+	<test name="采购" preserve-order="true">
+		<groups>
+			<define name="purchase">
+				<include name="purchase_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="purchase_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="报销" preserve-order="true">
+		<groups>
+			<define name="reimbursement">
+				<include name="reimbursement_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="reimbursement_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="付款" preserve-order="true">
+		<groups>
+			<define name="payment">
+				<include name="payment_Test" />
+			</define>
+		</groups>
+		<classes>
+			<class name="com.qifei.test.automation.ApprovalSingleCaseTest">
+				<methods>
+					<include name="payment_Test" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
 	<test name="获取所有审批类型" preserve-order="true">
 		<groups>
 			<define name="AllTypes">
