@@ -148,6 +148,70 @@ public class Approval {
 	}
 	
 	/**
+	 * @description 审批统计*/
+	@Step("approval_summary() 审批统计")
+	public String approval_summary(){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/automation/v1/approval/statistic/summary?year={year}&month={month}");
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+
+		// 设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		DateUtils dateUtils = new DateUtils();
+		
+		Map<String, Object> pathParamMap = new HashMap<>();
+		pathParamMap.put("year", dateUtils.getYear());
+		pathParamMap.put("month", dateUtils.getThisMonth());
+		
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("pathParams", pathParamMap);
+		
+		// 发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		
+		return http.getBody(response);
+	}
+	
+	/**
+	 * @description 审批统计*/
+	@Step("approval_summary() 审批统计")
+	public Response approval_summary(String year, String month){
+		Map<String, Object> baseMap = new HashMap<>();
+		baseMap.put("BasePath", basePath);
+		baseMap.put("Path", "/automation/v1/approval/statistic/summary?year="+year+"&month="+month);
+		baseMap.put("contentType", "application/json");
+		baseMap.put("Method", "GET");
+
+		// 设置Authorization
+		String authorization = new Headers(basePath).getAuthorization();
+		Map<String, Object> headerMap = new HashMap<>();
+		headerMap.put("Authorization", authorization);
+		DateUtils dateUtils = new DateUtils();
+		
+		Map<String, Object> pathParamMap = new HashMap<>();
+		pathParamMap.put("year", dateUtils.getYear());
+		pathParamMap.put("month", dateUtils.getThisMonth());
+		
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		map.put("base", baseMap);
+		map.put("headers", headerMap);
+		map.put("pathParams", pathParamMap);
+		
+		// 发起请求
+		HttpMethods http = new HttpMethods(basePath);
+		Response response = http.request(map);
+		
+		return response;
+	}
+	
+	/**
 	 * @description 搜索审批明细*/
 	@Step("search_approval() 搜索审批明细")
 	public Response search_approval(String title){
@@ -216,6 +280,19 @@ public class Approval {
 	/**
 	 * @description 审批通过 */
 	@Step("approval() 审批通过")
+	public String approval(String uuid){
+		String instance_id = getInstances(uuid);
+		String info = getInstanceInfo(instance_id);
+		String task_id = JsonPath.with(info).getString("tasks[0].uuid");
+		
+		String body = approval(instance_id, task_id);
+		
+		return body;
+	}
+	
+	/**
+	 * @description 审批通过 */
+	@Step("approval() 审批通过")
 	public String approval(String instance_id,String task_id){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
@@ -249,11 +326,44 @@ public class Approval {
 	
 	/**
 	 * @description 获取审批列表 */
-	@Step("getInstances() 获取审批列表")
+	@Step("getInstances() 获取我发起的审批")
 	public String getInstances(String uuid){
+		
+		String body = getInstances(10);
+		JsonPath json = JsonPath.with(body);
+		List<String> form_record_ids = json.getList("items.form_record_id");
+		
+		long time = 0;
+		while (!form_record_ids.contains(uuid)||time < 15000) {
+			try {
+				Thread.sleep(5000);
+				time += 5000;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			body = getInstances(10);
+			json = JsonPath.with(body);
+			form_record_ids = json.getList("items.form_record_id");
+		}
+		
+		TxtData txtData = new TxtData();
+		String filename = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"GetInstances.txt";
+		txtData.writerText(filename, body);
+		
+		Assert.assertTrue("not found approval:\""+uuid+"\"",form_record_ids.contains(uuid));
+		int index = form_record_ids.indexOf(uuid);
+		
+		return json.get("items["+index+"].uuid").toString();
+	}
+	
+	/**
+	 * @description 获取审批列表 */
+	@Step("getInstances() 获取我发起的审批")
+	public String getInstances(int limit){
 		Map<String, Object> baseMap = new HashMap<>();
 		baseMap.put("BasePath", basePath);
-		baseMap.put("Path", "/automation/v1/approval/instances?approvalRole=submitter&limit=1&offset=0");
+		baseMap.put("Path", "/automation/v1/approval/instances?approvalRole=submitter&limit="+limit+"&offset=0");
 		baseMap.put("contentType", "application/json");
 		baseMap.put("Method", "GET");
 		//设置Authorization
@@ -270,32 +380,7 @@ public class Approval {
 		Response response = http.request(map);
 		String body = http.getBody(response);
 		
-		JsonPath json = JsonPath.with(body);
-		String form_record_id = json.get("items[0].form_record_id").toString();
-		long time = 0;
-		do{
-			if(form_record_id.equals(uuid)){
-				break;
-			}else{
-				try {
-					Thread.sleep(5000);
-					time += 5000;
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				response = http.request(map);
-				json = JsonPath.with(http.getBody(response));
-				form_record_id = json.get("items[0].form_record_id").toString();
-			}
-		}while(time < 15000);
-		TxtData txtData = new TxtData();
-		String filename = System.getProperty("user.dir")+File.separator+"sources"+File.separator+"temp"+File.separator+"GetInstances.txt";
-		txtData.writerText(filename, http.getBody(response));
-		
-		Assert.assertEquals("not found approval:"+uuid+".", uuid, form_record_id);
-
-		return json.get("items[0].uuid").toString();
+		return body;
 	}
 	
 	/**
@@ -359,5 +444,20 @@ public class Approval {
 		Response response = http.request(map);
 		
 		return response;
+	}
+	
+	public static void main(String[] args) {
+		Approval approval = new Approval("http://console.t.upvi.com/bapi");
+		String body = approval.getInstances(10000);
+		JsonPath instances = JsonPath.with(body);
+		List<String> items = instances.getList("items");
+
+		for(int i=0;i<items.size();i++){
+			String status = instances.getString("items["+i+"].status");
+			if(status.equals("approving")){
+				approval.cancel(instances.getString("items["+i+"].uuid"));
+			}
+		}
+//		approval.approval_summary();
 	}
 }
