@@ -1,10 +1,10 @@
 package com.qifei.test.automation;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +20,7 @@ import com.qifei.utils.TxtData;
 import com.qifei.utils.test.BaseTest;
 
 import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 import junit.framework.Assert;
 
 public class ApprovalSingleCaseTest extends BaseTest {
@@ -351,13 +352,66 @@ public class ApprovalSingleCaseTest extends BaseTest {
 	
 	@Test(dataProvider = "SingleCase", description= "报销")
 	public void reimbursement_Test(Map<String, Object> params) {
+		Approval approval = new Approval(basePath);
+		//设置报销审批流程
+		approval.setApprovalType("reimbursement", "");
+		//获取当前报销统计总金额
+		String summary = approval.approval_summary();
+		JsonPath old_Summary = JsonPath.with(summary);
+		List<String> form_names = old_Summary.getList("money_statistics.form_name");
+		int index = form_names.indexOf("reimbursement");
+		double old_total_money = Double.parseDouble(old_Summary.get("money_statistics["+index+"].total_money").toString());
+		int old_total_number = Integer.parseInt(old_Summary.get("money_statistics["+index+"].total_number").toString());
+
+		//发起报销申请
 		setRequest("reimbursement", params);
 		checkResponse();
+		//将response转化为json
 		JsonPath response = JsonPath.with(bodyStr);
 		String uuid = response.get("uuid").toString();
-		Approval approval = new Approval(basePath);
-		uuid = approval.getInstances(uuid);
-		approval.cancel(uuid);
+
+		//审批通过报销审批
+		String approved = approval.approval(uuid);
+		String title = JsonPath.with(approved).get("title").toString();
+		uuid = JsonPath.with(approved).get("uuid").toString();
+		
+		//再次获取报销统计
+		summary = approval.approval_summary();
+		JsonPath new_Summary = JsonPath.with(summary);
+		List<String> new_form_names = new_Summary.getList("money_statistics.form_name");
+		index = new_form_names.indexOf("reimbursement");
+		//获取金额统计数组中，报销统计的总金额
+		double new_total_money = Double.parseDouble(new_Summary.get("money_statistics["+index+"].total_money").toString());
+		//获取金额统计数组中，报销统计的总量
+		int new_total_number = Integer.parseInt(new_Summary.get("money_statistics["+index+"].total_number").toString());
+		//获取数量统计数组中，报销统计的总量
+		List<String> number_form_names = new_Summary.getList("number_statistics.form_name");
+		index = number_form_names.indexOf("reimbursement");
+		int autual_number = Integer.parseInt(new_Summary.get("number_statistics["+index+"].total_number").toString());
+		
+		//计算预期的报销统计总金额
+		double total_price = Double.parseDouble(params.get("total_price").toString());
+		double expected_money = old_total_money+total_price;
+		//精确到两位小数
+		BigDecimal b1 = new BigDecimal(expected_money);  
+		double expected = b1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		//精确到两位小数
+		BigDecimal b2 = new BigDecimal(new_total_money);  
+		double actual = b2.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		
+		//校验报销统计总金额是否与预期一致
+		Assert.assertEquals("reimbursement summary "+new_total_money+" is not equals "+old_total_money+"+"+total_price,expected,actual);
+		//计算预期的报销统计总量
+		int expected_number = old_total_number+1;
+		//校验报销统计总量是否与预期一致
+		Assert.assertEquals("reimbursement summary "+new_total_number+" is not equals "+old_total_number+"+1",expected_number,new_total_number);
+		Assert.assertEquals("reimbursement summary "+new_total_number+" is not equals "+old_total_number+"+1",expected_number,autual_number);
+
+		//搜索审批明细
+		Response search = approval.search_approval(title);
+		JsonPath jsonPath = JsonPath.with(search.getBody().asInputStream());
+		List<String> approvals = jsonPath.getList("items.uuid");
+		Assert.assertTrue("not found approval:"+uuid,approvals.contains(uuid));
 	}
 	
 	@Test(dataProvider = "SingleCase", description= "付款")
